@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 use Modules\Core\App\Providers\CoreServiceProvider;
+use Modules\PkgApprenant\App\Providers\PkgApprenantServiceProvider;
 use Modules\PkgSanction\App\Providers\PkgSanctionServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -17,6 +18,8 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->register(CoreServiceProvider::class);
         $this->app->register(PkgSanctionServiceProvider::class);
+        $this->app->register(PkgApprenantServiceProvider::class);
+
     }
 
     /**
