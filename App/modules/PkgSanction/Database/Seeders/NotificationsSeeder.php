@@ -14,14 +14,14 @@ class NotificationsSeeder extends Seeder
         Notification::insert([
             [
                 'sanction_absence_id' => 1,
-                'user_id'             => 2,
+                'apprenant_id'             => 2,
                 'message'             => 'Vous avez dépassé votre quota d\'absences autorisées.',
                 'created_at'          => now()->subDays(6),
                 'updated_at'          => now(),
             ],
             [
                 'sanction_absence_id' => 2,
-                'user_id'             => 3,
+                'apprenant_id'             => 3,
                 'message'             => 'Votre accès est suspendu pour une durée de 4 jours.',
                 'created_at'          => now()->subDays(2),
                 'updated_at'          => now(),
