@@ -4,6 +4,10 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Modules\Core\Database\Seeders\UsersTableSeeder;
+use Modules\PkgApprenant\Database\Seeders\ApprenantGroupeSeeder;
+use Modules\PkgApprenant\Database\Seeders\ApprenantSeeder;
+use Modules\PkgApprenant\Database\Seeders\GroupeSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -21,6 +25,9 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             UsersTableSeeder::class,
+            GroupeSeeder::class,
+            ApprenantSeeder::class,
+            ApprenantGroupeSeeder::class,
             ReglesDeSanctionsSeeder::class,
             DureeSeancesSeeder::class,
             SeancesSeeder::class,
