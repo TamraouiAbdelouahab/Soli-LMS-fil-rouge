@@ -5,13 +5,14 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Modules\Core\Database\Seeders\UsersTableSeeder;
-use Modules\PkgApprenant\Database\Seeders\ApprenantGroupeSeeder;
-use Modules\PkgApprenant\Database\Seeders\ApprenantSeeder;
 use Modules\PkgApprenant\Database\Seeders\GroupeSeeder;
+use Modules\PkgApprenant\Database\Seeders\ApprenantSeeder;
 use Modules\PkgSanction\Database\Seeders\NotificationsSeeder;
+use Modules\PkgApprenant\Database\Seeders\ApprenantGroupeSeeder;
+use Modules\PkgSanction\Database\Seeders\SanctionAbsencesSeeder;
 use Modules\PkgSanction\Database\Seeders\ReglesDeSanctionsSeeder;
 use Modules\PkgSanction\Database\Seeders\SanctionAbsencesPrevisionnellesSeeder;
-use Modules\PkgSanction\Database\Seeders\SanctionAbsencesSeeder;
+use modules\PkgEntretienInscrition\Database\Seeders\PkgEntretienInscritionDatabaseSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -40,6 +41,7 @@ class DatabaseSeeder extends Seeder
             AbsencesSeeder::class,
             JustificationAbsenceSeeder::class,
             NotificationsSeeder::class,
+            PkgEntretienInscritionDatabaseSeeder::class
         ]);
     }
 }
