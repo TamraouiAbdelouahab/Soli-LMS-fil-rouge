@@ -2,9 +2,9 @@
 
 namespace Modules\PkgSanction\App\Models;
 
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Modules\PkgApprenant\App\Models\Apprenant;
 
 class Notification extends Model
 {
@@ -21,8 +21,8 @@ class Notification extends Model
         return $this->belongsTo(SanctionAbsence::class);
     }
 
-    public function user()
+    public function apprenant()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Apprenant::class);
     }
 }

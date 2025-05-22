@@ -6,6 +6,7 @@ namespace Modules\Core\App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Modules\PkgApprenant\App\Models\Apprenant;
 
 class User extends Authenticatable
 {
@@ -18,10 +19,8 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'name',
         'email',
         'password',
-        'role',
     ];
 
     /**
@@ -45,5 +44,10 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function apprenant()
+    {
+        return $this->hasOne(Apprenant::class);
     }
 }
