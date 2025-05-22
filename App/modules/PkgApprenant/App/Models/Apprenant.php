@@ -5,7 +5,7 @@ namespace Modules\PkgApprenant\App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Modules\Core\App\Models\User;
 
-class Apprenant extends User
+class Apprenant extends Model
 {
     protected $fillable = [
         'nom',
@@ -23,5 +23,9 @@ class Apprenant extends User
     {
         return $this->belongsToMany(Groupe::class, 'apprenant_groupe');
     }
-    
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

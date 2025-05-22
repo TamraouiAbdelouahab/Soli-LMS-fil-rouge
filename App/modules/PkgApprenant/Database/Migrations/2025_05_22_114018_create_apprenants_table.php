@@ -22,6 +22,7 @@ return new class extends Migration
             $table->date('date_inscription')->nullable();
             $table->string('cin')->unique();
             $table->string('adresse')->nullable();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
     }
