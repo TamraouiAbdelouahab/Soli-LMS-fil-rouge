@@ -4,6 +4,10 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Modules\Core\Database\Seeders\UsersTableSeeder;
+use Modules\PkgApprenant\Database\Seeders\ApprenantGroupeSeeder;
+use Modules\PkgApprenant\Database\Seeders\ApprenantSeeder;
+use Modules\PkgApprenant\Database\Seeders\GroupeSeeder;
 
 class DatabaseSeeder extends Seeder
 {
