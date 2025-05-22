@@ -1,8 +1,3 @@
-Thanks! Based on your folder structure, here’s an updated version of the `README.md` tailored to your **Soli LMS** modular structure — especially focusing on the `modules/Core/App` and `modules/PkgSanction` layout.
-
----
-
-```markdown
 # 📘 Soli LMS - Modular Laravel Project
 
 **Soli LMS** is a collaborative Learning Management System designed using a custom modular architecture in Laravel. It allows developers to build independent functional packages and plug them into the system seamlessly.
