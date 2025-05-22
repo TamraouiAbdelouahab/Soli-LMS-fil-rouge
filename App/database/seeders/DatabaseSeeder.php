@@ -8,6 +8,10 @@ use Modules\Core\Database\Seeders\UsersTableSeeder;
 use Modules\PkgApprenant\Database\Seeders\ApprenantGroupeSeeder;
 use Modules\PkgApprenant\Database\Seeders\ApprenantSeeder;
 use Modules\PkgApprenant\Database\Seeders\GroupeSeeder;
+use Modules\PkgSanction\Database\Seeders\NotificationsSeeder;
+use Modules\PkgSanction\Database\Seeders\ReglesDeSanctionsSeeder;
+use Modules\PkgSanction\Database\Seeders\SanctionAbsencesPrevisionnellesSeeder;
+use Modules\PkgSanction\Database\Seeders\SanctionAbsencesSeeder;
 
 class DatabaseSeeder extends Seeder
 {
