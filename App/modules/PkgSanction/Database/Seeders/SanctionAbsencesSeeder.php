@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Seeders;
+namespace Modules\PkgSanction\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Modules\PkgSanction\App\Models\SanctionAbsence;
