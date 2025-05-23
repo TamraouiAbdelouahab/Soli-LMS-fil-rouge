@@ -9,7 +9,7 @@
                     color="blue" icon="Gavel" />
                 <SummaryCard title="Sanctions ce mois-ci" value="32" trend="-5% par rapport au mois dernier"
                     color="orange" icon="Calendar" />
-                <SummaryCard title="Sanctions non résolues" value="18" trend="+3 depuis la semaine dernière" color="red"
+                <SummaryCard title="Sanctions non résolues" :value="sanctionsAbsencePrevisionnelleCount ?? 0" trend="+3 depuis la semaine dernière" color="red"
                     icon="AlertTriangle" />
                 <SummaryCard title="Taux de récurrence" value="15%" trend="-2% depuis le dernier trimestre"
                     color="green" icon="Percent" />
@@ -62,9 +62,11 @@ import BarChart from '../Components/Dashboard/BarChart.vue';
 
 const props = defineProps({
     sanctionsAbsenceCount: Number,
+    sanctionsAbsencePrevisionnelleCount: Number,
+    recentSanctions: Array,
 });
 
-console.log(props.sanctionsAbsenceCount);
+console.log(props.recentSanctions);
 // Sample data for charts
 const monthlyData = ref([
     { month: 'Jan', sanctions: 18 },

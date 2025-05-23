@@ -28,6 +28,6 @@ class SanctionAbsence extends Model
 
     public function regle()
     {
-        return $this->belongsTo(ReglesDeSanction::class);
+        return $this->belongsTo(ReglesDeSanction::class, 'regle_de_sanction_id');
     }
 }

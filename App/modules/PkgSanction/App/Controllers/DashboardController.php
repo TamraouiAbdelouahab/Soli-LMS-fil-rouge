@@ -21,7 +21,9 @@ class DashboardController extends BaseController
         // dd($this->sanctionService->totalSanctionAbsence());
 
         return Inertia::render('PkgSanction::Dashboard', [
-            'sanctionsAbsenceCount' => $this->sanctionService->totalSanctionAbsence()
+            'sanctionsAbsenceCount' => $this->sanctionService->totalSanctionAbsence(),
+            'sanctionsAbsencePrevisionnelleCount' => $this->sanctionService->totalSanctionAbsencePrevisionnelle(),
+            'recentSanctions' => $this->sanctionService->getRecentSanctions(),
         ]);
     }
 }

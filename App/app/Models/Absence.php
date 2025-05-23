@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Modules\PkgApprenant\App\Models\Apprenant;
+use Modules\PkgSanction\App\Models\SanctionAbsence;
 use Modules\PkgSanction\App\Models\SanctionAbsencePrevisionnelle;
 
 class Absence extends Model
@@ -17,9 +19,9 @@ class Absence extends Model
         'sanction_absence_previsionnelle_id',
     ];
 
-    public function user()
+    public function apprenant()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Apprenant::class);
     }
 
     public function seance()
