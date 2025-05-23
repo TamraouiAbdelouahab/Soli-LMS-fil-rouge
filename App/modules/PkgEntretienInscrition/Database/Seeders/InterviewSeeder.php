@@ -1,9 +1,9 @@
 <?php
 
-namespace  modules\PkgEntretienInscrition\Database\Seeders;
+namespace  Modules\PkgEntretienInscrition\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use modules\PkgEntretienInscrition\App\Models\Interview;
+use Modules\PkgEntretienInscrition\App\Models\Interview;
 
 class InterviewSeeder extends Seeder
 {

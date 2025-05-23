@@ -1,7 +1,7 @@
 <?php
 
-namespace modules\PkgEntretienInscrition\App\Models;
-namespace modules\PkgEntretienInscrition\App\Models;
+namespace Modules\PkgEntretienInscrition\App\Models;
+namespace Modules\PkgEntretienInscrition\App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;

@@ -1,8 +1,10 @@
 <?php
 
-namespace Module\pkgJustificatif\App\Models;
+namespace Modules\PkgJustificatif\App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+
+use Modules\PkgApprenant\App\Models\Apprenant;
 
 class Justificatif extends Model
 {
@@ -12,8 +14,22 @@ class Justificatif extends Model
         'date_debut',
         'date_fin',
         'fichier',
-        'descrition',
+        'description',
+        'apprenant_id',
         'raison_id',
         'statut'
     ];
+
+    public function apprenant()
+    {
+        return $this->belongsTo(Apprenant::class);
+    }
+
+    /**
+     * Relation avec le modèle Raison
+     */
+    public function raison()
+    {
+        return $this->belongsTo(Raison::class);
+    }
 }

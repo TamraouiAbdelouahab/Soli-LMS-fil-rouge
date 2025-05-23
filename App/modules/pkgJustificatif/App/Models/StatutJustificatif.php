@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\pkgJustificatif\App\Enums;
+namespace Modules\PkgJustificatif\App\Models;
 
 enum StatutJustificatif: string
 {

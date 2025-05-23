@@ -1,6 +1,6 @@
 <?php
 
-namespace modules\PkgEntretienInscrition\App\Providers;
+namespace Modules\PkgEntretienInscrition\App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Route;
