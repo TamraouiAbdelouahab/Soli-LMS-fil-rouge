@@ -1,11 +1,11 @@
 <?php
 
-namespace Modules\PkgSanction\App\Providers;
+namespace modules\PkgEntretienInscrition\App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Route;
 
-class PkgSanctionServiceProvider extends ServiceProvider
+class PkgEntretienInscritionProvider extends ServiceProvider
 {
     /**
      * Register services.
@@ -23,9 +23,9 @@ class PkgSanctionServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__ . '/../../Database/Migrations');
 
         // Load routes with proper middleware
-        // $this->registerRoutes();
+        $this->registerRoutes();
 
-        $this->loadViewsFrom(__DIR__ . '/../../Resources/Views', 'pkg-sanction');
+        $this->loadViewsFrom(__DIR__ . '/../../Resources/Views', 'pkg-entretien-inscrition');
     }
 
     /**
