@@ -16,8 +16,7 @@ return new class extends Migration
             $table->date('date_debut');
             $table->date('date_fin');
             $table->foreignId('regle_de_sanction_id')->constrained('regles_de_sanctions')->onDelete('cascade');
-            $table->foreignId('absence_id')->constrained('absences')->onDelete('cascade');
-            $table->foreignId('notification_id')->constrained('notifications')->onDelete('cascade');
+            // $table->foreignId('absence_id')->constrained('absences')->onDelete('cascade');
             $table->timestamps();
         });
     }

@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('apprenant_id')->constrained('apprenants')->onDelete('cascade');
             $table->foreignId('seance_id')->constrained('seances')->onDelete('cascade');
+            $table->foreignId('sanction_absence_id')->nullable()->constrained('sanction_absences')->onDelete('set null');
+            $table->foreignId('sanction_absence_previsionnelle_id')->nullable()->constrained('sanction_absences_previsionnelles')->onDelete('set null');
             $table->timestamps();
         });
     }
