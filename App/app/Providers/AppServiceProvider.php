@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 use Modules\Core\App\Providers\CoreServiceProvider;
+use Modules\PkgJustificatif\App\Providers\JustificatifServiceProvider;
 use Modules\PkgSanction\App\Providers\PkgSanctionServiceProvider;
 use Modules\PkgApprenant\App\Providers\PkgApprenantServiceProvider;
 use modules\PkgEntretienInscrition\App\Providers\PkgEntretienInscritionProvider;
@@ -18,8 +19,9 @@ class AppServiceProvider extends ServiceProvider
   public function register(): void
   {
     $this->app->register(CoreServiceProvider::class);
-    $this->app->register(PkgSanctionServiceProvider::class);
     $this->app->register(PkgApprenantServiceProvider::class);
+    $this->app->register(JustificatifServiceProvider::class);
+    $this->app->register(PkgSanctionServiceProvider::class);
     $this->app->register(PkgEntretienInscritionProvider::class);
   }
 
