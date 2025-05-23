@@ -7,6 +7,7 @@ use Illuminate\Database\Seeder;
 use Modules\Core\Database\Seeders\UsersTableSeeder;
 use Modules\PkgApprenant\Database\Seeders\GroupeSeeder;
 use Modules\PkgApprenant\Database\Seeders\ApprenantSeeder;
+use Modules\PkgJustificatif\Database\Seeders\DatabaseSeederJustificatif;
 use Modules\PkgSanction\Database\Seeders\NotificationsSeeder;
 use Modules\PkgApprenant\Database\Seeders\ApprenantGroupeSeeder;
 use Modules\PkgSanction\Database\Seeders\SanctionAbsencesSeeder;
@@ -33,13 +34,13 @@ class DatabaseSeeder extends Seeder
             GroupeSeeder::class,
             ApprenantSeeder::class,
             ApprenantGroupeSeeder::class,
+            DatabaseSeederJustificatif::class,
             ReglesDeSanctionsSeeder::class,
             DureeSeancesSeeder::class,
             SeancesSeeder::class,
             SanctionAbsencesSeeder::class,
             SanctionAbsencesPrevisionnellesSeeder::class,
             AbsencesSeeder::class,
-            JustificationAbsenceSeeder::class,
             NotificationsSeeder::class,
             PkgEntretienInscritionDatabaseSeeder::class
         ]);
