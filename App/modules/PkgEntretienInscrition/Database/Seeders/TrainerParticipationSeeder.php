@@ -1,10 +1,10 @@
 <?php
 
-namespace  modules\PkgEntretienInscrition\Database\Seeders;
+namespace  Modules\PkgEntretienInscrition\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use modules\PkgEntretienInscrition\App\Models\Trainer;
-use modules\PkgEntretienInscrition\App\Models\Participation;
+use Modules\PkgEntretienInscrition\App\Models\Trainer;
+use Modules\PkgEntretienInscrition\App\Models\Participation;
 
 class TrainerParticipationSeeder extends Seeder
 {

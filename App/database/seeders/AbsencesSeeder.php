@@ -14,7 +14,7 @@ class AbsencesSeeder extends Seeder
         // Bob Martin = user_id 2, Claire Bernard = id 3
         Absence::insert([
             [
-                'user_id' => 2,
+                'apprenant_id' => 2,
                 'seance_id' => 1,
                 'sanction_absence_id' => null,
                 'sanction_absence_previsionnelle_id' => null,
@@ -22,7 +22,7 @@ class AbsencesSeeder extends Seeder
                 'updated_at' => now()
             ],
             [
-                'user_id' => 2,
+                'apprenant_id' => 2,
                 'seance_id' => 1,
                 'sanction_absence_id' => null,
                 'sanction_absence_previsionnelle_id' => null,
@@ -30,7 +30,7 @@ class AbsencesSeeder extends Seeder
                 'updated_at' => now()
             ],
             [
-                'user_id' => 2,
+                'apprenant_id' => 2,
                 'seance_id' => 1,
                 'sanction_absence_id' => 1,
                 'sanction_absence_previsionnelle_id' => null,
@@ -38,7 +38,7 @@ class AbsencesSeeder extends Seeder
                 'updated_at' => now()
             ],
             [
-                'user_id' => 2,
+                'apprenant_id' => 2,
                 'seance_id' => 2,
                 'sanction_absence_id' => 2,
                 'sanction_absence_previsionnelle_id' => null,
@@ -46,7 +46,7 @@ class AbsencesSeeder extends Seeder
                 'updated_at' => now()
             ],
             [
-                'user_id' => 3,
+                'apprenant_id' => 3,
                 'seance_id' => 2,
                 'sanction_absence_id' => null,
                 'sanction_absence_previsionnelle_id' => 1,
@@ -54,7 +54,7 @@ class AbsencesSeeder extends Seeder
                 'updated_at' => now()
             ],
             [
-                'user_id' => 3,
+                'apprenant_id' => 3,
                 'seance_id' => 3,
                 'sanction_absence_id' => null,
                 'sanction_absence_previsionnelle_id' => 2,

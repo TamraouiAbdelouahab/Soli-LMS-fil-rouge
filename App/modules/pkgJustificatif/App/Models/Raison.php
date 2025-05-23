@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\PkgJustificatif\App\Models;
+namespace Modules\PkgJustificatif\App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 

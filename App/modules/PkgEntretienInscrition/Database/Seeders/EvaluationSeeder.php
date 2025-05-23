@@ -1,10 +1,10 @@
 <?php
 
-namespace modules\PkgEntretienInscrition\Database\Seeders;
+namespace Modules\PkgEntretienInscrition\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use modules\PkgEntretienInscrition\App\Models\Evaluation;
+use Modules\PkgEntretienInscrition\App\Models\Evaluation;
 
 class EvaluationSeeder extends Seeder
 {

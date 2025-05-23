@@ -1,10 +1,10 @@
 <?php
 
-namespace  modules\PkgEntretienInscrition\Database\Seeders;
+namespace  Modules\PkgEntretienInscrition\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use modules\PkgEntretienInscrition\App\Models\Question;
+use Modules\PkgEntretienInscrition\App\Models\Question;
 
 class QuestionSeeder extends Seeder
 {

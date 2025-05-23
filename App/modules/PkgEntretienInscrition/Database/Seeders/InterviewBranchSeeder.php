@@ -1,11 +1,11 @@
 <?php
 
-namespace  modules\PkgEntretienInscrition\Database\Seeders;
+namespace  Modules\PkgEntretienInscrition\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use modules\PkgEntretienInscrition\App\Models\Branch;
-use modules\PkgEntretienInscrition\App\Models\Interview;
+use Modules\PkgEntretienInscrition\App\Models\Branch;
+use Modules\PkgEntretienInscrition\App\Models\Interview;
 
 class InterviewBranchSeeder extends Seeder
 {

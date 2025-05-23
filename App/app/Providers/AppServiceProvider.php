@@ -9,7 +9,7 @@ use Modules\Core\App\Providers\CoreServiceProvider;
 use Modules\PkgJustificatif\App\Providers\JustificatifServiceProvider;
 use Modules\PkgSanction\App\Providers\PkgSanctionServiceProvider;
 use Modules\PkgApprenant\App\Providers\PkgApprenantServiceProvider;
-use modules\PkgEntretienInscrition\App\Providers\PkgEntretienInscritionProvider;
+use Modules\PkgEntretienInscrition\App\Providers\PkgEntretienInscritionProvider;
 
 class AppServiceProvider extends ServiceProvider
 {

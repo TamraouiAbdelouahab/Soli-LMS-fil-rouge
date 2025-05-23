@@ -3,7 +3,7 @@
 namespace Modules\PkgJustificatif\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Module\pkgJustificatif\App\Models\Raison;
+use Modules\PkgJustificatif\App\Models\Raison;
 
 class RaisonSeeder extends Seeder
 {

@@ -10,10 +10,10 @@ use Modules\PkgApprenant\Database\Seeders\ApprenantSeeder;
 use Modules\PkgJustificatif\Database\Seeders\DatabaseSeederJustificatif;
 use Modules\PkgSanction\Database\Seeders\NotificationsSeeder;
 use Modules\PkgApprenant\Database\Seeders\ApprenantGroupeSeeder;
+use Modules\PkgEntretienInscrition\Database\Seeders\PkgEntretienInscritionDatabaseSeeder;
 use Modules\PkgSanction\Database\Seeders\SanctionAbsencesSeeder;
 use Modules\PkgSanction\Database\Seeders\ReglesDeSanctionsSeeder;
 use Modules\PkgSanction\Database\Seeders\SanctionAbsencesPrevisionnellesSeeder;
-use modules\PkgEntretienInscrition\Database\Seeders\PkgEntretienInscritionDatabaseSeeder;
 
 class DatabaseSeeder extends Seeder
 {

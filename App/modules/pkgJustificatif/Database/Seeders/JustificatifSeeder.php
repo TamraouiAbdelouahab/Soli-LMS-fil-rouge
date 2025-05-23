@@ -3,8 +3,8 @@
 namespace Modules\PkgJustificatif\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Module\pkgJustificatif\App\Models\Justificatif;
 use Carbon\Carbon;
+use Modules\PkgJustificatif\App\Models\Justificatif;
 
 class JustificatifSeeder extends Seeder
 {
