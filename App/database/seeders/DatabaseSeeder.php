@@ -14,6 +14,7 @@ use Modules\PkgEntretienInscrition\Database\Seeders\PkgEntretienInscritionDataba
 use Modules\PkgSanction\Database\Seeders\SanctionAbsencesSeeder;
 use Modules\PkgSanction\Database\Seeders\ReglesDeSanctionsSeeder;
 use Modules\PkgSanction\Database\Seeders\SanctionAbsencesPrevisionnellesSeeder;
+use Modules\PkgAbsence\Database\Seeders\DatabaseSeederAbsence;
 
 class DatabaseSeeder extends Seeder
 {
@@ -40,7 +41,7 @@ class DatabaseSeeder extends Seeder
             SeancesSeeder::class,
             SanctionAbsencesSeeder::class,
             SanctionAbsencesPrevisionnellesSeeder::class,
-            AbsencesSeeder::class,
+            DatabaseSeederAbsence::class,
             NotificationsSeeder::class,
             PkgEntretienInscritionDatabaseSeeder::class
         ]);

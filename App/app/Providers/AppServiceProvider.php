@@ -10,6 +10,7 @@ use Modules\PkgJustificatif\App\Providers\JustificatifServiceProvider;
 use Modules\PkgSanction\App\Providers\PkgSanctionServiceProvider;
 use Modules\PkgApprenant\App\Providers\PkgApprenantServiceProvider;
 use Modules\PkgEntretienInscrition\App\Providers\PkgEntretienInscritionProvider;
+use Modules\PkgAbsence\App\Providers\PkgAbsenceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,6 +24,8 @@ class AppServiceProvider extends ServiceProvider
     $this->app->register(JustificatifServiceProvider::class);
     $this->app->register(PkgSanctionServiceProvider::class);
     $this->app->register(PkgEntretienInscritionProvider::class);
+    $this->app->register(PkgAbsenceProvider::class);
+
   }
 
   /**
