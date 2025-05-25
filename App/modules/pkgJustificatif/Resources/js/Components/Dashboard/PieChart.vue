@@ -20,13 +20,13 @@ export default defineComponent({
         const chartRef = ref(null);
         let chartInstance = null;
         const { chartData } = toRefs(props);
-
         const renderChart = () => {
             if (chartInstance) {
                 chartInstance.destroy();
             }
 
             const ctx = chartRef.value.getContext('2d');
+            console.log(chartData.value)
             chartInstance = new Chart(ctx, {
                 type: 'pie',
                 data: chartData.value,

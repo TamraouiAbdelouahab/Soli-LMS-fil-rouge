@@ -16,10 +16,14 @@
 <script setup>
 import { computed } from 'vue';
 import {
-    Gavel,
-    Calendar,
-    AlertTriangle,
-    Percent
+  Gavel,
+  Calendar,
+  Inbox,
+  Clock,
+  AlertTriangle,
+  Percent,
+  Mail,
+  Check,
 } from 'lucide-vue-next';
 
 const props = defineProps({
@@ -48,6 +52,9 @@ const props = defineProps({
 const iconComponent = computed(() => {
     const icons = {
         'Gavel': Gavel,
+        'Check': Check,
+        'Clock': Clock,
+        'Mail': Mail,
         'Calendar': Calendar,
         'AlertTriangle': AlertTriangle,
         'Percent': Percent
@@ -64,14 +71,22 @@ const colorClasses = {
         bg: 'bg-orange-500',
         iconBg: 'bg-orange-400'
     },
-    red: {
-        bg: 'bg-red-500',
-        iconBg: 'bg-red-400'
+    yellow: {
+        bg: 'bg-yellow-500',
+        iconBg: 'bg-yellow-400'
     },
     green: {
         bg: 'bg-green-500',
         iconBg: 'bg-green-400'
-    }
+    },
+    red: {
+        bg: 'bg-red-500',
+        iconBg: 'bg-red-400'
+    },
+    teal: {
+        bg: 'bg-cyan-500',
+        iconBg: 'bg-cyan-400'
+    },
 };
 
 const bgColor = computed(() => colorClasses[props.color]?.bg || 'bg-gray-500');

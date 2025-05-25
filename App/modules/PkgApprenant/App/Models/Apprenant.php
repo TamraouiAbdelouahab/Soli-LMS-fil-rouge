@@ -4,6 +4,7 @@ namespace Modules\PkgApprenant\App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Modules\Core\App\Models\User;
+use Modules\PkgJustificatif\App\Models\Justificatif;
 
 class Apprenant extends Model
 {
@@ -23,7 +24,10 @@ class Apprenant extends Model
     {
         return $this->belongsToMany(Groupe::class, 'apprenant_groupe');
     }
-
+    public function justificatifs()
+    {
+        return $this->hasMany(Justificatif::class);
+    }
     public function user()
     {
         return $this->belongsTo(User::class);

@@ -1,8 +1,8 @@
 <template>
     <div class="bg-white rounded-lg shadow p-4">
-        <h2 class="text-lg font-semibold text-gray-700 mb-4">Analyse des sanctions</h2>
+        <h2 class="text-lg font-semibold text-gray-700 mb-4">Analyse des justifications</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div v-for="(item, key) in analytics" :key="key" class="flex items-center p-4 bg-white rounded-lg shadow">
+            <div v-for="(item, key) in analyticsData" :key="key" class="flex items-center p-4 bg-white rounded-lg shadow">
                 <div :class="[
                     'p-3 rounded-full text-white mr-4',
                     colorClass(item.color)
@@ -19,11 +19,11 @@
 </template>
 
 <script setup>
-import { defineProps } from 'vue';
+import { defineProps,ref,computed } from 'vue';
 import { TrendingUp, Users, Clock, AlertCircle } from 'lucide-vue-next';
 
 const props = defineProps({
-    analytics: {
+    justifications: {
         type: Object,
         required: true
     }
@@ -35,6 +35,59 @@ const icons = {
     Clock,
     AlertCircle
 };
+
+const raisons = props.justifications.reduce((acc, justification) => {
+    const raison = justification.raison.title;
+    acc[raison] = (acc[raison] || 0) + 1;
+    return acc;
+}, {});
+const raisontendance = computed(() =>{
+    let max = 0;
+    let raisonMax = null;
+    for (let raison in raisons) {
+    if (raisons[raison] > max) {
+        max = raisons[raison];
+        raisonMax = raison;
+    }
+}
+    return raisonMax;
+});
+
+console.log(props.justifications);
+const apprenants = [...new Set(props.justifications.apprenant)];
+console.log(props.justifications.apprenant);
+
+
+
+
+
+
+
+
+const analyticsData = ref({
+    tendance: {
+        value: raisontendance,
+        icon: 'TrendingUp',
+        color: 'red'
+    },
+    apprenants: {
+        value: '12',
+        icon: 'Users',
+        color: 'orange'
+    },
+    duree: {
+        value: '5 jours',
+        icon: 'Clock',
+        color: 'blue'
+    },
+    attente: {
+        value: '7',
+        icon: 'AlertCircle',
+        color: 'red'
+    }
+});
+
+
 
 // Return Tailwind background color classes based on prop value
 const colorClass = (color) => {
