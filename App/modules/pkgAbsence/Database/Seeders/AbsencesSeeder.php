@@ -1,9 +1,9 @@
 <?php
 
-namespace Database\Seeders;
+namespace Modules\pkgAbsence\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Absence;
+use Modules\PkgAbsence\App\Models\Absence;
 
 class AbsencesSeeder extends Seeder
 {
@@ -18,6 +18,7 @@ class AbsencesSeeder extends Seeder
                 'seance_id' => 1,
                 'sanction_absence_id' => null,
                 'sanction_absence_previsionnelle_id' => null,
+                'date_absence' => now()->subDays(rand(0, 30))->toDateString(),
                 'created_at' => now()->subDays(9),
                 'updated_at' => now()
             ],
@@ -26,6 +27,7 @@ class AbsencesSeeder extends Seeder
                 'seance_id' => 1,
                 'sanction_absence_id' => null,
                 'sanction_absence_previsionnelle_id' => null,
+                'date_absence' => now()->subDays(rand(0, 30))->toDateString(),
                 'created_at' => now()->subDays(9),
                 'updated_at' => now()
             ],
@@ -34,6 +36,7 @@ class AbsencesSeeder extends Seeder
                 'seance_id' => 1,
                 'sanction_absence_id' => 1,
                 'sanction_absence_previsionnelle_id' => null,
+                'date_absence' => now()->subDays(rand(0, 30))->toDateString(),
                 'created_at' => now()->subDays(10),
                 'updated_at' => now()
             ],
@@ -42,6 +45,8 @@ class AbsencesSeeder extends Seeder
                 'seance_id' => 2,
                 'sanction_absence_id' => 2,
                 'sanction_absence_previsionnelle_id' => null,
+                'date_absence' => now()->subDays(rand(0, 30))->toDateString(),
+
                 'created_at' => now()->subDays(9),
                 'updated_at' => now()
             ],
@@ -50,6 +55,7 @@ class AbsencesSeeder extends Seeder
                 'seance_id' => 2,
                 'sanction_absence_id' => null,
                 'sanction_absence_previsionnelle_id' => 1,
+                'date_absence' => now()->subDays(rand(0, 30))->toDateString(),
                 'created_at' => now()->subDays(5),
                 'updated_at' => now()
             ],
@@ -58,6 +64,7 @@ class AbsencesSeeder extends Seeder
                 'seance_id' => 3,
                 'sanction_absence_id' => null,
                 'sanction_absence_previsionnelle_id' => 2,
+                'date_absence' => now()->subDays(rand(0, 30))->toDateString(),
                 'created_at' => now()->subDays(4),
                 'updated_at' => now()
             ],

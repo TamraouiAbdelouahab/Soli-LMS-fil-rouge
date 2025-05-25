@@ -1,12 +1,16 @@
 <?php
 
-namespace App\Models;
+namespace Modules\PkgAbsence\App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Modules\PkgApprenant\App\Models\Apprenant;
 use Modules\PkgSanction\App\Models\SanctionAbsence;
 use Modules\PkgSanction\App\Models\SanctionAbsencePrevisionnelle;
+use Modules\PkgSanction\App\Models\SanctionAbsence;
+use Modules\PkgApprenant\App\Models\Apprenant;
+use App\Models\JustificationAbsence;
+use App\Models\Seance; 
 
 class Absence extends Model
 {
@@ -17,6 +21,7 @@ class Absence extends Model
         'seance_id',
         'sanction_absence_id',
         'sanction_absence_previsionnelle_id',
+        'date_absence',
     ];
 
     public function apprenant()
@@ -27,20 +32,5 @@ class Absence extends Model
     public function seance()
     {
         return $this->belongsTo(Seance::class);
-    }
-
-    public function justification()
-    {
-        return $this->belongsTo(JustificationAbsence::class);
-    }
-
-    public function sanctionAbsence()
-    {
-        return $this->belongsTo(SanctionAbsence::class);
-    }
-
-    public function sanctionPrevisionnelle()
-    {
-        return $this->belongsTo(SanctionAbsencePrevisionnelle::class);
     }
 }
