@@ -2,6 +2,7 @@
 
 namespace Modules\PkgApprenant\App\Models;
 
+use App\Models\Absence;
 use Illuminate\Database\Eloquent\Model;
 use Modules\Core\App\Models\User;
 
@@ -27,5 +28,10 @@ class Apprenant extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function absences()
+    {
+        return $this->hasMany(Absence::class);
     }
 }

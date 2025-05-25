@@ -11,26 +11,36 @@ class SanctionService
 {
     public function getRecentSanctions()
     {
-        $RecentSanctions = Absence::with('apprenant', 'sanctionAbsence.regle')->whereNotNull('sanction_absence_id')->get();
 
-        foreach ($RecentSanctions as $RecentSanction) {
-            $SanctionAbsence = $RecentSanction->sanction_absence;
+        $RecentSanctions = SanctionAbsence::with('absences.apprenant', 'regle')->limit(5)->orderBy('date_fin', 'desc')->get();
 
-            if ($SanctionAbsence) {
-                $Statut = Carbon::parse($SanctionAbsence->date_fin)->lt(Carbon::now()) ? 'Terminée' : 'En cours';
+        foreach ($RecentSanctions as $Sanction) {
+            if ($Sanction) {
+                $Statut = Carbon::parse($Sanction->date_fin)->lt(Carbon::now()) ? 'Expirée' : 'Active';
+                $Sanction->statut = $Statut;
             }
         }
-
 
         return $RecentSanctions;
     }
 
-    public function totalSanctionAbsence()
+    public function recentSanctionsCount()
+    {
+        $RecentSanctionsCount = SanctionAbsence::where('date_fin', '>=', Carbon::now()->subDays(7))->count();
+        return $RecentSanctionsCount;
+    }
+
+    public function activeSanctionCount()
+    {
+        return SanctionAbsence::where('date_fin', '>=', Carbon::now())->count();
+    }
+
+    public function sanctionAbsenceCount()
     {
         return SanctionAbsence::count();
     }
 
-    public function totalSanctionAbsencePrevisionnelle()
+    public function sanctionAbsencePrevisionnelleCount()
     {
         return SanctionAbsencePrevisionnelle::count();
     }

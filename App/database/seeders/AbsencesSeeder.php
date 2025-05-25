@@ -30,7 +30,7 @@ class AbsencesSeeder extends Seeder
                 'updated_at' => now()
             ],
             [
-                'apprenant_id' => 2,
+                'apprenant_id' => 1,
                 'seance_id' => 1,
                 'sanction_absence_id' => 1,
                 'sanction_absence_previsionnelle_id' => null,
@@ -54,10 +54,18 @@ class AbsencesSeeder extends Seeder
                 'updated_at' => now()
             ],
             [
-                'apprenant_id' => 3,
+                'apprenant_id' => 4,
                 'seance_id' => 3,
                 'sanction_absence_id' => null,
                 'sanction_absence_previsionnelle_id' => 2,
+                'created_at' => now()->subDays(4),
+                'updated_at' => now()
+            ],
+            [
+                'apprenant_id' => 4,
+                'seance_id' => 2,
+                'sanction_absence_id' => 3,
+                'sanction_absence_previsionnelle_id' => null,
                 'created_at' => now()->subDays(4),
                 'updated_at' => now()
             ],

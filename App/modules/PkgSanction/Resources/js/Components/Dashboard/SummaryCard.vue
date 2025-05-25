@@ -2,14 +2,14 @@
     <div :class="[bgColor, 'rounded-lg shadow p-4 text-white']">
         <div class="flex items-center justify-between">
             <div>
-                <p class="text-sm opacity-80">{{ title }}</p>
+                <p class="text-md opacity-80">{{ title }}</p>
                 <p class="text-2xl font-bold">{{ value }}</p>
             </div>
             <div :class="[iconBgColor, 'p-3 rounded-full']">
                 <component :is="iconComponent" class="h-6 w-6" />
             </div>
         </div>
-        <p class="text-xs mt-2 opacity-80">{{ trend }}</p>
+        <p class="text-sm mt-2 opacity-80">{{ trend }}</p>
     </div>
 </template>
 
