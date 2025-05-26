@@ -2,18 +2,6 @@
     <div class="bg-white rounded-lg shadow p-4">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
             <h2 class="text-lg font-semibold text-gray-700">justificatifs récentes</h2>
-            <!-- <div class="flex space-x-2 mt-2 md:mt-0">
-                <button
-                    class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded-md text-sm flex items-center">
-                    <FileText class="h-4 w-4 mr-1" />
-                    Exporter PDF
-                </button>
-                <button
-                    class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded-md text-sm flex items-center">
-                    <FileSpreadsheet class="h-4 w-4 mr-1" />
-                    Exporter CSV
-                </button>
-            </div> -->
         </div>
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">
@@ -57,7 +45,7 @@
                                     (justification.statut == "REJETE") ? "rejeté" :""}}
                             </span>
                         </td>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{{ justification.raison.title }}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{{ justification.raison.libelle }}</td>
                         <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{{ justification.dateDepot }}</td>
                         <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
                             <div class="flex space-x-2">
