@@ -2,9 +2,9 @@
 
 namespace Modules\PkgSanction\App\Models;
 
-use App\Models\Absence;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Modules\PkgAbsence\App\Models\Absence;
 
 class SanctionAbsencePrevisionnelle extends Model
 {

@@ -2,9 +2,9 @@
 
 namespace Modules\PkgSanction\App\Models;
 
-use App\Models\Absence;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Modules\PkgAbsence\App\Models\Absence;
 
 class SanctionAbsence extends Model
 {
@@ -28,6 +28,6 @@ class SanctionAbsence extends Model
 
     public function regle()
     {
-        return $this->belongsTo(ReglesDeSanction::class);
+        return $this->belongsTo(ReglesDeSanction::class, 'regle_de_sanction_id');
     }
 }

@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('sanction_absences_previsionnelles', function (Blueprint $table) {
             $table->id();
             $table->foreignId('regle_de_sanction_id')->constrained('regles_de_sanctions')->onDelete('cascade');
+            // $table->foreignId('absence_id')->constrained('absences')->onDelete('cascade');
             $table->timestamps();
         });
     }

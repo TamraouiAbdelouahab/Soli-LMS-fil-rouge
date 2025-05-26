@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 use Modules\PkgSanction\App\Models\SanctionAbsencePrevisionnelle;
 use Modules\PkgSanction\App\Models\SanctionAbsence;
 use Modules\PkgApprenant\App\Models\Apprenant;
-use App\Models\JustificationAbsence;
 use App\Models\Seance; 
 
 class Absence extends Model
@@ -22,7 +21,7 @@ class Absence extends Model
         'date_absence',
     ];
 
-    public function user()
+    public function apprenant()
     {
         return $this->belongsTo(Apprenant::class);
     }
@@ -30,5 +29,15 @@ class Absence extends Model
     public function seance()
     {
         return $this->belongsTo(Seance::class);
+    }
+
+    public function sanctionAbsence()
+    {
+        return $this->belongsTo(SanctionAbsence::class);
+    }
+
+    public function sanctionPrevisionnelle()
+    {
+        return $this->belongsTo(SanctionAbsencePrevisionnelle::class);
     }
 }
