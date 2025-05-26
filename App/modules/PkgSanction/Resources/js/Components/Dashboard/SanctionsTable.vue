@@ -24,14 +24,14 @@
                             Apprenant</th>
                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type
                         </th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Formateur</th>
+                        <!-- <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Formateur</th> -->
                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Statut</th>
                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date
                         </th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Récurrence</th>
+                        <!-- <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Récurrence</th> -->
                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Actions</th>
                     </tr>
@@ -42,21 +42,23 @@
                             <div class="flex items-center">
                                 <div
                                     class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 mr-2">
-                                    {{ sanction.apprenant.charAt(0) }}
+                                    {{ sanction.absences?.[0]?.apprenant?.nom?.charAt(0) ?? '-' }}
                                 </div>
-                                <div class="text-sm font-medium text-gray-900">{{ sanction.apprenant }}</div>
+                                <div class="text-sm font-medium text-gray-900">{{ sanction.absences?.[0]?.apprenant?.nom
+                                    ?? '-' }}
+                                    {{ sanction.absences?.[0]?.apprenant?.prenom ?? '-' }}</div>
                             </div>
                         </td>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{{ sanction.type }}</td>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{{ sanction.formateur }}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{{ sanction.regle.penalite }}</td>
+                        <!-- <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{{ sanction.formateur }}</td> -->
                         <td class="px-4 py-3 whitespace-nowrap">
                             <span
-                                :class="`inline-flex px-2 py-1 text-xs rounded-full ${sanction.statut === 'Résolue' ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'}`">
+                                :class="`inline-flex px-2 py-1 text-xs rounded-full ${sanction.statut === 'Expirée' ? 'bg-gray-100 text-gray-800' : 'bg-orange-100 text-orange-800'}`">
                                 {{ sanction.statut }}
                             </span>
                         </td>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{{ sanction.date }}</td>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{{ sanction.recurrence }}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{{ sanction.date_debut }}</td>
+                        <!-- <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{{ sanction.recurrence }}</td> -->
                         <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
                             <div class="flex space-x-2">
                                 <button class="text-blue-600 hover:text-blue-800">

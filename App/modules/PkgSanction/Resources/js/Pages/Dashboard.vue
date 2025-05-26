@@ -5,13 +5,14 @@
 
             <!-- Summary Cards -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                <SummaryCard title="Total des sanctions" :value="sanctionsAbsenceCount ?? 0" trend="+12% depuis le dernier trimestre"
-                    color="blue" icon="Gavel" />
-                <SummaryCard title="Sanctions ce mois-ci" value="32" trend="-5% par rapport au mois dernier"
-                    color="orange" icon="Calendar" />
-                <SummaryCard title="Sanctions non résolues" value="18" trend="+3 depuis la semaine dernière" color="red"
-                    icon="AlertTriangle" />
-                <SummaryCard title="Taux de récurrence" value="15%" trend="-2% depuis le dernier trimestre"
+                <SummaryCard title="Sanctions actives"
+                    :value="recentSanctionsCount ? `${activeSanctionCount}/${sanctionsAbsenceCount}` : '0/0'"
+                    trend="voir les détails" color="blue" icon="Gavel" />
+                <SummaryCard title="Sanctions  semaine" :value="recentSanctionsCount ?? 0"
+                    trend="Baisse de 5% cette semaine" color="orange" icon="Calendar" />
+                <SummaryCard title="Sanctions non résolues" :value="sanctionsAbsencePrevisionnelleCount ?? 0"
+                    trend="voir les détails" color="red" icon="AlertTriangle" />
+                <SummaryCard title="Taux de récurrence" value="15%" trend="Baisse de 2% ce trimestre"
                     color="green" icon="Percent" />
             </div>
 
@@ -20,31 +21,31 @@
                 <div class="bg-white rounded-lg shadow p-4">
                     <h2 class="text-lg font-semibold text-gray-700 mb-4">Évolution mensuelle des sanctions</h2>
                     <div class="h-64">
-                        <LineChart :chartData="monthlyChartData" />
+                        <LineChart :chartData="monthlySanctionsChartData" />
                     </div>
                 </div>
 
                 <div class="bg-white rounded-lg shadow p-4">
                     <h2 class="text-lg font-semibold text-gray-700 mb-4">Répartition par type de sanction</h2>
                     <div class="h-64">
-                        <PieChart :chartData="sanctionTypesChartData" />
+                        <PieChart :chartData="sanctionsByTypesChartData" />
                     </div>
                 </div>
             </div>
 
-            <div class="bg-white rounded-lg shadow p-4 mb-6">
+            <!-- <div class="bg-white rounded-lg shadow p-4 mb-6">
                 <h2 class="text-lg font-semibold text-gray-700 mb-4">Top 5 des formateurs ayant le plus d'apprenants
                     sanctionnés</h2>
                 <div class="h-64">
                     <BarChart :chartData="trainersChartData" />
                 </div>
-            </div>
+            </div> -->
 
             <!-- Recent Sanctions Table -->
             <SanctionsTable :sanctions="recentSanctions" class="mb-6" />
 
             <!-- Analytics Box -->
-            <AnalyticsBox :analytics="analyticsData" />
+            <!-- <AnalyticsBox :analytics="analyticsData" /> -->
         </div>
     </AuthenticatedLayout>
 </template>
@@ -62,133 +63,57 @@ import BarChart from '../Components/Dashboard/BarChart.vue';
 
 const props = defineProps({
     sanctionsAbsenceCount: Number,
+    sanctionsAbsencePrevisionnelleCount: Number,
+    recentSanctions: Array,
+    recentSanctionsCount: Number,
+    activeSanctionCount: Number,
+    monthlySanctions: Array,
+    sanctionsByTypes: Array,
 });
 
-console.log(props.sanctionsAbsenceCount);
-// Sample data for charts
-const monthlyData = ref([
-    { month: 'Jan', sanctions: 18 },
-    { month: 'Fév', sanctions: 22 },
-    { month: 'Mar', sanctions: 30 },
-    { month: 'Avr', sanctions: 25 },
-    { month: 'Mai', sanctions: 28 },
-    { month: 'Juin', sanctions: 32 }
-]);
+console.log(props.sanctionsByTypes);
 
-const sanctionTypesData = ref([
-    { type: 'Blâme', value: 45 },
-    { type: 'Avertissement', value: 30 },
-    { type: 'Exclusion', value: 15 },
-    { type: 'Autre', value: 10 }
-]);
+const monthlySanctionsChartData = computed(() => {
+    if (!props.monthlySanctions || !props.monthlySanctions.length) {
+        return {
+            labels: [],
+            datasets: []
+        };
+    }
 
-const trainersData = ref([
-    { name: 'Dupont', count: 15 },
-    { name: 'Martin', count: 12 },
-    { name: 'Dubois', count: 10 },
-    { name: 'Bernard', count: 8 },
-    { name: 'Thomas', count: 6 }
-]);
-
-// Prepare data for Chart.js
-const monthlyChartData = computed(() => {
     return {
-        labels: monthlyData.value.map(item => item.month),
+        labels: props.monthlySanctions.map(item => item.month),
         datasets: [
             {
                 label: 'Sanctions',
-                data: monthlyData.value.map(item => item.sanctions),
+                data: props.monthlySanctions.map(item => item.count),
                 borderColor: '#3b82f6',
                 backgroundColor: 'rgba(59, 130, 246, 0.1)',
                 borderWidth: 2,
                 tension: 0.3,
-                fill: true
+                fill: true,
             }
-        ]
+        ],
     };
 });
 
-const sanctionTypesChartData = computed(() => {
+const sanctionsByTypesChartData = computed(() => {
     return {
-        labels: sanctionTypesData.value.map(item => item.type),
+        labels: props.sanctionsByTypes.map(item => item.penalite),
         datasets: [
             {
-                data: sanctionTypesData.value.map(item => item.value),
+                data: props.sanctionsByTypes.map(item => item.value),
                 backgroundColor: [
                     'rgba(59, 130, 246, 0.8)',
                     'rgba(245, 158, 11, 0.8)',
                     'rgba(239, 68, 68, 0.8)',
-                    'rgba(16, 185, 129, 0.8)'
+                    'rgba(16, 185, 129, 0.8)',
                 ],
-                borderWidth: 1
+                borderWidth: 1,
             }
         ]
     };
 });
-
-const trainersChartData = computed(() => {
-    return {
-        labels: trainersData.value.map(item => item.name),
-        datasets: [
-            {
-                label: 'Apprenants sanctionnés',
-                data: trainersData.value.map(item => item.count),
-                backgroundColor: [
-                    'rgba(59, 130, 246, 0.8)',
-                    'rgba(79, 70, 229, 0.8)',
-                    'rgba(99, 102, 241, 0.8)',
-                    'rgba(139, 92, 246, 0.8)',
-                    'rgba(168, 85, 247, 0.8)'
-                ],
-                borderWidth: 1
-            }
-        ]
-    };
-});
-
-// Sample data for recent sanctions table
-const recentSanctions = ref([
-    {
-        apprenant: 'Jean Dupont',
-        type: 'Avertissement',
-        formateur: 'Marie Martin',
-        statut: 'En cours',
-        date: '15/05/2023',
-        recurrence: '1ère fois'
-    },
-    {
-        apprenant: 'Sophie Moreau',
-        type: 'Blâme',
-        formateur: 'Thomas Dubois',
-        statut: 'Résolue',
-        date: '10/05/2023',
-        recurrence: '2ème fois'
-    },
-    {
-        apprenant: 'Lucas Bernard',
-        type: 'Exclusion',
-        formateur: 'Julie Petit',
-        statut: 'Résolue',
-        date: '05/05/2023',
-        recurrence: '1ère fois'
-    },
-    {
-        apprenant: 'Emma Leroy',
-        type: 'Avertissement',
-        formateur: 'Pierre Dupont',
-        statut: 'En cours',
-        date: '01/05/2023',
-        recurrence: '1ère fois'
-    },
-    {
-        apprenant: 'Hugo Roux',
-        type: 'Blâme',
-        formateur: 'Sophie Martin',
-        statut: 'Résolue',
-        date: '28/04/2023',
-        recurrence: '3ème fois'
-    }
-]);
 
 // Analytics data
 const analyticsData = ref({

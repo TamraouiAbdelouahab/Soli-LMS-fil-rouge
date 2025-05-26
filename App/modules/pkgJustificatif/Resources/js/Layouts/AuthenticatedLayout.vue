@@ -142,13 +142,13 @@ onUnmounted(() => {
             <div class="flex flex-1 flex-col overflow-y-auto pt-5 pb-4">
                 <nav class="mt-5 flex-1 space-y-1 px-2">
                     <!-- Dashboard -->
-                    <Link :href="route('dashboard')" :class="[
-                        route().current('dashboard') ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
+                    <Link :href="route('Justificatifs.dashboard')" :class="[
+                        route().current('Justificatifs.dashboard') ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
                         sidebarOpen ? 'justify-start' : 'justify-center',
                         'group flex items-center rounded-md px-2 py-2 text-sm font-medium'
                     ]">
                     <Home :class="[
-                        route().current('dashboard') ? 'text-blue-600' : 'text-gray-500 group-hover:text-gray-500',
+                        route().current('Justificatifs.dashboard') ? 'text-blue-600 ' : 'text-gray-500 group-hover:text-gray-500',
                         'mr-3 h-5 w-5 flex-shrink-0'
                     ]" />
                     <span v-if="sidebarOpen">Dashboard</span>

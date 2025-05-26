@@ -76,5 +76,6 @@ class AbsencesSeeder extends Seeder
             
             $currentDate->addDay();
         }
+
     }
 } 

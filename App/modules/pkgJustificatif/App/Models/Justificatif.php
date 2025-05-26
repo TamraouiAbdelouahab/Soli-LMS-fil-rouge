@@ -10,9 +10,9 @@ class Justificatif extends Model
 {
     protected $fillable = [
         'titre',
-        'date_depot',
-        'date_debut',
-        'date_fin',
+        'dateDepot',
+        'dateDebut',
+        'dateFin',
         'fichier',
         'description',
         'apprenant_id',
