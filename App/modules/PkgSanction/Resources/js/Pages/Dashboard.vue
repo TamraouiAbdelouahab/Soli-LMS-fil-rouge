@@ -8,11 +8,11 @@
                 <SummaryCard title="Sanctions actives"
                     :value="recentSanctionsCount ? `${activeSanctionCount}/${sanctionsAbsenceCount}` : '0/0'"
                     trend="voir les détails" color="blue" icon="Gavel" />
-                <SummaryCard title="Sanctions cette semaine" :value="recentSanctionsCount ?? 0"
-                    trend="-5% par rapport à la semaine dernière" color="orange" icon="Calendar" />
+                <SummaryCard title="Sanctions  semaine" :value="recentSanctionsCount ?? 0"
+                    trend="Baisse de 5% cette semaine" color="orange" icon="Calendar" />
                 <SummaryCard title="Sanctions non résolues" :value="sanctionsAbsencePrevisionnelleCount ?? 0"
                     trend="voir les détails" color="red" icon="AlertTriangle" />
-                <SummaryCard title="Taux de récurrence" value="15%" trend="-2% depuis le dernier trimestre"
+                <SummaryCard title="Taux de récurrence" value="15%" trend="Baisse de 2% ce trimestre"
                     color="green" icon="Percent" />
             </div>
 

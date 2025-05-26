@@ -2,7 +2,6 @@
 
 namespace Modules\PkgSanction\App\Services;
 
-use App\Models\Absence;
 use Carbon\Carbon;
 use Modules\PkgSanction\App\Models\SanctionAbsence;
 use Modules\PkgSanction\App\Models\SanctionAbsencePrevisionnelle;
