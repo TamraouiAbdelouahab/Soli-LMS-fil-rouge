@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Modules\PkgAbsence\App\Models\Absence;
 
 class JustificationAbsence extends Model
 {
