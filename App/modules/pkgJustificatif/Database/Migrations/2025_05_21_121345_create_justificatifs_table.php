@@ -11,8 +11,8 @@ return new class extends Migration {
         Schema::create('justificatifs', function (Blueprint $table) {
             $table->id();
             $table->date('dateDepot');
-            $table->date('DateDebut');
-            $table->date('DateFin');
+            $table->date('dateDebut');
+            $table->date('dateFin');
             $table->string('fichier');
             $table->text('description')->nullable();
             $table->string('statut')->default(StatutJustificatif::ACCEPTE->name);

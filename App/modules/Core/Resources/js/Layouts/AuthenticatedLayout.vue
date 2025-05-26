@@ -129,7 +129,7 @@ onUnmounted(() => {
             <div class="flex h-16 items-center justify-between border-b px-4">
                 <Link :href="route('dashboard')" class="flex items-center" v-show="sidebarOpen">
                 <ApplicationLogo class="block h-8 w-auto fill-current text-gray-800" />
-                <span class="ml-3 text-lg font-semibold text-gray-800">Admin</span>
+                <span class="ml-3 text-lg font-semibold text-gray-800">Soli-LMS</span>
                 </Link>
                 <button @click="toggleSidebar"
                     class="lg:flex hidden rounded-md p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-600 focus:outline-none">
