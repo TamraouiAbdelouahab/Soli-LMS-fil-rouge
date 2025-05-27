@@ -12,7 +12,6 @@ class PkgAbsenceProvider extends ServiceProvider
      **/
     public function register(): void
     {
-        // Register any bindings or services
     }
 
     /**
@@ -21,6 +20,10 @@ class PkgAbsenceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->loadMigrationsFrom(__DIR__ . '/../../Database/Migrations');
-        $this->loadViewsFrom(__DIR__ . '/../../Resources/Views', 'pkg_absence');
+
+        // Load routes with proper middleware
+        // $this->registerRoutes();
+
+        $this->loadViewsFrom(__DIR__ . '/../../Resources/Views', 'pkg-absence');
     }
 }

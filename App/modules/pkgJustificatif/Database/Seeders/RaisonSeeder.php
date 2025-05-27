@@ -13,19 +13,19 @@ class RaisonSeeder extends Seeder
             [
                 'id'   =>1,
                 'code' => 'MAL',
-                'title' => 'Maladie',
+                'libelle' => 'Maladie',
                 'description' => 'Absence pour cause de maladie'
             ],
             [
                 'id'   => 2,
                 'code' => 'DEP',
-                'title' => 'Déplacement',
+                'libelle' => 'Déplacement',
                 'description' => 'Absence liée à un déplacement professionnel ou personnel'
             ],
             [
                 'id'   => 3,
                 'code' => 'FAM',
-                'title' => 'Raison familiale',
+                'libelle' => 'Raison familiale',
                 'description' => 'Problème familial urgent'
             ]
         ]);

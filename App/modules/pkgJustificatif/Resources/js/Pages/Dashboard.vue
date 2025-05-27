@@ -26,10 +26,7 @@
                         <TopStagiaire :apprenants="props.apprenants" />
                 </div>
             </div>
-            <!-- Recent Sanctions Table -->
             <JustificationsTable :justifications="justifications" class="mb-6" />
-
-            <!-- Analytics Box -->
             <AnalyticsBox :justifications="justifications" />
         </div>
     </AuthenticatedLayout>
@@ -43,9 +40,7 @@ import { Head } from '@inertiajs/vue3';
 import SummaryCard from '../Components/Dashboard/SummaryCard.vue';
 import JustificationsTable from '../Components/Dashboard/JustificationsTable.vue';
 import AnalyticsBox from '../Components/Dashboard/AnalyticsBox.vue';
-import LineChart from '../Components/Dashboard/LineChart.vue';
 import PieChart from '../Components/Dashboard/PieChart.vue';
-import BarChart from '../Components/Dashboard/BarChart.vue';
 import TopStagiaire from '../Components/Dashboard/TopStagiaire.vue';
 
 
@@ -93,29 +88,4 @@ const justificationTypesChartData = computed(() => {
         ]
     };
 });
-
-
-const analyticsData = ref({
-    tendance: {
-        value: 'En hausse',
-        icon: 'TrendingUp',
-        color: 'red'
-    },
-    apprenants: {
-        value: '12',
-        icon: 'Users',
-        color: 'orange'
-    },
-    duree: {
-        value: '5 jours',
-        icon: 'Clock',
-        color: 'blue'
-    },
-    attente: {
-        value: '7',
-        icon: 'AlertCircle',
-        color: 'red'
-    }
-});
-
 </script>
