@@ -11,3 +11,7 @@ use Modules\PkgSanction\App\Controllers\DashboardController;
 Route::get('sanction/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('sanction.dashboard');
+
+Route::get('sanction/rules', function () {
+    return Inertia::render('PkgSanction::SanctionRules');
+})->middleware(['auth', 'verified'])->name('sanction.rules');
