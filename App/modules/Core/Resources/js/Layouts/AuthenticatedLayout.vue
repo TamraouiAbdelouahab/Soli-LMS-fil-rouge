@@ -22,6 +22,8 @@ import {
     ChevronLeft
 } from 'lucide-vue-next';
 
+const dashboardExpanded = ref(false)
+
 const showingNavigationDropdown = ref(false);
 const sidebarOpen = ref(true);
 const isMobile = ref(false);
@@ -141,59 +143,54 @@ onUnmounted(() => {
             <!-- Sidebar content -->
             <div class="flex flex-1 flex-col overflow-y-auto pt-5 pb-4">
                 <nav class="mt-5 flex-1 space-y-1 px-2">
-                    <!-- Dashboard -->
-                    <Link :href="route('dashboard')" :class="[
-                        route().current('dashboard') ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
+                    <!-- Dashboard Parent -->
+                    <button @click="dashboardExpanded = !dashboardExpanded" :class="[
+                        route().current('dashboard') || route().current('page-1') || route().current('page-2') || route().current('page-3')
+                            ? 'bg-blue-50 text-blue-600'
+                            : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
                         sidebarOpen ? 'justify-start' : 'justify-center',
-                        'group flex items-center rounded-md px-2 py-2 text-sm font-medium'
+                        'w-full flex items-center rounded-md px-2 py-2 text-sm font-medium focus:outline-none transition'
                     ]">
-                    <Home :class="[
-                        route().current('dashboard') ? 'text-blue-600' : 'text-gray-500 group-hover:text-gray-500',
-                        'mr-3 h-5 w-5 flex-shrink-0'
-                    ]" />
-                    <span v-if="sidebarOpen">Dashboard</span>
-                    </Link>
+                        <Home :class="[
+                            route().current('dashboard') || route().current('page-1') || route().current('page-2') || route().current('page-3')
+                                ? 'text-blue-600'
+                                : 'text-gray-500 group-hover:text-gray-500',
+                            'mr-3 h-5 w-5 flex-shrink-0'
+                        ]" />
+                        <span v-if="sidebarOpen">Dashboards</span>
+                        <ChevronRight v-if="!dashboardExpanded && sidebarOpen" class="ml-auto h-4 w-4 text-gray-400" />
+                        <ChevronDown v-if="dashboardExpanded && sidebarOpen" class="ml-auto h-4 w-4 text-gray-400" />
+                    </button>
 
-                    <!-- Page 1 -->
-                    <Link href="#page-1" :class="[
-                        route().current('page-1') ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
-                        sidebarOpen ? 'justify-start' : 'justify-center',
-                        'group flex items-center rounded-md px-2 py-2 text-sm font-medium'
-                    ]">
-                    <BarChart2 :class="[
-                        route().current('page-1') ? 'text-blue-600' : 'text-gray-500 group-hover:text-gray-500',
-                        'mr-3 h-5 w-5 flex-shrink-0'
-                    ]" />
-                    <span v-if="sidebarOpen">Page 1</span>
-                    </Link>
+                    <!-- Sublinks: Page 1, Page 2, Page 3 -->
+                    <div v-show="dashboardExpanded" class="ml-8 space-y-1" v-if="sidebarOpen">
+                        <!-- Page 1 -->
+                        <Link :href="route('sanction.dashboard')" :class="[
+                            route().current('sanction.dashboard') ? 'text-blue-600' : 'text-gray-600 hover:text-blue-500',
+                            'block text-sm py-1 transition'
+                        ]">
+                        Sanctions
+                        </Link>
 
-                    <!-- Page 2 -->
-                    <Link href="#page-2" :class="[
-                        route().current('page-2') ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
-                        sidebarOpen ? 'justify-start' : 'justify-center',
-                        'group flex items-center rounded-md px-2 py-2 text-sm font-medium'
-                    ]">
-                    <FileText :class="[
-                        route().current('page-2') ? 'text-blue-600' : 'text-gray-500 group-hover:text-gray-500',
-                        'mr-3 h-5 w-5 flex-shrink-0'
-                    ]" />
-                    <span v-if="sidebarOpen">Page 2</span>
-                    </Link>
+                        <!-- Page 2 -->
+                        <Link :href="route('Justificatifs.dashboard')" :class="[
+                            route().current('Justificatifs.dashboard') ? 'text-blue-600' : 'text-gray-600 hover:text-blue-500',
+                            'block text-sm py-1 transition'
+                        ]">
+                        Justificatifs
+                        </Link>
 
-                    <!-- Page 3 -->
-                    <Link href="#page-3" :class="[
-                        route().current('page-3') ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
-                        sidebarOpen ? 'justify-start' : 'justify-center',
-                        'group flex items-center rounded-md px-2 py-2 text-sm font-medium'
-                    ]">
-                    <Settings :class="[
-                        route().current('page-3') ? 'text-blue-600' : 'text-gray-500 group-hover:text-gray-500',
-                        'mr-3 h-5 w-5 flex-shrink-0'
-                    ]" />
-                    <span v-if="sidebarOpen">Page 3</span>
-                    </Link>
+                        <!-- Page 3 -->
+                        <Link :href="route('absence.dashboard')" :class="[
+                            route().current('absence.dashboard') ? 'text-blue-600' : 'text-gray-600 hover:text-blue-500',
+                            'block text-sm py-1 transition'
+                        ]">
+                        Absences
+                        </Link>
+                    </div>
                 </nav>
             </div>
+
 
             <!-- Sidebar footer -->
             <div class="border-t border-gray-200 p-4" v-if="sidebarOpen">

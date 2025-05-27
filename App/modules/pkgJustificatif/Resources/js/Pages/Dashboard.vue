@@ -34,7 +34,7 @@
 
 <script setup>
 import { ref, computed } from 'vue';
-import AuthenticatedLayout from '../Layouts/AuthenticatedLayout.vue';
+import AuthenticatedLayout from '@core/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
 
 import SummaryCard from '../Components/Dashboard/SummaryCard.vue';
