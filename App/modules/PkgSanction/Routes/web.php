@@ -8,6 +8,6 @@ use Modules\PkgSanction\App\Controllers\DashboardController;
 //     return Inertia::render('PkgSanction::Dashboard');
 // })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/dashboard', [DashboardController::class, 'index'])
+Route::get('sanction/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+    ->name('sanction.dashboard');
