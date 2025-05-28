@@ -27,11 +27,11 @@
       <!-- Stats Cards -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <StatCard title="Total des Règles" :value="rulesCount" color="blue" icon="FileText" textSize="text-2xl" />
-        <StatCard title="Règles Actives" :value="rulesActiveCount" color="green" icon="CheckCircle"
+        <StatCard title="Règles Actives" :value="activeRulesCount" color="green" icon="CheckCircle"
           textSize="text-2xl" />
         <StatCard title="Dernière Modification" :value="formatDate(lastModificationDate)" color="orange" icon="Clock"
           textSize="text-sm" />
-        <StatCard title="Apprenants Concernés" :value="totalStudents" color="purple" icon="Users" textSize="text-2xl" />
+        <StatCard title="Apprenants Concernés" :value="learnersSanctionedCount" color="purple" icon="Users" textSize="text-2xl" />
       </div>
 
       <!-- Rules Table -->
@@ -81,10 +81,11 @@ import RulesTable from '../Components/Sanction/RulesTable.vue';
 const props = defineProps({
   sanctionRules: Array,
   rulesCount: Number,
-  rulesActiveCount: Number,
+  activeRulesCount: Number,
   lastModificationDate: String,
+  learnersSanctionedCount: Number,
 });
-console.log('Props:', props.lastModificationDate);
+console.log('Props:', props.learnersSanctionedCount);
 // Reactive data
 const searchQuery = ref('');
 const statusFilter = ref('');
@@ -92,92 +93,55 @@ const showAddRuleModal = ref(false);
 const showViewModal = ref(false);
 const showEditModal = ref(false);
 const selectedRule = ref(null);
+const rules = ref([]);
 
 // Sample rules data
-const rules = ref([
-  {
-    id: 1,
-    titre: 'Règle d\'absentéisme niveau 1',
-    description: 'Règle de base pour les absences non justifiées. Application automatique après dépassement du seuil.',
-    absencesMax: 5,
-    seuilDeNotification: 3,
-    dureeSanction: 7,
-    statut: 'active',
-    dateModification: new Date('2024-01-15'),
-    dateCreation: new Date('2024-01-10')
-  },
-  {
-    id: 2,
-    titre: 'Règle d\'absentéisme niveau 2',
-    description: 'Règle renforcée pour les cas récidivistes. Sanctions plus sévères avec suivi personnalisé.',
-    absencesMax: 10,
-    seuilDeNotification: 7,
-    dureeSanction: 14,
-    statut: 'active',
-    dateModification: new Date('2024-01-20'),
-    dateCreation: new Date('2024-01-12')
-  },
-  {
-    id: 3,
-    titre: 'Règle retards répétés',
-    description: 'Gestion des retards chroniques. Conversion automatique en absences après accumulation.',
-    absencesMax: 8,
-    seuilDeNotification: 5,
-    dureeSanction: 5,
-    statut: 'inactive',
-    dateModification: new Date('2024-01-18'),
-    dateCreation: new Date('2024-01-08')
-  },
-  {
-    id: 4,
-    titre: 'Règle absence examens',
-    description: 'Règle spécifique pour les absences lors des évaluations importantes.',
-    absencesMax: 3,
-    seuilDeNotification: 2,
-    dureeSanction: 21,
-    statut: 'active',
-    dateModification: new Date('2024-01-25'),
-    dateCreation: new Date('2024-01-22')
-  }
-]);
-
-// Computed properties
-const filteredRules = computed(() => {
-  let filtered = rules.value;
-
-  // Filter by search query
-  if (searchQuery.value) {
-    const query = searchQuery.value.toLowerCase();
-    filtered = filtered.filter(rule =>
-      rule.titre.toLowerCase().includes(query) ||
-      rule.description.toLowerCase().includes(query)
-    );
-  }
-
-  // Filter by status
-  if (statusFilter.value) {
-    filtered = filtered.filter(rule => rule.est_actif === statusFilter.value);
-  }
-
-  return filtered;
-});
-
-const activeRulesCount = computed(() => {
-  return rules.value.filter(rule => rule.est_actif === 1).length;
-});
-
-const lastModified = computed(() => {
-  if (rules.value.length === 0) return 'Aucune';
-  const latest = rules.value.reduce((latest, rule) =>
-    rule.dateModification > latest.dateModification ? rule : latest
-  );
-  return formatDate(latest.dateModification);
-});
-
-const totalStudents = computed(() => {
-  // This would typically come from an API
-  return 1247;
-});
+// const rules = ref([
+//   {
+//     id: 1,
+//     titre: 'Règle d\'absentéisme niveau 1',
+//     description: 'Règle de base pour les absences non justifiées. Application automatique après dépassement du seuil.',
+//     absencesMax: 5,
+//     seuilDeNotification: 3,
+//     dureeSanction: 7,
+//     statut: 'active',
+//     dateModification: new Date('2024-01-15'),
+//     dateCreation: new Date('2024-01-10')
+//   },
+//   {
+//     id: 2,
+//     titre: 'Règle d\'absentéisme niveau 2',
+//     description: 'Règle renforcée pour les cas récidivistes. Sanctions plus sévères avec suivi personnalisé.',
+//     absencesMax: 10,
+//     seuilDeNotification: 7,
+//     dureeSanction: 14,
+//     statut: 'active',
+//     dateModification: new Date('2024-01-20'),
+//     dateCreation: new Date('2024-01-12')
+//   },
+//   {
+//     id: 3,
+//     titre: 'Règle retards répétés',
+//     description: 'Gestion des retards chroniques. Conversion automatique en absences après accumulation.',
+//     absencesMax: 8,
+//     seuilDeNotification: 5,
+//     dureeSanction: 5,
+//     statut: 'inactive',
+//     dateModification: new Date('2024-01-18'),
+//     dateCreation: new Date('2024-01-08')
+//   },
+//   {
+//     id: 4,
+//     titre: 'Règle absence examens',
+//     description: 'Règle spécifique pour les absences lors des évaluations importantes.',
+//     absencesMax: 3,
+//     seuilDeNotification: 2,
+//     dureeSanction: 21,
+//     statut: 'active',
+//     dateModification: new Date('2024-01-25'),
+//     dateCreation: new Date('2024-01-22')
+//   }
+// ]);
 
 // Methods
 const formatDate = (date) => {

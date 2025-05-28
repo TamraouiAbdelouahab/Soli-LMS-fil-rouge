@@ -2,6 +2,7 @@
 
 namespace Modules\PkgSanction\App\Services;
 
+use Modules\PkgApprenant\App\Models\Apprenant;
 use Modules\PkgSanction\App\Models\ReglesDeSanction;
 
 class SanctionRulesService
@@ -17,9 +18,18 @@ class SanctionRulesService
         return ReglesDeSanction::count();
     }
 
-    public function rulesActiveCount()
+    public function activeRulesCount()
     {
         return ReglesDeSanction::where('est_actif', true)->count();
+    }
+
+    public function learnersSanctionedCount()
+    {
+        $learnersSanctionedCount = Apprenant::whereHas('absences', function ($query) {
+            $query->whereNotNull('sanction_absence_id');
+        })->distinct()->count('id');
+
+        return $learnersSanctionedCount;
     }
 
     public function getLastModificationDate()

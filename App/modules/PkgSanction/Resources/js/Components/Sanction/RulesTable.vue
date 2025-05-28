@@ -107,7 +107,9 @@ const localStatusFilter = ref('')
 
 const computedRules = computed(() => {
     if (!localStatusFilter.value) return props.rules
-    return props.rules.filter(r => r.est_actif === localStatusFilter.value)
+    if (localStatusFilter.value === 'active') return props.rules.filter(r => r.est_actif === 1)
+    if (localStatusFilter.value === 'inactive') return props.rules.filter(r => r.est_actif === 0)
+    return props.rules
 })
 
 const formatDate = (date) => {

@@ -139,12 +139,15 @@ const closeModal = () => {
 };
 
 const formatDate = (date) => {
-    return new Intl.DateTimeFormat('fr-FR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-    }).format(date);
+  const parsed = new Date(date);
+  if (isNaN(parsed.getTime())) return 'Date invalide';
+  return new Intl.DateTimeFormat('fr-FR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  }).format(parsed);
 };
+
 </script>
 
 <style scoped>

@@ -20,8 +20,9 @@ class SanctionRulesController extends BaseController
         return Inertia::render('PkgSanction::SanctionRules', [
             'sanctionRules' => $this->sanctionRulesService->getSanctionRules(),
             'rulesCount' => $this->sanctionRulesService->rulesCount(),
-            'rulesActiveCount' => $this->sanctionRulesService->rulesActiveCount(),
+            'activeRulesCount' => $this->sanctionRulesService->activeRulesCount(),
             'lastModificationDate' => $this->sanctionRulesService->getLastModificationDate(),
+            'learnersSanctionedCount' => $this->sanctionRulesService->learnersSanctionedCount(),
         ]);
     }
 
