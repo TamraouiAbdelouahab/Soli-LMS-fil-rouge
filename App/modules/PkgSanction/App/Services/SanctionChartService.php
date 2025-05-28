@@ -35,8 +35,8 @@ class SanctionChartService
     public function getSanctionsByTypes()
     {
         return SanctionAbsence::join('regles_de_sanctions', 'sanction_absences.regle_de_sanction_id', '=', 'regles_de_sanctions.id')
-            ->select('regles_de_sanctions.penalite', DB::raw('COUNT(*) as value'))
-            ->groupBy('regles_de_sanctions.penalite')
+            ->select('regles_de_sanctions.titre', DB::raw('COUNT(*) as value'))
+            ->groupBy('regles_de_sanctions.titre')
             ->get();
     }
 }

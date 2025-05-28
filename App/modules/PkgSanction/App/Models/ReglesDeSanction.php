@@ -13,10 +13,9 @@ class ReglesDeSanction extends Model
         'titre',
         'description',
         'absences_max',
-        'penalite',
         'seuil_de_notification',
-        'duree',
-        'note',
+        'duree_sanction',
+        'est_actif',
     ];
 
     public function sanctionsAbsences()

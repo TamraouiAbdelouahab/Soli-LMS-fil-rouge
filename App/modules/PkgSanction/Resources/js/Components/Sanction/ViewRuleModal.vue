@@ -34,16 +34,16 @@
                                 <label class="block text-sm font-medium text-gray-500">Statut</label>
                                 <span :class="[
                                     'inline-flex px-2 py-1 text-xs font-semibold rounded-full',
-                                    rule.statut === 'active'
+                                    rule.est_actif === 1
                                         ? 'bg-green-100 text-green-800'
                                         : 'bg-red-100 text-red-800'
                                 ]">
-                                    {{ rule.statut === 'active' ? 'Actif' : 'Inactif' }}
+                                    {{ rule.est_actif === 1 ? 'Actif' : 'Inactif' }}
                                 </span>
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-500">Date de création</label>
-                                <p class="text-sm text-gray-900">{{ formatDate(rule.dateCreation) }}</p>
+                                <p class="text-sm text-gray-900">{{ formatDate(rule.created_at) }}</p>
                             </div>
                         </div>
                     </div>
@@ -55,17 +55,17 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div class="bg-blue-50 rounded-lg p-4 text-center">
                             <Users class="h-8 w-8 text-blue-600 mx-auto mb-2" />
-                            <p class="text-2xl font-bold text-blue-900">{{ rule.absencesMax }}</p>
+                            <p class="text-2xl font-bold text-blue-900">{{ rule.absences_max }}</p>
                             <p class="text-sm text-blue-700">Absences Maximum</p>
                         </div>
                         <div class="bg-orange-50 rounded-lg p-4 text-center">
                             <Bell class="h-8 w-8 text-orange-600 mx-auto mb-2" />
-                            <p class="text-2xl font-bold text-orange-900">{{ rule.seuilDeNotification }}</p>
+                            <p class="text-2xl font-bold text-orange-900">{{ rule.seuil_de_notification }}</p>
                             <p class="text-sm text-orange-700">Seuil de Notification</p>
                         </div>
                         <div class="bg-green-50 rounded-lg p-4 text-center">
                             <Calendar class="h-8 w-8 text-green-600 mx-auto mb-2" />
-                            <p class="text-2xl font-bold text-green-900">{{ rule.dureeSanction }}</p>
+                            <p class="text-2xl font-bold text-green-900">{{ rule.duree_sanction }}</p>
                             <p class="text-sm text-green-700">Durée (jours)</p>
                         </div>
                     </div>
@@ -83,8 +83,8 @@
                                 </div>
                                 <div class="ml-3">
                                     <p class="text-sm text-gray-900">
-                                        <strong>Notification à {{ rule.seuilDeNotification }} absence{{
-                                            rule.seuilDeNotification > 1 ? 's' : '' }}</strong>
+                                        <strong>Notification à {{ rule.seuil_de_notification }} absence{{
+                                            rule.seuil_de_notification > 1 ? 's' : '' }}</strong>
                                     </p>
                                     <p class="text-xs text-gray-500">Avertissement automatique envoyé</p>
                                 </div>
@@ -96,11 +96,11 @@
                                 </div>
                                 <div class="ml-3">
                                     <p class="text-sm text-gray-900">
-                                        <strong>Sanction à {{ rule.absencesMax }} absence{{ rule.absencesMax > 1 ? 's' :
+                                        <strong>Sanction à {{ rule.absences_max }} absence{{ rule.absences_max > 1 ? 's' :
                                             '' }}</strong>
                                     </p>
                                     <p class="text-xs text-gray-500">Application de la sanction pendant {{
-                                        rule.dureeSanction }} jour{{ rule.dureeSanction > 1 ? 's' : '' }}</p>
+                                        rule.duree_sanction }} jour{{ rule.duree_sanction > 1 ? 's' : '' }}</p>
                                 </div>
                             </div>
                         </div>
