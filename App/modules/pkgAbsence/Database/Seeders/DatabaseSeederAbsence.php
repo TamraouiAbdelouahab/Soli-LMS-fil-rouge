@@ -3,6 +3,7 @@
 namespace Modules\PkgAbsence\Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Modules\pkgAbsence\Database\Seeders\AbsencesSeeder1;
 
 class DatabaseSeederAbsence extends Seeder
 {
@@ -13,7 +14,7 @@ class DatabaseSeederAbsence extends Seeder
     {
         // Appel des seeders dans l'ordre logique
         $this->call([
-            AbsencesSeeder::class,   
+            AbsencesSeeder1::class,   
         ]);
     }
 }
