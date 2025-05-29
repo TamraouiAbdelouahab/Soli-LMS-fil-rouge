@@ -1,0 +1,95 @@
+classDiagram
+
+namespace PkgSanction {
+  class SanctionAbsence {
+    +id: int
+    +date_debut: date
+    +date_fin: date
+  }
+  class ReglesDeSanction {
+    +id: int
+    +titre: string
+    +description: string
+    +absences_max: int
+    +seuil_de_notification: int
+    +duree_sanction: int
+    +est_actif: boolean
+  }
+  class Notification {
+    +id: int
+    +titre: string
+    +message: string
+    +etat: string
+  }
+  class SanctionAbsenceCalculee {
+    +id: int
+  }
+}
+
+namespace PkgEmploiTemps {
+  class Seance {
+    +id: int
+    +date_debut: date
+    +date_fin: date
+  }
+}
+
+namespace PkgJustification {
+  class JustificationAbsence {
+    +id: int
+    +date_depot: string
+    +date_debut: string
+    +date_fin: string
+    +fichier: string
+    +description: string
+    +statut: string
+    +user_id: int
+  }
+
+  class Raison {
+    +id: int
+    +code: string
+    +libelle: string
+    +description: string
+  }
+}
+
+namespace PkgApprenant {
+  class Apprenant {
+    +id: int
+    +nom: string
+    +prenom: string
+    +cin: string
+    +tele_num: string
+    +date_inscription: Date
+    +profile_image: string
+  }
+
+  class Groupe {
+    +id: int
+    +nom: string
+    +description: string
+  }
+}
+
+namespace PkgAbsence {
+  class Absence {
+    +id: int
+    +justifie: boolean
+    +user_id: int
+  }
+}
+
+%% ================== Relationships ==================
+Absence "0..*" -- "1" Apprenant : "appartient à"
+Absence "0..*" -- "1" Seance : "contient"
+Apprenant "*" -- "*" Groupe : "membre de"
+Apprenant "1" -- "0..*" JustificationAbsence : "possède"
+JustificationAbsence "0..*" -- "1" Raison 
+
+ReglesDeSanction "1" -- "0..*" SanctionAbsenceCalculee : "s'applique à"
+ReglesDeSanction "1" -- "0..*" SanctionAbsence : "s'applique à"
+SanctionAbsence "1" -- "1..*" Notification : "déclenche"
+SanctionAbsence "0..1" -- "1..*" Absence : "basée sur"
+SanctionAbsenceCalculee "0..1" -- "0..*" Absence : "analyse"
+Apprenant "1" -- "0..*" Notification : "reçoit"
