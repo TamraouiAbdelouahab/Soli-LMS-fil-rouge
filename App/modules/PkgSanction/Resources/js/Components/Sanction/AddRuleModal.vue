@@ -25,61 +25,89 @@
                         </label>
                         <input id="titre" v-model="form.titre" type="text" :class="[
                             'w-full px-3 py-2 border rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500',
-                            errors.titre ? 'border-red-300 bg-red-50' : 'border-gray-300 hover:border-gray-400 focus:border-blue-500'
+                            form.errors.titre ? 'border-red-300 bg-red-50' : 'border-gray-300 hover:border-gray-400 focus:border-blue-500'
                         ]" placeholder="Ex: Règle d'absentéisme niveau 1" />
-                        <p v-if="errors.titre" class="mt-1 text-sm text-red-600">{{ errors.titre }}</p>
+                        <p v-if="form.errors.titre" class="mt-1 text-sm text-red-600">{{ form.errors.titre }}</p>
                     </div>
 
                     <!-- Description -->
                     <div>
                         <label for="description" class="block text-sm font-medium text-gray-700 mb-2">
-                            Description <span class="text-red-500">*</span>
+                            Description
                         </label>
                         <textarea id="description" v-model="form.description" rows="3" :class="[
                             'w-full px-3 py-2 border rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-vertical',
-                            errors.description ? 'border-red-300 bg-red-50' : 'border-gray-300 hover:border-gray-400 focus:border-blue-500'
+                            form.errors.description ? 'border-red-300 bg-red-50' : 'border-gray-300 hover:border-gray-400 focus:border-blue-500'
                         ]" placeholder="Décrivez les conditions et modalités de cette règle..."></textarea>
-                        <p v-if="errors.description" class="mt-1 text-sm text-red-600">{{ errors.description }}</p>
+                        <p v-if="form.errors.description" class="mt-1 text-sm text-red-600">{{ form.errors.description
+                            }}</p>
                     </div>
+
+                    <!-- Status Toggle -->
+                    <div class="flex items-center">
+                        <label class="block text-sm font-medium text-gray-700 mr-4">
+                            Statut
+                        </label>
+                        <div class="flex items-center">
+                            <button type="button" @click="form.est_actif = true" :class="[
+                                'px-3 py-1 rounded-l-md border',
+                                form.est_actif ? 'bg-green-500 text-white border-green-600' : 'bg-gray-100 text-gray-700 border-gray-300'
+                            ]">
+                                Actif
+                            </button>
+                            <button type="button" @click="form.est_actif = false" :class="[
+                                'px-3 py-1 rounded-r-md border',
+                                !form.est_actif ? 'bg-red-500 text-white border-red-600' : 'bg-gray-100 text-gray-700 border-gray-300'
+                            ]">
+                                Inactif
+                            </button>
+                        </div>
+                    </div>
+                    <p v-if="form.errors.est_actif" class="mt-1 text-sm text-red-600">{{ form.errors.est_actif }}</p>
 
                     <!-- Numeric Fields Grid -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <!-- Absences Maximum -->
                         <div>
-                            <label for="absencesMax" class="block text-sm font-medium text-gray-700 mb-2">
+                            <label for="absences_max" class="block text-sm font-medium text-gray-700 mb-2">
                                 Absences Max <span class="text-red-500">*</span>
                             </label>
-                            <input id="absencesMax" v-model.number="form.absencesMax" type="number" min="1" :class="[
+                            <input id="absences_max" v-model.number="form.absences_max" type="number" min="1" :class="[
                                 'w-full px-3 py-2 border rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500',
-                                errors.absencesMax ? 'border-red-300 bg-red-50' : 'border-gray-300 hover:border-gray-400 focus:border-blue-500'
+                                form.errors.absences_max ? 'border-red-300 bg-red-50' : 'border-gray-300 hover:border-gray-400 focus:border-blue-500'
                             ]" placeholder="5" />
-                            <p v-if="errors.absencesMax" class="mt-1 text-sm text-red-600">{{ errors.absencesMax }}</p>
+                            <p v-if="form.errors.absences_max" class="mt-1 text-sm text-red-600">{{
+                                form.errors.absences_max }}
+                            </p>
                         </div>
 
                         <!-- Seuil de Notification -->
                         <div>
-                            <label for="seuilDeNotification" class="block text-sm font-medium text-gray-700 mb-2">
+                            <label for="seuil_de_notification" class="block text-sm font-medium text-gray-700 mb-2">
                                 Seuil Notif. <span class="text-red-500">*</span>
                             </label>
-                            <input id="seuilDeNotification" v-model.number="form.seuilDeNotification" type="number"
+                            <input id="seuil_de_notification" v-model.number="form.seuil_de_notification" type="number"
                                 min="1" :class="[
                                     'w-full px-3 py-2 border rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500',
-                                    errors.seuilDeNotification ? 'border-red-300 bg-red-50' : 'border-gray-300 hover:border-gray-400 focus:border-blue-500'
+                                    form.errors.seuil_de_notification ? 'border-red-300 bg-red-50' : 'border-gray-300 hover:border-gray-400 focus:border-blue-500'
                                 ]" placeholder="3" />
-                            <p v-if="errors.seuilDeNotification" class="mt-1 text-sm text-red-600">{{
-                                errors.seuilDeNotification }}</p>
+                            <p v-if="form.errors.seuil_de_notification" class="mt-1 text-sm text-red-600">{{
+                                form.errors.seuil_de_notification }}</p>
                         </div>
 
                         <!-- Durée de la Sanction -->
                         <div>
-                            <label for="dureeSanction" class="block text-sm font-medium text-gray-700 mb-2">
+                            <label for="duree_sanction" class="block text-sm font-medium text-gray-700 mb-2">
                                 Durée (jours) <span class="text-red-500">*</span>
                             </label>
-                            <input id="dureeSanction" v-model.number="form.dureeSanction" type="number" min="1" :class="[
-                                'w-full px-3 py-2 border rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500',
-                                errors.dureeSanction ? 'border-red-300 bg-red-50' : 'border-gray-300 hover:border-gray-400 focus:border-blue-500'
-                            ]" placeholder="7" />
-                            <p v-if="errors.dureeSanction" class="mt-1 text-sm text-red-600">{{ errors.dureeSanction }}
+                            <input id="duree_sanction" v-model.number="form.duree_sanction" type="number" min="1"
+                                :class="[
+                                    'w-full px-3 py-2 border rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500',
+                                    form.errors.duree_sanction ? 'border-red-300 bg-red-50' : 'border-gray-300 hover:border-gray-400 focus:border-blue-500'
+                                ]" placeholder="7" />
+                            <p v-if="form.errors.duree_sanction" class="mt-1 text-sm text-red-600">{{
+                                form.errors.duree_sanction
+                                }}
                             </p>
                         </div>
                     </div>
@@ -115,18 +143,20 @@
 
 <script setup>
 import { ref, reactive, computed } from 'vue';
+import { useForm } from '@inertiajs/vue3';
 import { Plus, X, Info, Save, Loader2 } from 'lucide-vue-next';
 
 // Emits
 const emit = defineEmits(['close', 'submit']);
 
 // Form data
-const form = reactive({
+const form = useForm({
     titre: '',
     description: '',
-    absencesMax: null,
-    seuilDeNotification: null,
-    dureeSanction: null
+    absences_max: null,
+    seuil_de_notification: null,
+    duree_sanction: null,
+    est_actif: true
 });
 
 // Form state
@@ -136,80 +166,28 @@ const isSubmitting = ref(false);
 // Computed properties
 const isFormValid = computed(() => {
     return form.titre.trim() &&
-        form.description.trim() &&
-        form.absencesMax > 0 &&
-        form.seuilDeNotification > 0 &&
-        form.dureeSanction > 0 &&
-        form.seuilDeNotification < form.absencesMax;
+        form.absences_max > 0 &&
+        form.seuil_de_notification > 0 &&
+        form.duree_sanction > 0 &&
+        form.seuil_de_notification < form.absences_max;
 });
 
-// Methods
-const validateForm = () => {
-    const newErrors = {};
 
-    if (!form.titre.trim()) {
-        newErrors.titre = 'Le titre est requis';
-    } else if (form.titre.trim().length < 3) {
-        newErrors.titre = 'Le titre doit contenir au moins 3 caractères';
-    }
-
-    if (!form.description.trim()) {
-        newErrors.description = 'La description est requise';
-    } else if (form.description.trim().length < 10) {
-        newErrors.description = 'La description doit contenir au moins 10 caractères';
-    }
-
-    if (!form.absencesMax || form.absencesMax <= 0) {
-        newErrors.absencesMax = 'Le nombre maximum d\'absences doit être un entier positif';
-    }
-
-    if (!form.seuilDeNotification || form.seuilDeNotification <= 0) {
-        newErrors.seuilDeNotification = 'Le seuil de notification doit être un entier positif';
-    } else if (form.absencesMax && form.seuilDeNotification >= form.absencesMax) {
-        newErrors.seuilDeNotification = 'Le seuil doit être inférieur au maximum d\'absences';
-    }
-
-    if (!form.dureeSanction || form.dureeSanction <= 0) {
-        newErrors.dureeSanction = 'La durée de la sanction doit être un entier positif';
-    }
-
-    errors.value = newErrors;
-    return Object.keys(newErrors).length === 0;
-};
-
-const handleSubmit = async () => {
-    if (!validateForm()) {
-        return;
-    }
-
-    isSubmitting.value = true;
-
-    try {
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        emit('submit', { ...form });
-        resetForm();
-
-    } catch (error) {
-        console.error('Erreur lors de l\'enregistrement:', error);
-    } finally {
-        isSubmitting.value = false;
-    }
+const handleSubmit = () => {
+    form.post(route('sanction.rules.store'), {
+        preserveScroll: true,
+        onSuccess: () => {
+            emit('submit');
+            form.reset();
+            closeModal();
+        }
+    });
 };
 
 const closeModal = () => {
     emit('close');
 };
 
-const resetForm = () => {
-    form.titre = '';
-    form.description = '';
-    form.absencesMax = null;
-    form.seuilDeNotification = null;
-    form.dureeSanction = null;
-    errors.value = {};
-};
 </script>
 
 <style scoped>

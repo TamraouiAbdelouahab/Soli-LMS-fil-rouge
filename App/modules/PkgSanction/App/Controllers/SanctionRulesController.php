@@ -4,6 +4,7 @@ namespace Modules\PkgSanction\App\Controllers;
 
 use Inertia\Inertia;
 use Modules\Core\App\Controllers\BaseController;
+use Modules\PkgSanction\App\Requests\SanctionRulesRequest;
 use Modules\PkgSanction\App\Services\SanctionRulesService;
 
 class SanctionRulesController extends BaseController
@@ -26,5 +27,13 @@ class SanctionRulesController extends BaseController
         ]);
     }
 
-
+    public function store(SanctionRulesRequest $request)
+    {
+        try {
+            $this->sanctionRulesService->createSanctionRule($request->validated());
+            return redirect()->back()->with('success', 'Règle créée avec succès.');
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors($e->getMessage());
+        }
+    }
 }

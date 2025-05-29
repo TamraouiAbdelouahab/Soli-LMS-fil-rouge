@@ -16,3 +16,7 @@ Route::get('sanction/dashboard', [DashboardController::class, 'index'])
 Route::get('sanction/rules', [SanctionRulesController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('sanction.rules');
+
+Route::post('sanction/rules', [SanctionRulesController::class, 'store'])
+    ->middleware(['auth', 'verified'])
+    ->name('sanction.rules.store');

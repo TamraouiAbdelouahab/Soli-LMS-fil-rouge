@@ -95,54 +95,6 @@ const showEditModal = ref(false);
 const selectedRule = ref(null);
 const rules = ref([]);
 
-// Sample rules data
-// const rules = ref([
-//   {
-//     id: 1,
-//     titre: 'Règle d\'absentéisme niveau 1',
-//     description: 'Règle de base pour les absences non justifiées. Application automatique après dépassement du seuil.',
-//     absencesMax: 5,
-//     seuilDeNotification: 3,
-//     dureeSanction: 7,
-//     statut: 'active',
-//     dateModification: new Date('2024-01-15'),
-//     dateCreation: new Date('2024-01-10')
-//   },
-//   {
-//     id: 2,
-//     titre: 'Règle d\'absentéisme niveau 2',
-//     description: 'Règle renforcée pour les cas récidivistes. Sanctions plus sévères avec suivi personnalisé.',
-//     absencesMax: 10,
-//     seuilDeNotification: 7,
-//     dureeSanction: 14,
-//     statut: 'active',
-//     dateModification: new Date('2024-01-20'),
-//     dateCreation: new Date('2024-01-12')
-//   },
-//   {
-//     id: 3,
-//     titre: 'Règle retards répétés',
-//     description: 'Gestion des retards chroniques. Conversion automatique en absences après accumulation.',
-//     absencesMax: 8,
-//     seuilDeNotification: 5,
-//     dureeSanction: 5,
-//     statut: 'inactive',
-//     dateModification: new Date('2024-01-18'),
-//     dateCreation: new Date('2024-01-08')
-//   },
-//   {
-//     id: 4,
-//     titre: 'Règle absence examens',
-//     description: 'Règle spécifique pour les absences lors des évaluations importantes.',
-//     absencesMax: 3,
-//     seuilDeNotification: 2,
-//     dureeSanction: 21,
-//     statut: 'active',
-//     dateModification: new Date('2024-01-25'),
-//     dateCreation: new Date('2024-01-22')
-//   }
-// ]);
-
 // Methods
 const formatDate = (date) => {
   const parsedDate = new Date(date);

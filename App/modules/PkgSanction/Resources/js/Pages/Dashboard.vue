@@ -99,7 +99,7 @@ const monthlySanctionsChartData = computed(() => {
 
 const sanctionsByTypesChartData = computed(() => {
     return {
-        labels: props.sanctionsByTypes.map(item => item.penalite),
+        labels: props.sanctionsByTypes.map(item => item.titre),
         datasets: [
             {
                 data: props.sanctionsByTypes.map(item => item.value),

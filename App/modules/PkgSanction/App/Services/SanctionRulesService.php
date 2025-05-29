@@ -2,6 +2,7 @@
 
 namespace Modules\PkgSanction\App\Services;
 
+use Illuminate\Support\Facades\DB;
 use Modules\PkgApprenant\App\Models\Apprenant;
 use Modules\PkgSanction\App\Models\ReglesDeSanction;
 
@@ -38,18 +39,11 @@ class SanctionRulesService
         return $lastModification ? $lastModification->updated_at : null;
     }
 
-    public function getSanctionRuleById($id)
-    {
-        // This method should return a specific sanction rule by its ID.
-        // For now, we will return null as a placeholder.
-        return null;
-    }
-
     public function createSanctionRule($data)
     {
-        // This method should handle the creation of a new sanction rule.
-        // For now, we will just return true as a placeholder.
-        return true;
+        return DB::transaction(function () use ($data) {
+            return ReglesDeSanction::create($data);
+        });
     }
 
     public function updateSanctionRule($id, $data)
