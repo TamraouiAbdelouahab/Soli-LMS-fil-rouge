@@ -48,15 +48,30 @@ class SanctionRulesService
 
     public function updateSanctionRule($id, $data)
     {
-        // This method should handle the update of an existing sanction rule.
-        // For now, we will just return true as a placeholder.
-        return true;
+        return DB::transaction(function () use ($id, $data) {
+            $rule = ReglesDeSanction::findOrFail($id);
+            $rule->update($data);
+            return $rule;
+        });
     }
 
     public function deleteSanctionRule($id)
     {
-        // This method should handle the deletion of a sanction rule.
-        // For now, we will just return true as a placeholder.
-        return true;
+        return DB::transaction(function () use ($id) {
+            $rule = ReglesDeSanction::findOrFail($id);
+            $rule->delete();
+            return true;
+        });
+    }
+
+    public function toggleStatus($id)
+    {
+        return DB::transaction(function () use ($id) {
+            $rule = ReglesDeSanction::findOrFail($id);
+            $rule->est_actif = !$rule->est_actif;
+            $rule->save();
+
+            return $rule;
+        });
     }
 }

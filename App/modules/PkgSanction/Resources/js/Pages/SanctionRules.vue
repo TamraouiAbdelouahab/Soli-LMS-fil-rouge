@@ -31,7 +31,8 @@
           textSize="text-2xl" />
         <StatCard title="Dernière Modification" :value="formatDate(lastModificationDate)" color="orange" icon="Clock"
           textSize="text-sm" />
-        <StatCard title="Apprenants Concernés" :value="learnersSanctionedCount" color="purple" icon="Users" textSize="text-2xl" />
+        <StatCard title="Apprenants Concernés" :value="learnersSanctionedCount" color="purple" icon="Users"
+          textSize="text-2xl" />
       </div>
 
       <!-- Rules Table -->
@@ -53,6 +54,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
+import { router, useForm } from '@inertiajs/vue3';
 import {
   Home,
   ChevronRight,
@@ -107,20 +109,64 @@ const formatDate = (date) => {
   }).format(parsedDate);
 };
 
-const handleAddRule = (newRule) => {
-  const rule = {
-    id: Date.now(),
-    ...newRule,
-    statut: 'active',
-    dateCreation: new Date(),
-    dateModification: new Date()
-  };
+// const handleAddRule = (newRule) => {
+//   const rule = {
+//     id: Date.now(),
+//     ...newRule,
+//     statut: 'active',
+//     dateCreation: new Date(),
+//     dateModification: new Date()
+//   };
 
-  rules.value.unshift(rule);
-  showAddRuleModal.value = false;
+//   rules.value.unshift(rule);
+//   showAddRuleModal.value = false;
 
-  // Show success notification
-  console.log('Nouvelle règle ajoutée:', rule);
+//   // Show success notification
+//   console.log('Nouvelle règle ajoutée:', rule);
+// };
+
+
+// Methods
+// const handleAddRule = (newRule) => {
+//     router.post(route('sanction.rules.store'), newRule, {
+//         preserveScroll: true,
+//         onSuccess: () => {
+//             showAddRuleModal.value = false;
+//         },
+//     });
+// };
+
+// const handleEditRule = (updatedRule) => {
+//     router.put(route('sanction.rules.update', selectedRule.value.id), updatedRule, {
+//         preserveScroll: true,
+//         onSuccess: () => {
+//             showEditModal.value = false;
+//             selectedRule.value = null;
+//         },
+//     });
+// };
+
+const formStatRule = useForm({
+  est_actif: 0,
+});
+
+const toggleRuleStatus = (rule) => {
+  formStatRule.est_actif = rule.est_actif === 1 ? 0 : 1;
+  formStatRule.put(`/sanction-rules/${rule.id}/toggle-status`, {
+    preserveScroll: true,
+    onSuccess: () => {
+      rule.est_actif = formStatRule.est_actif;
+    },
+  });
+};
+
+
+const deleteRule = (rule) => {
+  if (confirm(`Êtes-vous sûr de vouloir supprimer la règle "${rule.titre}"? Cette action est irréversible.`)) {
+    router.delete(route('sanction.rules.destroy', rule.id), {
+      preserveScroll: true,
+    });
+  }
 };
 
 const viewRule = (rule) => {
@@ -131,38 +177,6 @@ const viewRule = (rule) => {
 const editRule = (rule) => {
   selectedRule.value = rule;
   showEditModal.value = true;
-};
-
-const handleEditRule = (updatedRule) => {
-  const index = rules.value.findIndex(r => r.id === selectedRule.value.id);
-  if (index !== -1) {
-    rules.value[index] = {
-      ...rules.value[index],
-      ...updatedRule,
-      dateModification: new Date()
-    };
-  }
-  showEditModal.value = false;
-  selectedRule.value = null;
-};
-
-const toggleRuleStatus = (rule) => {
-  const newStatus = rule.est_actif === 'active' ? 'inactive' : 'active';
-  const action = newStatus === 'active' ? 'activer' : 'désactiver';
-
-  if (confirm(`Êtes-vous sûr de vouloir ${action} cette règle?`)) {
-    rule.est_actif = newStatus;
-    rule.dateModification = new Date();
-  }
-};
-
-const deleteRule = (rule) => {
-  if (confirm(`Êtes-vous sûr de vouloir supprimer la règle "${rule.titre}"? Cette action est irréversible.`)) {
-    const index = rules.value.findIndex(r => r.id === rule.id);
-    if (index !== -1) {
-      rules.value.splice(index, 1);
-    }
-  }
 };
 
 const exportRules = () => {

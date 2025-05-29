@@ -36,4 +36,34 @@ class SanctionRulesController extends BaseController
             return redirect()->back()->withErrors($e->getMessage());
         }
     }
+
+    public function update(SanctionRulesRequest $request, $id)
+    {
+        try {
+            $this->sanctionRulesService->updateSanctionRule($id, $request->validated());
+            return redirect()->back()->with('success', 'Règle mise à jour avec succès.');
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors($e->getMessage());
+        }
+    }
+
+    public function destroy($id)
+    {
+        try {
+            $this->sanctionRulesService->deleteSanctionRule($id);
+            return redirect()->back()->with('success', 'Règle supprimée avec succès.');
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors($e->getMessage());
+        }
+    }
+
+    public function toggleStatus($id)
+    {
+        try {
+            $rule = $this->sanctionRulesService->toggleStatus($id);
+            return back()->with('success', 'Statut de la règle mis à jour avec succès.');
+        } catch (\Exception $e) {
+            return back()->withErrors($e->getMessage());
+        }
+    }
 }
