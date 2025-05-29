@@ -152,7 +152,7 @@ const formStatRule = useForm({
 
 const toggleRuleStatus = (rule) => {
   formStatRule.est_actif = rule.est_actif === 1 ? 0 : 1;
-  formStatRule.put(`/sanction-rules/${rule.id}/toggle-status`, {
+  formStatRule.put(`/sanction/rules/${rule.id}/toggle-status`, {
     preserveScroll: true,
     onSuccess: () => {
       rule.est_actif = formStatRule.est_actif;
