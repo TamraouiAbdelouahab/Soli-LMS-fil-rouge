@@ -17,7 +17,7 @@
           </button>
 
           <button @click="showAddRuleModal = true"
-            class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+            class="inline-flex items-center px-4 py-2 bg-teal-600 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">
             <Plus class="h-4 w-4 mr-2" />
             Nouvelle Règle
           </button>
@@ -25,7 +25,7 @@
       </div>
 
       <!-- Stats Cards -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <!-- <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <StatCard title="Total des Règles" :value="rulesCount" color="blue" icon="FileText" textSize="text-2xl" />
         <StatCard title="Règles Actives" :value="activeRulesCount" color="green" icon="CheckCircle"
           textSize="text-2xl" />
@@ -33,7 +33,7 @@
           textSize="text-sm" />
         <StatCard title="Apprenants Concernés" :value="learnersSanctionedCount" color="purple" icon="Users"
           textSize="text-2xl" />
-      </div>
+      </div> -->
 
       <!-- Rules Table -->
       <RulesTable :rules="sanctionRules" @view="viewRule" @edit="editRule" @toggle-status="toggleRuleStatus"
@@ -109,43 +109,6 @@ const formatDate = (date) => {
   }).format(parsedDate);
 };
 
-// const handleAddRule = (newRule) => {
-//   const rule = {
-//     id: Date.now(),
-//     ...newRule,
-//     statut: 'active',
-//     dateCreation: new Date(),
-//     dateModification: new Date()
-//   };
-
-//   rules.value.unshift(rule);
-//   showAddRuleModal.value = false;
-
-//   // Show success notification
-//   console.log('Nouvelle règle ajoutée:', rule);
-// };
-
-
-// Methods
-// const handleAddRule = (newRule) => {
-//     router.post(route('sanction.rules.store'), newRule, {
-//         preserveScroll: true,
-//         onSuccess: () => {
-//             showAddRuleModal.value = false;
-//         },
-//     });
-// };
-
-// const handleEditRule = (updatedRule) => {
-//     router.put(route('sanction.rules.update', selectedRule.value.id), updatedRule, {
-//         preserveScroll: true,
-//         onSuccess: () => {
-//             showEditModal.value = false;
-//             selectedRule.value = null;
-//         },
-//     });
-// };
-
 const formStatRule = useForm({
   est_actif: 0,
 });
@@ -214,6 +177,8 @@ onMounted(() => {
 </script>
 
 <style scoped>
+
+
 /* Custom scrollbar for table */
 .overflow-x-auto::-webkit-scrollbar {
   height: 6px;

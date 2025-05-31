@@ -1,217 +1,3 @@
-<!-- <template>
-    <div class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50" @click="closeModal">
-        <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 xl:w-2/5 shadow-lg rounded-md bg-white"
-            @click.stop>
-            <div class="flex items-center justify-between pb-4 border-b border-gray-200">
-                <h3 class="text-xl font-semibold text-gray-900 flex items-center">
-                    <Eye class="h-5 w-5 mr-2 text-blue-600" />
-                    Détails de la sanction
-                </h3>
-                <button @click="closeModal" class="text-gray-400 hover:text-gray-600 transition-colors">
-                    <X class="h-6 w-6" />
-                </button>
-            </div>
-
-            <div class="mt-4 space-y-6">
-                <div>
-                    <h4 class="text-lg font-medium text-gray-900 mb-3">Informations de l'apprenant</h4>
-                    <div class="bg-gray-50 rounded-lg p-4 space-y-3">
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-500">Nom</label>
-                                <p class="text-sm text-gray-900">{{ sanction.learner }}</p>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-500">Classe</label>
-                                <p class="text-sm text-gray-900">{{ sanction.class }}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div>
-                    <h4 class="text-lg font-medium text-gray-900 mb-3">Détails de la sanction</h4>
-                    <div class="bg-gray-50 rounded-lg p-4 space-y-3">
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-500">Type</label>
-                                <span :class="[
-                                    'inline-flex px-2 py-1 text-xs font-semibold rounded-full',
-                                    getSanctionTypeColor(sanction.sanctionType)
-                                ]">
-                                    {{ sanction.sanctionType }}
-                                </span>
-                            </div>
-                            <div v-if="sanction.status">
-                                <label class="block text-sm font-medium text-gray-500">Statut</label>
-                                <span :class="[
-                                    'inline-flex px-2 py-1 text-xs font-semibold rounded-full',
-                                    getStatusColor(sanction.status)
-                                ]">
-                                    {{ getStatusLabel(sanction.status) }}
-                                </span>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-500">Motif</label>
-                            <p class="text-sm text-gray-900">{{ sanction.reason }}</p>
-                        </div>
-                        <div v-if="sanction.rule">
-                            <label class="block text-sm font-medium text-gray-500">Règle appliquée</label>
-                            <p class="text-sm text-gray-900">{{ sanction.rule }}</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div>
-                    <h4 class="text-lg font-medium text-gray-900 mb-3">Chronologie</h4>
-                    <div class="bg-gray-50 rounded-lg p-4">
-                        <div class="space-y-3">
-                            <div v-if="sanction.calculatedOn" class="flex items-center">
-                                <div
-                                    class="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                                    <Calculator class="h-4 w-4 text-blue-600" />
-                                </div>
-                                <div class="ml-3">
-                                    <p class="text-sm text-gray-900">
-                                        <strong>Calculée le {{ formatDate(sanction.calculatedOn) }}</strong>
-                                    </p>
-                                    <p class="text-xs text-gray-500">Sanction automatiquement déterminée</p>
-                                </div>
-                            </div>
-
-                            <div v-if="sanction.appliedOn" class="flex items-center">
-                                <div
-                                    class="flex-shrink-0 w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                                    <CheckCircle class="h-4 w-4 text-green-600" />
-                                </div>
-                                <div class="ml-3">
-                                    <p class="text-sm text-gray-900">
-                                        <strong>Appliquée le {{ formatDate(sanction.appliedOn) }}</strong>
-                                    </p>
-                                    <p class="text-xs text-gray-500">Par {{ sanction.appliedBy }}</p>
-                                </div>
-                            </div>
-
-                            <div v-if="sanction.endDate && sanction.status === 'Active'" class="flex items-center">
-                                <div
-                                    class="flex-shrink-0 w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
-                                    <Calendar class="h-4 w-4 text-orange-600" />
-                                </div>
-                                <div class="ml-3">
-                                    <p class="text-sm text-gray-900">
-                                        <strong>Fin prévue le {{ formatDate(sanction.endDate) }}</strong>
-                                    </p>
-                                    <p class="text-xs text-gray-500">Durée: {{ sanction.duration }} jour{{
-                                        sanction.duration > 1 ? 's' : '' }}</p>
-                                </div>
-                            </div>
-
-                            <div v-if="sanction.liftedOn" class="flex items-center">
-                                <div
-                                    class="flex-shrink-0 w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                                    <Shield class="h-4 w-4 text-purple-600" />
-                                </div>
-                                <div class="ml-3">
-                                    <p class="text-sm text-gray-900">
-                                        <strong>Levée le {{ formatDate(sanction.liftedOn) }}</strong>
-                                    </p>
-                                    <p class="text-xs text-gray-500">Par {{ sanction.liftedBy }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="flex items-center justify-end pt-4 border-t border-gray-200">
-                <button @click="closeModal"
-                    class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500">
-                    Fermer
-                </button>
-            </div>
-        </div>
-    </div>
-</template>
-
-<script setup>
-import {
-    Eye,
-    X,
-    Calculator,
-    CheckCircle,
-    Calendar,
-    Shield
-} from 'lucide-vue-next';
-
-const props = defineProps({
-    sanction: {
-        type: Object,
-        required: true
-    }
-});
-
-const emit = defineEmits(['close']);
-
-const closeModal = () => {
-    emit('close');
-};
-
-const getSanctionTypeColor = (type) => {
-    const colors = {
-        'Avertissement': 'bg-yellow-100 text-yellow-800',
-        'Blâme': 'bg-orange-100 text-orange-800',
-        'Exclusion': 'bg-red-100 text-red-800'
-    };
-    return colors[type] || 'bg-gray-100 text-gray-800';
-};
-
-const getStatusColor = (status) => {
-    const colors = {
-        'Active': 'bg-green-100 text-green-800',
-        'Expired': 'bg-gray-100 text-gray-800',
-        'Lifted': 'bg-blue-100 text-blue-800'
-    };
-    return colors[status] || 'bg-gray-100 text-gray-800';
-};
-
-const getStatusLabel = (status) => {
-    const labels = {
-        'Active': 'Active',
-        'Expired': 'Expirée',
-        'Lifted': 'Levée'
-    };
-    return labels[status] || status;
-};
-
-const formatDate = (date) => {
-    return new Intl.DateTimeFormat('fr-FR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-    }).format(date);
-};
-</script>
-
-<style scoped>
-/* Modal animation */
-@keyframes modalSlideIn {
-    from {
-        opacity: 0;
-        transform: translateY(-50px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.relative {
-    animation: modalSlideIn 0.3s ease-out;
-}
-</style> -->
-
 <template>
     <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div class="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
@@ -234,7 +20,7 @@ const formatDate = (date) => {
                             Détails de la sanction
                         </h3>
                         <button @click="$emit('close')" class="text-gray-500 hover:text-gray-700">
-                            <XMarkIcon class="h-6 w-6" aria-hidden="true" />
+                            <X class="h-6 w-6" aria-hidden="true" />
                         </button>
                     </div>
 
@@ -359,8 +145,6 @@ const formatDate = (date) => {
 
 <script>
 import { defineComponent } from 'vue';
-import { XMarkIcon } from '@heroicons/vue/24/outline';
-// import { Eye, Calculator, CheckCircle, Calendar, Shield } from '@heroicons/vue/24/solid';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import {
@@ -374,7 +158,7 @@ import {
 
 export default defineComponent({
     components: {
-        XMarkIcon,
+        X,
         Eye,
         Calculator,
         CheckCircle,
@@ -421,46 +205,6 @@ export default defineComponent({
 </script>
 
 <style scoped>
-/* Brand Colors */
-.text-charcoal-900 {
-    color: #1E1E1E;
-}
-
-.text-teal-600 {
-    color: #00B3C6;
-}
-
-.text-golden-yellow {
-    color: #D99200;
-}
-
-.text-light-blue-600 {
-    color: #9BB5D6;
-}
-
-.bg-light-blue-100 {
-    background-color: #E8EDF5;
-}
-
-.bg-teal-100 {
-    background-color: #CCF2F5;
-}
-
-.bg-golden-yellow-100 {
-    background-color: #FFF4CC;
-}
-
-.bg-bright-yellow {
-    background-color: #FFDD33;
-}
-
-.bg-golden-yellow {
-    background-color: #D99200;
-}
-
-.bg-red-orange {
-    background-color: #FF5F33;
-}
 
 /* Modal animation */
 @keyframes modalSlideIn {

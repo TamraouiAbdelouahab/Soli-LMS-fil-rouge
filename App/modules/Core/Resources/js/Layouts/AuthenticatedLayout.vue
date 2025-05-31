@@ -148,14 +148,14 @@ onUnmounted(() => {
                     <!-- Dashboard Parent -->
                     <button @click="dashboardExpanded = !dashboardExpanded" :class="[
                         route().current('sanction.dashboard') || route().current('Justificatifs.dashboard') || route().current('absence.dashboard')
-                            ? 'bg-blue-50 text-blue-600'
+                            ? 'bg-blue-50 text-teal-700'
                             : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
                         sidebarOpen ? 'justify-start' : 'justify-center',
                         'w-full flex items-center rounded-md px-2 py-2 text-sm font-medium focus:outline-none transition'
                     ]">
                         <Home :class="[
                             route().current('sanction.dashboard') || route().current('Justificatifs.dashboard') || route().current('absence.dashboard')
-                                ? 'text-blue-600'
+                                ? 'text-teal-700'
                                 : 'text-gray-500 group-hover:text-gray-500',
                             'mr-3 h-5 w-5 flex-shrink-0'
                         ]" />
@@ -168,7 +168,7 @@ onUnmounted(() => {
                     <div v-show="dashboardExpanded" class="ml-8 space-y-1" v-if="sidebarOpen">
                         <!-- Page 1 -->
                         <Link :href="route('sanction.dashboard')" :class="[
-                            route().current('sanction.dashboard') ? 'text-blue-600' : 'text-gray-600 hover:text-blue-500',
+                            route().current('sanction.dashboard') ? 'text-teal-700' : 'text-gray-600 hover:text-teal-600',
                             'block text-sm py-1 transition'
                         ]">
                         Sanctions
@@ -176,7 +176,7 @@ onUnmounted(() => {
 
                         <!-- Page 2 -->
                         <Link :href="route('Justificatifs.dashboard')" :class="[
-                            route().current('Justificatifs.dashboard') ? 'text-blue-600' : 'text-gray-600 hover:text-blue-500',
+                            route().current('Justificatifs.dashboard') ? 'text-teal-700' : 'text-gray-600 hover:text-teal-600',
                             'block text-sm py-1 transition'
                         ]">
                         Justificatifs
@@ -184,7 +184,7 @@ onUnmounted(() => {
 
                         <!-- Page 3 -->
                         <Link :href="route('absence.dashboard')" :class="[
-                            route().current('absence.dashboard') ? 'text-blue-600' : 'text-gray-600 hover:text-blue-500',
+                            route().current('absence.dashboard') ? 'text-teal-700' : 'text-gray-600 hover:text-teal-600',
                             'block text-sm py-1 transition'
                         ]">
                         Absences
@@ -194,14 +194,14 @@ onUnmounted(() => {
                     <!-- Sanction Parent -->
                     <button @click="sanctionExpanded = !sanctionExpanded" :class="[
                         route().current('sanction.rules.index') || route().current('sanction.tracking.index')
-                            ? 'bg-blue-50 text-blue-600'
+                            ? 'bg-blue-50 text-teal-700'
                             : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
                         sidebarOpen ? 'justify-start' : 'justify-center',
                         'w-full flex items-center rounded-md px-2 py-2 text-sm font-medium focus:outline-none transition'
                     ]">
                         <Gavel :class="[
                             route().current('sanction.rules.index') || route().current('sanction.tracking.index')
-                                ? 'text-blue-600'
+                                ? 'text-teal-700'
                                 : 'text-gray-500 group-hover:text-gray-500',
                             'mr-3 h-5 w-5 flex-shrink-0'
                         ]" />
@@ -214,14 +214,14 @@ onUnmounted(() => {
                     <div v-show="sanctionExpanded" class="ml-8 space-y-1" v-if="sidebarOpen">
                         <!-- Page 1 -->
                         <Link :href="route('sanction.rules.index')" :class="[
-                            route().current('sanction.rules.index') ? 'text-blue-600' : 'text-gray-600 hover:text-blue-500',
+                            route().current('sanction.rules.index') ? 'text-teal-700' : 'text-gray-600 hover:text-teal-600',
                             'block text-sm py-1 transition'
                         ]">
                         Règles de sanction
                         </Link>
                         <!-- Page 2 -->
                         <Link :href="route('sanction.tracking.index')" :class="[
-                            route().current('sanction.tracking.index') ? 'text-blue-600' : 'text-gray-600 hover:text-blue-500',
+                            route().current('sanction.tracking.index') ? 'text-teal-700' : 'text-gray-600 hover:text-teal-600',
                             'block text-sm py-1 transition'
                         ]">
                         Suivi des sanctions
