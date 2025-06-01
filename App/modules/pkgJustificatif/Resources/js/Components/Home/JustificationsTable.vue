@@ -1,7 +1,7 @@
 <template>
     <div class="bg-white rounded-lg shadow p-4">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
-            <h2 class="text-lg font-semibold text-gray-700">justificatifs récentes</h2>
+            <h2 class="text-lg font-semibold text-gray-700">Les Justifications</h2>
         </div>
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">
@@ -22,7 +22,7 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                    <tr v-for="(justification, index) in justifications.slice(0,5)" :key="index">
+                    <tr v-for="(justification, index) in justifications" :key="index">
                         <td class="px-4 py-3 whitespace-nowrap">
                             <div class="flex items-center">
                                 <div
@@ -61,22 +61,11 @@
                 </tbody>
             </table>
         </div>
-         <div class="flex flex-col md:flex-row justify-end items-start md:items-center m-4">
-            <div class="flex space-x-2 mt-2 md:mt-0">
-                <Link
-                    :href="route('Justificatifs.home')"
-                    class="bg-gray-100 hover:bg-gray-200 text-gray-900 px-3 py-1 rounded-md text-sm flex items-center">
-                    Voir plus
-                </Link>
-
-            </div>
-        </div>
     </div>
 </template>
 
 <script setup>
 import { FileText, FileSpreadsheet, Edit, Trash2 } from 'lucide-vue-next';
-import { Link } from '@inertiajs/vue3';
 
 defineProps({
     justifications: {
@@ -84,5 +73,4 @@ defineProps({
         required: true
     }
 });
-
 </script>

@@ -6,7 +6,7 @@ use Inertia\Inertia;
 use Modules\Core\App\Controllers\BaseController;
 use Modules\PkgJustificatif\App\Services\justificatifService;
 
-class DashboardController extends  BaseController
+class HomeController extends  BaseController
 {
     protected $justificationService;
 
@@ -16,10 +16,8 @@ class DashboardController extends  BaseController
     }
     public function index()
     {
-        return Inertia::render('PkgJustificatif::Dashboard', [
+        return Inertia::render('PkgJustificatif::Home', [
             'justifications'=> $this->justificationService->Alljustifications(),
-            'apprenants' => $this->justificationService->ApprenantswithJustifications(),
-            
         ]);
     }
 }

@@ -37,7 +37,7 @@ const icons = {
 };
 
 const raisons = props.justifications.reduce((acc, justification) => {
-    const raison = justification.raison.title;
+    const raison = justification.raison.libelle;
     acc[raison] = (acc[raison] || 0) + 1;
     return acc;
 }, {});
