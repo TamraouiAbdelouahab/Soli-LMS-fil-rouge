@@ -3,6 +3,7 @@
 namespace Modules\PkgSanction\App\Services;
 
 use Carbon\Carbon;
+use Modules\PkgApprenant\App\Models\Apprenant;
 use Modules\PkgSanction\App\Models\SanctionAbsence;
 use Modules\PkgSanction\App\Models\SanctionAbsenceCalculee;
 
@@ -42,6 +43,15 @@ class SanctionService
     public function sanctionAbsenceCalculeeCount()
     {
         return SanctionAbsenceCalculee::count();
+    }
+
+    public function learnersSanctionedCount()
+    {
+        $learnersSanctionedCount = Apprenant::whereHas('absences', function ($query) {
+            $query->whereNotNull('sanction_absence_id');
+        })->distinct()->count('id');
+
+        return $learnersSanctionedCount;
     }
 
     public function getSanctionsApplied()

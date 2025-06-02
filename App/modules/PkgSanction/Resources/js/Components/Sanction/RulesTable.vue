@@ -44,7 +44,7 @@
                                 <div class="text-sm font-medium text-charcoal-900">{{ rule.titre }}</div>
                                 <div class="text-sm text-gray-500 max-w-xs truncate">
                                     {{ rule.description.length > 30 ? rule.description.slice(0, 30) + '...' :
-                                    rule.description }}
+                                        rule.description }}
                                 </div>
                             </div>
                         </td>
@@ -77,38 +77,47 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                             {{ formatDate(rule.updated_at) }}
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <div class="flex items-center space-x-2">
-                                <button @click="$emit('view', rule)"
-                                    class="bg-light-blue-100 hover:bg-light-blue-200 text-light-blue-800 px-3 py-1 rounded-md text-xs font-medium transition">
-                                    <Eye class="h-3 w-3 mr-1 inline" />
-                                    Voir
-                                </button>
+                        <td class="px-6 py-4 text-sm font-medium">
+                            <div class="flex flex-col gap-2">
 
-                                <button @click="$emit('edit', rule)"
-                                    class="bg-teal-100 hover:bg-teal-200 text-teal-800 px-3 py-1 rounded-md text-xs font-medium transition">
-                                    <Edit class="h-3 w-3 mr-1 inline" />
-                                    Modifier
-                                </button>
+                                <!-- Row 1 -->
+                                <div class="flex gap-2">
+                                    <button @click="$emit('view', rule)"
+                                        class="bg-light-blue-100 hover:bg-light-blue-200 text-light-blue-800 px-3 py-1 rounded-md text-xs font-medium transition flex items-center w-full justify-center">
+                                        <Eye class="h-3 w-3 mr-1" />
+                                        Voir
+                                    </button>
 
-                                <button @click="$emit('toggle-status', rule)" :class="[
-                                    'px-3 py-1 rounded-md text-xs font-medium flex items-center transition',
-                                    rule.est_actif === 1
-                                        ? 'bg-red-orange-100 hover:bg-red-orange-200 text-red-orange-800'
-                                        : 'bg-teal-100 hover:bg-teal-200 text-teal-800'
-                                ]">
-                                    <Power class="h-3 w-3 mr-1 inline" />
-                                    {{ rule.est_actif === 1 ? 'Désactiver' : 'Activer' }}
-                                </button>
+                                    <button @click="$emit('delete', rule)"
+                                        class="bg-red-orange-100 hover:bg-red-orange-200 text-red-orange-800 px-3 py-1 rounded-md text-xs font-medium transition flex items-center w-full justify-center">
+                                        <Trash2 class="h-3 w-3 mr-1" />
+                                        Supprimer
+                                    </button>
+                                </div>
 
-                                <button @click="$emit('delete', rule)"
-                                    class="bg-red-orange-100 hover:bg-red-orange-200 text-red-orange-800 px-3 py-1 rounded-md text-xs font-medium transition">
-                                    <Trash2 class="h-3 w-3 mr-1 inline" />
-                                    Supprimer
-                                </button>
+                                <!-- Row 2 -->
+                                <div class="flex gap-2">
+                                    <button @click="$emit('edit', rule)"
+                                        class="bg-teal-100 hover:bg-teal-200 text-teal-800 px-3 py-1 rounded-md text-xs font-medium transition flex items-center w-full justify-center">
+                                        <Edit class="h-3 w-3 mr-1" />
+                                        Modifier
+                                    </button>
+
+                                    <button @click="$emit('toggle-status', rule)" :class="[
+                                        'px-3 py-1 rounded-md text-xs font-medium flex items-center w-full justify-center transition',
+                                        rule.est_actif === 1
+                                            ? 'bg-red-orange-100 hover:bg-red-orange-200 text-red-orange-800'
+                                            : 'bg-teal-100 hover:bg-teal-200 text-teal-800'
+                                    ]">
+                                        <Power class="h-3 w-3 mr-1" />
+                                        {{ rule.est_actif === 1 ? 'Désactiver' : 'Activer' }}
+                                    </button>
+                                </div>
+
                             </div>
-
                         </td>
+
+
                     </tr>
                 </tbody>
             </table>
