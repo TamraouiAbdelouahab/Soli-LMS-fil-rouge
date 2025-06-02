@@ -37,7 +37,7 @@ const icons = {
 };
 
 const raisons = props.justifications.reduce((acc, justification) => {
-    const raison = justification.raison.title;
+    const raison = justification.raison.libelle;
     acc[raison] = (acc[raison] || 0) + 1;
     return acc;
 }, {});
@@ -53,35 +53,48 @@ const raisontendance = computed(() =>{
     return raisonMax;
 });
 
-console.log(props.justifications);
 const apprenants = [...new Set(props.justifications.apprenant)];
-console.log(props.justifications.apprenant);
+const apprenantIds = new Set(props.justifications.map(j => j.apprenant_id));
+const countApprenants = apprenantIds.size;
 
 
+console.log(props.justifications);
+const dureeMoyenne = computed(() => {
+  if (props.justifications.length === 0) return 0;
+
+  const totalJours = props.justifications.reduce((somme, j) => {
+    const debut = new Date(j.dateDebut);
+    const fin = new Date(j.dateFin);
+    const duree = (fin - debut) / (1000 * 60 * 60 * 24) + 1; 
+    return somme + duree;
+  }, 0);
+
+  return totalJours / props.justifications.length + " jours";
+});
 
 
-
+const justificationEnAttente = props.justifications.filter(justification => justification.statut === 'EN_ATTENTE').length;
 
 
 
 const analyticsData = ref({
-    tendance: {
+    "tendance": {
         value: raisontendance,
         icon: 'TrendingUp',
         color: 'red'
     },
-    apprenants: {
-        value: '12',
+    "apprenants": {
+        value: countApprenants,
         icon: 'Users',
         color: 'orange'
     },
-    duree: {
-        value: '5 jours',
+    "duree moyenne": {
+        value: dureeMoyenne,
         icon: 'Clock',
         color: 'blue'
     },
-    attente: {
-        value: '7',
+    "en attente": {
+        value: justificationEnAttente,
         icon: 'AlertCircle',
         color: 'red'
     }
@@ -89,7 +102,6 @@ const analyticsData = ref({
 
 
 
-// Return Tailwind background color classes based on prop value
 const colorClass = (color) => {
     const colorMap = {
         red: 'bg-red-500',

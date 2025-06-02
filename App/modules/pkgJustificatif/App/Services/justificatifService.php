@@ -13,12 +13,15 @@ class justificatifService
 
     public function Alljustifications()
     {
-        $count = $this->justificationRepository->Alljustifications();
-        return $count;
+        $allJustifications = $this->justificationRepository->Alljustifications();
+        return $allJustifications;
     }
-
     public function ApprenantswithJustifications(){
         $apprenants = $this->justificationRepository->ApprenantswithJustifications();
         return $apprenants;
+    }
+    public function countapprenantwithjustification(){
+        $count = $this->justificationRepository->countapprenantwithjustification();
+        return $count;
     }
 }
