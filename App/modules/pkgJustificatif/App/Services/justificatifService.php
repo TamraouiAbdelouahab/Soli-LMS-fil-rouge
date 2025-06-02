@@ -20,4 +20,8 @@ class justificatifService
         $apprenants = $this->justificationRepository->ApprenantswithJustifications();
         return $apprenants;
     }
+    public function countapprenantwithjustification(){
+        $count = $this->justificationRepository->countapprenantwithjustification();
+        return $count;
+    }
 }

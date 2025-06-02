@@ -20,4 +20,8 @@ class justificatifRepository
                         ->get();
         return $topApprenants;
     }
+    public function countapprenantwithjustification(){
+        $count = Justificatif::distinct('apprenant_id')->count('apprenant_id');
+        return $count;
+    }
 }

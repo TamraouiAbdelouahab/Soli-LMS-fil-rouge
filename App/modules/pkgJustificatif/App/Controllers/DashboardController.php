@@ -19,7 +19,7 @@ class DashboardController extends  BaseController
         return Inertia::render('PkgJustificatif::Dashboard', [
             'justifications'=> $this->justificationService->Alljustifications(),
             'apprenants' => $this->justificationService->ApprenantswithJustifications(),
-            
+            'countapprenant' => $this->justificationService->countapprenantwithjustification(),
         ]);
     }
 }

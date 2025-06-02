@@ -13,7 +13,7 @@
             </div>
             <JustificationsTable :justifications="props.justifications" class="mb-6" />
         </div>
-         <Modal :show="modalVisible" @close="modalVisible = false" />
+         <Modal :show="modalVisible" :reasons="props.reasons" :groups="props.groups"  @close="modalVisible = false" />
     </AuthenticatedLayout>
 </template>
 
@@ -28,6 +28,8 @@ import { ref } from 'vue';
 const props = defineProps({
     justifications:Object,
     apprenants:Object,
+    reasons:Object,
+    groups:Object
 });
 const modalVisible = ref(false)
 </script>
