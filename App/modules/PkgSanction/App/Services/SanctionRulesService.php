@@ -4,6 +4,7 @@ namespace Modules\PkgSanction\App\Services;
 
 use Illuminate\Support\Facades\DB;
 use Modules\PkgApprenant\App\Models\Apprenant;
+use Modules\PkgSanction\App\Enum\SanctionType;
 use Modules\PkgSanction\App\Models\ReglesDeSanction;
 
 class SanctionRulesService
@@ -73,5 +74,17 @@ class SanctionRulesService
 
             return $rule;
         });
+    }
+
+    public function getSanctionTypes()
+    {
+        $sanctionTypes = SanctionType::cases();
+        $sanctionTypes = array_map(function ($type) {
+            return [
+                'value' => $type->value,
+                'label' => $type->name,
+            ];
+        }, $sanctionTypes);
+        return $sanctionTypes;
     }
 }

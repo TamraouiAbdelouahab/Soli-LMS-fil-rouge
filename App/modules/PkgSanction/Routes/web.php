@@ -3,6 +3,7 @@
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use Modules\PkgSanction\App\Controllers\DashboardController;
+use Modules\PkgSanction\App\Controllers\SanctionController;
 use Modules\PkgSanction\App\Controllers\SanctionRulesController;
 
 // Route::get('/dashboard', function () {
@@ -21,11 +22,11 @@ Route::prefix('sanction/rules')->middleware(['auth', 'verified'])->group(functio
     Route::delete('/{id}', [SanctionRulesController::class, 'destroy'])->name('sanction.rules.destroy');
 });
 
-// Route::prefix('sanction/tracking')->middleware(['auth', 'verified'])->group(function () {
-//     Route::get('/', [SanctionTrackingController::class, 'index'])->name('sanction.tracking.index');
+Route::prefix('sanction/tracking')->middleware(['auth', 'verified'])->group(function () {
+    Route::get('/', [SanctionController::class, 'index'])->name('sanction.tracking.index');
 
-// });
+});
 
-Route::get('sanction/tracking', function () {
-    return Inertia::render('PkgSanction::SanctionTracking');
-})->middleware(['auth', 'verified'])->name('sanction.tracking.index');
+// Route::get('sanction/tracking', function () {
+//     return Inertia::render('PkgSanction::SanctionTracking');
+// })->middleware(['auth', 'verified'])->name('sanction.tracking.index');

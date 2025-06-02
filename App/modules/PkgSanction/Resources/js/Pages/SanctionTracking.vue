@@ -40,7 +40,7 @@
                                 Sanctions à appliquer
                                 <span
                                     class="ml-2 bg-golden-yellow text-white text-xs font-medium px-2 py-1 rounded-full">
-                                    {{ filteredPendingSanctions.length }}
+                                    {{ sanctionsCalculees.data.length }}
                                 </span>
                             </div>
                         </button>
@@ -55,7 +55,7 @@
                                 <CheckCircle class="h-4 w-4 mr-2" />
                                 Sanctions appliquées
                                 <span class="ml-2 bg-teal-500 text-white text-xs font-medium px-2 py-1 rounded-full">
-                                    {{ filteredAppliedSanctions.length }}
+                                    {{ sanctionsApplied.data.length }}
                                 </span>
                             </div>
                         </button>
@@ -70,7 +70,7 @@
                             <h2 class="text-lg font-semibold text-charcoal-900">Sanctions en attente d'application</h2>
                             <div class="flex items-center space-x-2">
                                 <select v-model="pendingStatusFilter"
-                                    class="text-sm border border-gray-300 rounded-md px-3 py-1 focus:outline-none focus:ring-2 focus:ring-teal-500">
+                                    class="text-sm border border-gray-300 rounded-md ps-3 pe-7 py-1 focus:outline-none focus:ring-2 focus:ring-teal-500">
                                     <option value="">Tous les types</option>
                                     <option value="Avertissement">Avertissement</option>
                                     <option value="Blâme">Blâme</option>
@@ -79,8 +79,8 @@
                             </div>
                         </div>
 
-                        <PendingSanctionsTable :sanctions="filteredPendingSanctions" @apply="applySanction"
-                            @ignore="ignoreSanction" @view="viewSanction" />
+                        <PendingSanctionsTable :sanctions="sanctionsCalculees.data" @apply="applySanction"
+                            @ignore="ignoreSanction" @view="viewSanction" :links="sanctionsApplied.links" />
                     </div>
 
                     <!-- Applied Sanctions Tab -->
@@ -89,7 +89,7 @@
                             <h2 class="text-lg font-semibold text-charcoal-900">Sanctions appliquées</h2>
                             <div class="flex items-center space-x-2">
                                 <select v-model="appliedStatusFilter"
-                                    class="text-sm border border-gray-300 rounded-md px-3 py-1 focus:outline-none focus:ring-2 focus:ring-teal-500">
+                                    class="text-sm border border-gray-300 rounded-md ps-3 pe-7 py-1 focus:outline-none focus:ring-2 focus:ring-teal-500">
                                     <option value="">Tous les statuts</option>
                                     <option value="Active">Active</option>
                                     <option value="Expired">Expirée</option>
@@ -98,8 +98,8 @@
                             </div>
                         </div>
 
-                        <AppliedSanctionsTable :sanctions="filteredAppliedSanctions" @view="viewSanction"
-                            @lift="liftSanction" />
+                        <AppliedSanctionsTable :sanctions="sanctionsApplied.data" :links="sanctionsApplied.links"
+                            @view="viewSanction" @lift="liftSanction" />
                     </div>
                 </div>
             </div>
@@ -130,6 +130,12 @@ import AppliedSanctionsTable from '../Components/Sanction/AppliedSanctionsTable.
 import ViewSanctionModal from '../Components/Sanction/ViewSanctionModal.vue';
 import ApplySanctionModal from '../Components/Sanction/ApplySanctionModal.vue';
 
+const props = defineProps({
+    sanctionsApplied: Object,
+    sanctionsCalculees: Object,
+})
+
+console.log('Sanctions appliquées:', props.sanctionsCalculees);
 // Reactive state
 const activeTab = ref('pending');
 const searchQuery = ref('');
@@ -141,88 +147,50 @@ const showApplyModal = ref(false);
 const selectedSanction = ref(null);
 
 // Sample pending sanctions data
-const pendingSanctions = ref([
-    {
-        id: 1,
-        learner: 'Jean Dupont',
-        class: '1A',
-        sanctionType: 'Avertissement',
-        reason: 'Absences répétées (5/5)',
-        calculatedOn: new Date('2024-01-25'),
-        rule: "Règle d'absentéisme niveau 1",
-        absenceCount: 5
-    },
-    {
-        id: 2,
-        learner: 'Marie Martin',
-        class: '2B',
-        sanctionType: 'Blâme',
-        reason: 'Retards chroniques (8/8)',
-        calculatedOn: new Date('2024-01-24'),
-        rule: 'Règle retards répétés',
-        absenceCount: 8
-    },
-    {
-        id: 3,
-        learner: 'Pierre Durand',
-        class: '1B',
-        sanctionType: 'Exclusion',
-        reason: 'Absence examen important',
-        calculatedOn: new Date('2024-01-23'),
-        rule: 'Règle absence examens',
-        absenceCount: 3
-    },
-    {
-        id: 4,
-        learner: 'Sophie Leroy',
-        class: '2A',
-        sanctionType: 'Avertissement',
-        reason: 'Absences non justifiées (5/5)',
-        calculatedOn: new Date('2024-01-22'),
-        rule: "Règle d'absentéisme niveau 1",
-        absenceCount: 5
-    }
-]);
+// const pendingSanctions = ref([
+//     {
+//         id: 1,
+//         learner: 'Jean Dupont',
+//         class: '1A',
+//         sanctionType: 'Avertissement',
+//         reason: 'Absences répétées (5/5)',
+//         calculatedOn: new Date('2024-01-25'),
+//         rule: "Règle d'absentéisme niveau 1",
+//         absenceCount: 5
+//     },
+//     {
+//         id: 2,
+//         learner: 'Marie Martin',
+//         class: '2B',
+//         sanctionType: 'Blâme',
+//         reason: 'Retards chroniques (8/8)',
+//         calculatedOn: new Date('2024-01-24'),
+//         rule: 'Règle retards répétés',
+//         absenceCount: 8
+//     },
+//     {
+//         id: 3,
+//         learner: 'Pierre Durand',
+//         class: '1B',
+//         sanctionType: 'Exclusion',
+//         reason: 'Absence examen important',
+//         calculatedOn: new Date('2024-01-23'),
+//         rule: 'Règle absence examens',
+//         absenceCount: 3
+//     },
+//     {
+//         id: 4,
+//         learner: 'Sophie Leroy',
+//         class: '2A',
+//         sanctionType: 'Avertissement',
+//         reason: 'Absences non justifiées (5/5)',
+//         calculatedOn: new Date('2024-01-22'),
+//         rule: "Règle d'absentéisme niveau 1",
+//         absenceCount: 5
+//     }
+// ]);
 
-// Sample applied sanctions data
-const appliedSanctions = ref([
-    {
-        id: 1,
-        learner: 'Lucas Bernard',
-        class: '1A',
-        sanctionType: 'Avertissement',
-        appliedOn: new Date('2024-01-20'),
-        status: 'Active',
-        duration: 7,
-        appliedBy: 'M. Directeur',
-        endDate: new Date('2024-01-27'),
-        reason: 'Absences répétées'
-    },
-    {
-        id: 2,
-        learner: 'Emma Moreau',
-        class: '2A',
-        sanctionType: 'Blâme',
-        appliedOn: new Date('2024-01-15'),
-        status: 'Expired',
-        duration: 14,
-        appliedBy: 'Mme. Conseillère',
-        endDate: new Date('2024-01-29'),
-        reason: 'Comportement inapproprié'
-    },
-    {
-        id: 3,
-        learner: 'Hugo Petit',
-        class: '1B',
-        sanctionType: 'Exclusion',
-        appliedOn: new Date('2024-01-10'),
-        status: 'Lifted',
-        duration: 30,
-        appliedBy: 'M. Directeur',
-        endDate: new Date('2024-02-09'),
-        reason: 'Violence en classe'
-    }
-]);
+// const sanctionsApplied = ref({});
 
 // Computed: Filtered Pending Sanctions based on selected filter and search query
 const filteredPendingSanctions = computed(() => {
@@ -234,12 +202,12 @@ const filteredPendingSanctions = computed(() => {
 });
 
 // Computed: Filtered Applied Sanctions based on selected filter and search query
-const filteredAppliedSanctions = computed(() => {
-    return appliedSanctions.value.filter(sanction => {
-        const matchesStatus = appliedStatusFilter.value ? sanction.status === appliedStatusFilter.value : true;
-        return matchesStatus;
-    });
-});
+// const filteredAppliedSanctions = computed(() => {
+//     return appliedSanctions.value.filter(sanction => {
+//         const matchesStatus = appliedStatusFilter.value ? sanction.status === appliedStatusFilter.value : true;
+//         return matchesStatus;
+//     });
+// });
 
 // Methods
 function exportSanctions() {

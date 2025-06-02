@@ -24,6 +24,7 @@ class SanctionRulesController extends BaseController
             'activeRulesCount' => $this->sanctionRulesService->activeRulesCount(),
             'lastModificationDate' => $this->sanctionRulesService->getLastModificationDate(),
             'learnersSanctionedCount' => $this->sanctionRulesService->learnersSanctionedCount(),
+            'sanctionTypes' => $this->sanctionRulesService->getSanctionTypes(),
         ]);
     }
 

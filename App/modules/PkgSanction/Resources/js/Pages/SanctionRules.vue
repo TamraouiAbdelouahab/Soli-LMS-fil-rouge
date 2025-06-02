@@ -40,13 +40,13 @@
         @delete="deleteRule" />
 
       <!-- Add Rule Modal -->
-      <AddRuleModal v-if="showAddRuleModal" @close="showAddRuleModal = false" @submit="handleAddRule" />
+      <AddRuleModal v-if="showAddRuleModal" :sanctionTypes="sanctionTypes" @close="showAddRuleModal = false" @submit="handleAddRule" />
 
       <!-- View Rule Modal -->
       <ViewRuleModal v-if="showViewModal && selectedRule" :rule="selectedRule" @close="showViewModal = false" />
 
       <!-- Edit Rule Modal -->
-      <EditRuleModal v-if="showEditModal && selectedRule" :rule="selectedRule" @close="showEditModal = false"
+      <EditRuleModal v-if="showEditModal && selectedRule" :sanctionTypes="sanctionTypes" :rule="selectedRule" @close="showEditModal = false"
         @submit="handleEditRule" />
     </div>
   </AuthenticatedLayout>
@@ -86,8 +86,9 @@ const props = defineProps({
   activeRulesCount: Number,
   lastModificationDate: String,
   learnersSanctionedCount: Number,
+  sanctionTypes: Array,
 });
-console.log('Props:', props.learnersSanctionedCount);
+console.log('Props:', props.sanctionTypes);
 // Reactive data
 const searchQuery = ref('');
 const statusFilter = ref('');

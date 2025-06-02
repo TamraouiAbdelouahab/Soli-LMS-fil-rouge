@@ -18,56 +18,62 @@
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Durée
                     </th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <!-- <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Appliquée par
-                    </th>
+                    </th> -->
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Actions
                     </th>
                 </tr>
             </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-                <tr v-for="sanction in sanctions" :key="sanction.id" class="hover:bg-light-blue-25">
+            <tbody class="bg-white ">
+                <tr v-for="sanction in sanctions" :key="sanction.id"
+                    class="hover:bg-light-blue-25 border-t border-gray-200 last:border-b">
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="flex items-center">
                             <div
                                 class="h-10 w-10 rounded-full bg-light-blue-100 flex items-center justify-center text-teal-700 font-medium mr-3">
-                                {{ sanction.learner.charAt(0) }}
+                                {{ sanction.absences[0]?.apprenant?.prenom?.charAt(0) || '?' }}
                             </div>
                             <div>
-                                <div class="text-sm font-medium text-gray-900">{{ sanction.learner }}</div>
-                                <div class="text-sm text-gray-500">Classe {{ sanction.class }}</div>
+                                <div class="text-sm font-medium text-gray-900">
+                                    {{ sanction.absences[0]?.apprenant?.nom || 'N/A' }}
+                                    {{ sanction.absences[0]?.apprenant?.prenom || '' }}
+                                </div>
+                                <div class="text-sm text-gray-500">
+                                    Groupe {{ sanction.absences[0]?.apprenant?.groupes[0]?.nom || 'N/A' }}
+                                </div>
                             </div>
                         </div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <span :class="[
                             'inline-flex px-2 py-1 text-xs font-semibold rounded-full',
-                            getSanctionTypeColor(sanction.sanctionType)
+                            getSanctionTypeColor(sanction.regle.sanction_type)
                         ]">
-                            {{ sanction.sanctionType }}
+                            {{ sanction.regle.sanction_type }}
                         </span>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {{ formatDate(sanction.appliedOn) }}
+                        {{ formatDate(sanction.date_debut) }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <span :class="[
                             'inline-flex px-2 py-1 text-xs font-semibold rounded-full',
-                            getStatusColor(sanction.status)
+                            getStatusColor(sanction.statut)
                         ]">
-                            {{ getStatusLabel(sanction.status) }}
+                            {{ getStatusLabel(sanction.statut) }}
                         </span>
-                        <div v-if="sanction.status === 'Active'" class="text-xs text-gray-500 mt-1">
-                            Fin: {{ formatDate(sanction.endDate) }}
+                        <div v-if="sanction.statut === 'Active'" class="text-xs text-gray-500 mt-1">
+                            Fin: {{ formatDate(sanction.date_fin) }}
                         </div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {{ sanction.duration }} jour{{ sanction.duration > 1 ? 's' : '' }}
+                        {{ sanction.regle.duree_sanction }} jour{{ sanction.regle.duree_sanction > 1 ? 's' : '' }}
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {{ sanction.appliedBy }}
-                    </td>
+                    <!-- <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+
+                    </td> -->
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <div class="flex items-center space-x-2">
                             <button @click="$emit('view', sanction)"
@@ -92,16 +98,47 @@
             <h3 class="mt-2 text-sm font-medium text-gray-900">Aucune sanction appliquée</h3>
             <p class="mt-1 text-sm text-gray-500">Les sanctions appliquées apparaîtront ici.</p>
         </div>
+
+        <!-- Pagination -->
+        <div v-if="links && links.length > 0" class="flex justify-end py-4 px-6">
+            <nav class="inline-flex rounded-md shadow-sm">
+                <button v-for="(link, index) in links" :key="index" v-html="link.label" :disabled="!link.url"
+                    @click="changePage(link.url)" :class="[
+                        'px-4 py-2 border text-sm',
+                        link.active
+                            ? 'bg-teal-600 text-white border-teal-600'
+                            : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100',
+                        !link.url ? 'cursor-not-allowed opacity-50' : ''
+                    ]"></button>
+            </nav>
+        </div>
     </div>
+
 </template>
 
 <script setup>
 import { Eye, Shield, CheckCircle } from 'lucide-vue-next';
+import { router } from '@inertiajs/vue3';
+
+function changePage(url) {
+    if (url) {
+        router.visit(url, {
+            preserveScroll: true,
+            preserveState: true,
+        });
+    }
+}
 
 defineProps({
     sanctions: {
         type: Array,
-        required: true
+        required: true,
+        default: () => []
+    },
+    links: {
+        type: Array,
+        required: true,
+        default: () => []
     }
 });
 
@@ -110,7 +147,7 @@ defineEmits(['view', 'lift']);
 const getSanctionTypeColor = (type) => {
     const colors = {
         'Avertissement': 'bg-bright-yellow-100 text-yellow-800',
-        'Blâme': 'bg-golden-yellow-200 text-yellow-900',
+        'Blame': 'bg-golden-yellow-200 text-yellow-900',
         'Exclusion': 'bg-red-orange-100 text-red-orange-800'
     };
     return colors[type] || 'bg-gray-100 text-gray-800';
@@ -136,10 +173,12 @@ const getStatusLabel = (status) => statusStyles[status]?.label || status;
 
 
 const formatDate = (date) => {
+    const parsedDate = new Date(date);
+    if (isNaN(parsedDate)) return 'Date invalide';
     return new Intl.DateTimeFormat('fr-FR', {
         day: '2-digit',
         month: '2-digit',
         year: 'numeric'
-    }).format(date);
+    }).format(parsedDate);
 };
 </script>

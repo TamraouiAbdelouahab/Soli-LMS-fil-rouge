@@ -3,6 +3,8 @@
 namespace Modules\PkgSanction\App\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Enum;
+use Modules\PkgSanction\App\Enum\SanctionType;
 
 class SanctionRulesRequest extends FormRequest
 {
@@ -28,6 +30,7 @@ class SanctionRulesRequest extends FormRequest
             'seuil_de_notification' => 'required|integer|min:0',
             'duree_sanction' => 'nullable|integer|min:0',
             'est_actif' => 'required|boolean',
+            'sanction_type' => ['required', new Enum(SanctionType::class)],
         ];
     }
 }

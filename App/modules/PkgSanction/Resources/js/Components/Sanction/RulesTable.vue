@@ -42,7 +42,10 @@
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div>
                                 <div class="text-sm font-medium text-charcoal-900">{{ rule.titre }}</div>
-                                <div class="text-sm text-gray-500 max-w-xs truncate">{{ rule.description }}</div>
+                                <div class="text-sm text-gray-500 max-w-xs truncate">
+                                    {{ rule.description.length > 30 ? rule.description.slice(0, 30) + '...' :
+                                    rule.description }}
+                                </div>
                             </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">

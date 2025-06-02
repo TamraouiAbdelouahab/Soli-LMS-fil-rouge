@@ -7,7 +7,7 @@
             <!-- Modal Header -->
             <div class="flex items-center justify-between pb-4 border-b border-gray-200">
                 <h3 class="text-xl font-semibold text-gray-900 flex items-center">
-                    <Eye class="h-5 w-5 mr-2 text-blue-600" />
+                    <Eye class="h-5 w-5 mr-2 text-light-blue-800" />
                     Détails de la Règle
                 </h3>
                 <button @click="closeModal" class="text-gray-400 hover:text-gray-600 transition-colors">
@@ -21,10 +21,17 @@
                 <div>
                     <h4 class="text-lg font-medium text-gray-900 mb-3">Informations Générales</h4>
                     <div class="bg-gray-50 rounded-lg p-4 space-y-3">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-500">Titre</label>
-                            <p class="text-sm text-gray-900">{{ rule.titre }}</p>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-500">Titre</label>
+                                <p class="text-sm text-gray-900">{{ rule.titre }}</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-500">Type de Sanction</label>
+                                <p class="text-sm text-gray-900">{{ rule.sanction_type }}</p>
+                            </div>
                         </div>
+
                         <div>
                             <label class="block text-sm font-medium text-gray-500">Description</label>
                             <p class="text-sm text-gray-900">{{ rule.description }}</p>
@@ -35,8 +42,8 @@
                                 <span :class="[
                                     'inline-flex px-2 py-1 text-xs font-semibold rounded-full',
                                     rule.est_actif === 1
-                                        ? 'bg-green-100 text-green-800'
-                                        : 'bg-red-100 text-red-800'
+                                        ? 'bg-teal-100 text-teal-800'
+                                        : 'bg-red-orange-100 text-red-orange-800'
                                 ]">
                                     {{ rule.est_actif === 1 ? 'Actif' : 'Inactif' }}
                                 </span>
@@ -53,20 +60,20 @@
                 <div>
                     <h4 class="text-lg font-medium text-gray-900 mb-3">Paramètres</h4>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="bg-blue-50 rounded-lg p-4 text-center">
-                            <Users class="h-8 w-8 text-blue-600 mx-auto mb-2" />
-                            <p class="text-2xl font-bold text-blue-900">{{ rule.absences_max }}</p>
-                            <p class="text-sm text-blue-700">Absences Maximum</p>
+                        <div class="bg-teal-50 rounded-lg p-4 text-center">
+                            <Users class="h-8 w-8 text-teal-800 mx-auto mb-2" />
+                            <p class="text-2xl font-bold text-teal-900">{{ rule.absences_max }}</p>
+                            <p class="text-sm text-teal-800">Absences Maximum</p>
                         </div>
-                        <div class="bg-orange-50 rounded-lg p-4 text-center">
-                            <Bell class="h-8 w-8 text-orange-600 mx-auto mb-2" />
-                            <p class="text-2xl font-bold text-orange-900">{{ rule.seuil_de_notification }}</p>
-                            <p class="text-sm text-orange-700">Seuil de Notification</p>
+                        <div class="bg-teal-50 rounded-lg p-4 text-center">
+                            <Bell class="h-8 w-8 text-teal-800 mx-auto mb-2" />
+                            <p class="text-2xl font-bold text-teal-800">{{ rule.seuil_de_notification }}</p>
+                            <p class="text-sm text-teal-800">Seuil de Notification</p>
                         </div>
-                        <div class="bg-green-50 rounded-lg p-4 text-center">
-                            <Calendar class="h-8 w-8 text-green-600 mx-auto mb-2" />
-                            <p class="text-2xl font-bold text-green-900">{{ rule.duree_sanction }}</p>
-                            <p class="text-sm text-green-700">Durée (jours)</p>
+                        <div class="bg-teal-50 rounded-lg p-4 text-center">
+                            <Calendar class="h-8 w-8 text-teal-800 mx-auto mb-2" />
+                            <p class="text-2xl font-bold text-teal-800">{{ rule.duree_sanction }}</p>
+                            <p class="text-sm text-teal-800">Durée (jours)</p>
                         </div>
                     </div>
                 </div>
@@ -96,7 +103,8 @@
                                 </div>
                                 <div class="ml-3">
                                     <p class="text-sm text-gray-900">
-                                        <strong>Sanction à {{ rule.absences_max }} absence{{ rule.absences_max > 1 ? 's' :
+                                        <strong>Sanction à {{ rule.absences_max }} absence{{ rule.absences_max > 1 ? 's'
+                                            :
                                             '' }}</strong>
                                     </p>
                                     <p class="text-xs text-gray-500">Application de la sanction pendant {{
@@ -139,13 +147,13 @@ const closeModal = () => {
 };
 
 const formatDate = (date) => {
-  const parsed = new Date(date);
-  if (isNaN(parsed.getTime())) return 'Date invalide';
-  return new Intl.DateTimeFormat('fr-FR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric'
-  }).format(parsed);
+    const parsed = new Date(date);
+    if (isNaN(parsed.getTime())) return 'Date invalide';
+    return new Intl.DateTimeFormat('fr-FR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    }).format(parsed);
 };
 
 </script>

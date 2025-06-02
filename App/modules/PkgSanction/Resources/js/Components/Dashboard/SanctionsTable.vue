@@ -49,7 +49,7 @@
                                     {{ sanction.absences?.[0]?.apprenant?.prenom ?? '-' }}</div>
                             </div>
                         </td>
-                        <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-500">{{ sanction.regle.titre }}</td>
+                        <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-500">{{ sanction.regle.sanction_type }}</td>
                         <!-- <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-500">{{ sanction.formateur }}</td> -->
                         <td class="px-6 py-3 whitespace-nowrap">
                             <span
