@@ -5,7 +5,6 @@
   >
     <div class="bg-white p-6 rounded-lg shadow-xl  w-3/4">
       <h2 class="text-xl font-semibold mb-4">Ajouter un justification</h2>
-      <!-- <p class="mb-4">Ceci est le contenu du modal.</p> -->
       <div>
           <label  for="dateDebut" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
             Date debut
@@ -62,8 +61,9 @@
           <label  for="apprenant" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
             apprenant
           </label>
-          <input  type="text" id="apprenant" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-2" 
-                  placeholder="apprenant" required />
+          <select name="groupe" id="groupe" v-model="groupe" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-2">
+            <option v-for="apprenant in apprenantsDuGroupe" :value="apprenant.id" :key="apprenant.id">{{apprenant.nom}}</option>
+          </select>
       </div>
       <div class="flex items-center justify-between">
           <button
@@ -92,16 +92,12 @@ const props = defineProps(['show','reasons','groups'])
 console.log(props.groups);
 
 
-const groupe = ref(props.groups[0].id);
+const groupe = ref(props.groups[1].id);
 
 const apprenantsDuGroupe = computed(() => {
   const selectedGroup = props.groups.find(g => g.id === groupe.value);
   return selectedGroup ? selectedGroup.apprenants : [];
 });
-
-console.log(apprenantsDuGroupe);
-
-
 console.log(props.reasons)
 const statuses = ref({
   "EN_ATTENTE": "an attente",
