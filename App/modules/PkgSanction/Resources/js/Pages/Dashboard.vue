@@ -10,7 +10,7 @@
                     trend="voir les détails" color="blue" icon="Gavel" />
                 <SummaryCard title="Sanctions  semaine" :value="recentSanctionsCount ?? 0"
                     trend="Baisse de 5% cette semaine" color="orange" icon="Calendar" />
-                <SummaryCard title="Sanctions non résolues" :value="sanctionsAbsencePrevisionnelleCount ?? 0"
+                <SummaryCard title="Sanctions non résolues" :value="sanctionsAbsenceCalculeeCount ?? 0"
                     trend="voir les détails" color="red" icon="AlertTriangle" />
                 <SummaryCard title="Taux de récurrence" value="15%" trend="Baisse de 2% ce trimestre"
                     color="green" icon="Percent" />
@@ -33,19 +33,9 @@
                 </div>
             </div>
 
-            <!-- <div class="bg-white rounded-lg shadow p-4 mb-6">
-                <h2 class="text-lg font-semibold text-gray-700 mb-4">Top 5 des formateurs ayant le plus d'apprenants
-                    sanctionnés</h2>
-                <div class="h-64">
-                    <BarChart :chartData="trainersChartData" />
-                </div>
-            </div> -->
-
             <!-- Recent Sanctions Table -->
             <SanctionsTable :sanctions="recentSanctions" class="mb-6" />
 
-            <!-- Analytics Box -->
-            <!-- <AnalyticsBox :analytics="analyticsData" /> -->
         </div>
     </AuthenticatedLayout>
 </template>
@@ -56,22 +46,18 @@ import AuthenticatedLayout from '@core/Layouts/AuthenticatedLayout.vue';
 
 import SummaryCard from '../Components/Dashboard/SummaryCard.vue';
 import SanctionsTable from '../Components/Dashboard/SanctionsTable.vue';
-import AnalyticsBox from '../Components/Dashboard/AnalyticsBox.vue';
 import LineChart from '../Components/Dashboard/LineChart.vue';
 import PieChart from '../Components/Dashboard/PieChart.vue';
-import BarChart from '../Components/Dashboard/BarChart.vue';
 
 const props = defineProps({
     sanctionsAbsenceCount: Number,
-    sanctionsAbsencePrevisionnelleCount: Number,
+    sanctionsAbsenceCalculeeCount: Number,
     recentSanctions: Array,
     recentSanctionsCount: Number,
     activeSanctionCount: Number,
     monthlySanctions: Array,
     sanctionsByTypes: Array,
 });
-
-console.log(props.sanctionsByTypes);
 
 const monthlySanctionsChartData = computed(() => {
     if (!props.monthlySanctions || !props.monthlySanctions.length) {
@@ -99,7 +85,7 @@ const monthlySanctionsChartData = computed(() => {
 
 const sanctionsByTypesChartData = computed(() => {
     return {
-        labels: props.sanctionsByTypes.map(item => item.penalite),
+        labels: props.sanctionsByTypes.map(item => item.sanction_type),
         datasets: [
             {
                 data: props.sanctionsByTypes.map(item => item.value),
@@ -115,27 +101,4 @@ const sanctionsByTypesChartData = computed(() => {
     };
 });
 
-// Analytics data
-const analyticsData = ref({
-    tendance: {
-        value: 'En hausse',
-        icon: 'TrendingUp',
-        color: 'red'
-    },
-    apprenants: {
-        value: '12',
-        icon: 'Users',
-        color: 'orange'
-    },
-    duree: {
-        value: '5 jours',
-        icon: 'Clock',
-        color: 'blue'
-    },
-    attente: {
-        value: '7',
-        icon: 'AlertCircle',
-        color: 'red'
-    }
-});
 </script>

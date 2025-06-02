@@ -1,6 +1,6 @@
 <template>
-    <div class="bg-white rounded-lg shadow p-4">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
+    <div class="bg-white rounded-lg shadow ">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center px-6 py-4">
             <h2 class="text-lg font-semibold text-gray-700">Sanctions récentes</h2>
             <div class="flex space-x-2 mt-2 md:mt-0">
                 <button
@@ -20,25 +20,25 @@
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Apprenant</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type
                         </th>
-                        <!-- <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <!-- <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Formateur</th> -->
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Statut</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date
                         </th>
-                        <!-- <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <!-- <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Récurrence</th> -->
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Actions</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
                     <tr v-for="(sanction, index) in sanctions" :key="index">
-                        <td class="px-4 py-3 whitespace-nowrap">
+                        <td class="px-6 py-3 whitespace-nowrap">
                             <div class="flex items-center">
                                 <div
                                     class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 mr-2">
@@ -49,17 +49,17 @@
                                     {{ sanction.absences?.[0]?.apprenant?.prenom ?? '-' }}</div>
                             </div>
                         </td>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{{ sanction.regle.penalite }}</td>
-                        <!-- <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{{ sanction.formateur }}</td> -->
-                        <td class="px-4 py-3 whitespace-nowrap">
+                        <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-500">{{ sanction.regle.sanction_type }}</td>
+                        <!-- <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-500">{{ sanction.formateur }}</td> -->
+                        <td class="px-6 py-3 whitespace-nowrap">
                             <span
                                 :class="`inline-flex px-2 py-1 text-xs rounded-full ${sanction.statut === 'Expirée' ? 'bg-gray-100 text-gray-800' : 'bg-orange-100 text-orange-800'}`">
                                 {{ sanction.statut }}
                             </span>
                         </td>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{{ sanction.date_debut }}</td>
-                        <!-- <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{{ sanction.recurrence }}</td> -->
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                        <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-500">{{ sanction.date_debut }}</td>
+                        <!-- <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-500">{{ sanction.recurrence }}</td> -->
+                        <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-500">
                             <div class="flex space-x-2">
                                 <button class="text-blue-600 hover:text-blue-800">
                                     <Edit class="h-4 w-4" />

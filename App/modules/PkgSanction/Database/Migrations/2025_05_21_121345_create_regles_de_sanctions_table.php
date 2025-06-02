@@ -16,10 +16,10 @@ return new class extends Migration
             $table->string('titre');
             $table->text('description')->nullable();
             $table->integer('absences_max');
-            $table->string('penalite');
             $table->integer('seuil_de_notification');
-            $table->integer('duree');
-            $table->text('note')->nullable();
+            $table->integer('duree_sanction');
+            $table->boolean('est_actif')->default(true);
+            $table->string('sanction_type'); 
             $table->timestamps();
         });
     }

@@ -19,10 +19,12 @@ import {
     FileText,
     Settings,
     ChevronRight,
-    ChevronLeft
+    ChevronLeft,
+    Gavel
 } from 'lucide-vue-next';
 
 const dashboardExpanded = ref(false)
+const sanctionExpanded = ref(false)
 
 const showingNavigationDropdown = ref(false);
 const sidebarOpen = ref(true);
@@ -145,28 +147,28 @@ onUnmounted(() => {
                 <nav class="mt-5 flex-1 space-y-1 px-2">
                     <!-- Dashboard Parent -->
                     <button @click="dashboardExpanded = !dashboardExpanded" :class="[
-                        route().current('dashboard') || route().current('page-1') || route().current('page-2') || route().current('page-3')
-                            ? 'bg-blue-50 text-blue-600'
+                        route().current('sanction.dashboard') || route().current('Justificatifs.dashboard') || route().current('absence.dashboard')
+                            ? 'bg-blue-50 text-teal-700'
                             : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
                         sidebarOpen ? 'justify-start' : 'justify-center',
                         'w-full flex items-center rounded-md px-2 py-2 text-sm font-medium focus:outline-none transition'
                     ]">
                         <Home :class="[
-                            route().current('dashboard') || route().current('page-1') || route().current('page-2') || route().current('page-3')
-                                ? 'text-blue-600'
+                            route().current('sanction.dashboard') || route().current('Justificatifs.dashboard') || route().current('absence.dashboard')
+                                ? 'text-teal-700'
                                 : 'text-gray-500 group-hover:text-gray-500',
                             'mr-3 h-5 w-5 flex-shrink-0'
                         ]" />
-                        <span v-if="sidebarOpen">Dashboards</span>
+                        <span v-if="sidebarOpen">Tableaux de bord</span>
                         <ChevronRight v-if="!dashboardExpanded && sidebarOpen" class="ml-auto h-4 w-4 text-gray-400" />
                         <ChevronDown v-if="dashboardExpanded && sidebarOpen" class="ml-auto h-4 w-4 text-gray-400" />
                     </button>
 
-                    <!-- Sublinks: Page 1, Page 2, Page 3 -->
+                    <!-- Sublinks -->
                     <div v-show="dashboardExpanded" class="ml-8 space-y-1" v-if="sidebarOpen">
                         <!-- Page 1 -->
                         <Link :href="route('sanction.dashboard')" :class="[
-                            route().current('sanction.dashboard') ? 'text-blue-600' : 'text-gray-600 hover:text-blue-500',
+                            route().current('sanction.dashboard') ? 'text-teal-700' : 'text-gray-600 hover:text-teal-600',
                             'block text-sm py-1 transition'
                         ]">
                         Sanctions
@@ -174,7 +176,7 @@ onUnmounted(() => {
 
                         <!-- Page 2 -->
                         <Link :href="route('Justificatifs.dashboard')" :class="[
-                            route().current('Justificatifs.dashboard') ? 'text-blue-600' : 'text-gray-600 hover:text-blue-500',
+                            route().current('Justificatifs.dashboard') ? 'text-teal-700' : 'text-gray-600 hover:text-teal-600',
                             'block text-sm py-1 transition'
                         ]">
                         Justificatifs
@@ -182,11 +184,49 @@ onUnmounted(() => {
 
                         <!-- Page 3 -->
                         <Link :href="route('absence.dashboard')" :class="[
-                            route().current('absence.dashboard') ? 'text-blue-600' : 'text-gray-600 hover:text-blue-500',
+                            route().current('absence.dashboard') ? 'text-teal-700' : 'text-gray-600 hover:text-teal-600',
                             'block text-sm py-1 transition'
                         ]">
                         Absences
                         </Link>
+                    </div>
+
+                    <!-- Sanction Parent -->
+                    <button @click="sanctionExpanded = !sanctionExpanded" :class="[
+                        route().current('sanction.rules.index') || route().current('sanction.tracking.index')
+                            ? 'bg-blue-50 text-teal-700'
+                            : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
+                        sidebarOpen ? 'justify-start' : 'justify-center',
+                        'w-full flex items-center rounded-md px-2 py-2 text-sm font-medium focus:outline-none transition'
+                    ]">
+                        <Gavel :class="[
+                            route().current('sanction.rules.index') || route().current('sanction.tracking.index')
+                                ? 'text-teal-700'
+                                : 'text-gray-500 group-hover:text-gray-500',
+                            'mr-3 h-5 w-5 flex-shrink-0'
+                        ]" />
+                        <span v-if="sidebarOpen">Sanctions</span>
+                        <ChevronRight v-if="!sanctionExpanded && sidebarOpen" class="ml-auto h-4 w-4 text-gray-400" />
+                        <ChevronDown v-if="sanctionExpanded && sidebarOpen" class="ml-auto h-4 w-4 text-gray-400" />
+                    </button>
+
+                    <!-- Sublinks -->
+                    <div v-show="sanctionExpanded" class="ml-8 space-y-1" v-if="sidebarOpen">
+                        <!-- Page 1 -->
+                        <Link :href="route('sanction.rules.index')" :class="[
+                            route().current('sanction.rules.index') ? 'text-teal-700' : 'text-gray-600 hover:text-teal-600',
+                            'block text-sm py-1 transition'
+                        ]">
+                        Règles de sanction
+                        </Link>
+                        <!-- Page 2 -->
+                        <Link :href="route('sanction.tracking.index')" :class="[
+                            route().current('sanction.tracking.index') ? 'text-teal-700' : 'text-gray-600 hover:text-teal-600',
+                            'block text-sm py-1 transition'
+                        ]">
+                        Suivi des sanctions
+                        </Link>
+
                     </div>
                 </nav>
             </div>

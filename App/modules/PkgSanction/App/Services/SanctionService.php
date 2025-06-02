@@ -4,7 +4,7 @@ namespace Modules\PkgSanction\App\Services;
 
 use Carbon\Carbon;
 use Modules\PkgSanction\App\Models\SanctionAbsence;
-use Modules\PkgSanction\App\Models\SanctionAbsencePrevisionnelle;
+use Modules\PkgSanction\App\Models\SanctionAbsenceCalculee;
 
 class SanctionService
 {
@@ -39,8 +39,22 @@ class SanctionService
         return SanctionAbsence::count();
     }
 
-    public function sanctionAbsencePrevisionnelleCount()
+    public function sanctionAbsenceCalculeeCount()
     {
-        return SanctionAbsencePrevisionnelle::count();
+        return SanctionAbsenceCalculee::count();
+    }
+
+    public function getSanctionsApplied()
+    {
+        $SanctionsApplied = SanctionAbsence::with('absences.apprenant.groupes', 'regle')->orderBy('date_fin', 'desc')->paginate(10);
+
+        foreach ($SanctionsApplied as $Sanction) {
+            if ($Sanction) {
+                $Statut = Carbon::parse($Sanction->date_fin)->lt(Carbon::now()) ? 'Expirée' : 'Active';
+                $Sanction->statut = $Statut;
+            }
+        }
+
+        return $SanctionsApplied;
     }
 }

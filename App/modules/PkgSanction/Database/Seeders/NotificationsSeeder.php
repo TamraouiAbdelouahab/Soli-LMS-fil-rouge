@@ -15,6 +15,8 @@ class NotificationsSeeder extends Seeder
             [
                 'sanction_absence_id' => 1,
                 'apprenant_id'             => 2,
+                'titre'               => 'Avertissement pour absences',
+                'etat'               => 'non lu',
                 'message'             => 'Vous avez dépassé votre quota d\'absences autorisées.',
                 'created_at'          => now()->subDays(6),
                 'updated_at'          => now(),
@@ -22,6 +24,8 @@ class NotificationsSeeder extends Seeder
             [
                 'sanction_absence_id' => 2,
                 'apprenant_id'             => 3,
+                'titre'               => 'Suspension temporaire',
+                'etat'               => 'non lu',
                 'message'             => 'Votre accès est suspendu pour une durée de 4 jours.',
                 'created_at'          => now()->subDays(2),
                 'updated_at'          => now(),

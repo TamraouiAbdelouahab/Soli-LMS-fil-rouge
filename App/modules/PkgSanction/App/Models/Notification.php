@@ -12,7 +12,9 @@ class Notification extends Model
 
     protected $fillable = [
         'sanction_absence_id',
-        'user_id',
+        'apprenant_id',
+        'titre',
+        'etat',
         'message',
     ];
 

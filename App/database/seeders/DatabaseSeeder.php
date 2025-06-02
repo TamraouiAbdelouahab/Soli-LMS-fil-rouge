@@ -8,13 +8,10 @@ use Modules\Core\Database\Seeders\UsersTableSeeder;
 use Modules\PkgApprenant\Database\Seeders\GroupeSeeder;
 use Modules\PkgApprenant\Database\Seeders\ApprenantSeeder;
 use Modules\PkgJustificatif\Database\Seeders\DatabaseSeederJustificatif;
-use Modules\PkgSanction\Database\Seeders\NotificationsSeeder;
 use Modules\PkgApprenant\Database\Seeders\ApprenantGroupeSeeder;
 use Modules\PkgEntretienInscrition\Database\Seeders\PkgEntretienInscritionDatabaseSeeder;
-use Modules\PkgSanction\Database\Seeders\SanctionAbsencesSeeder;
-use Modules\PkgSanction\Database\Seeders\ReglesDeSanctionsSeeder;
-use Modules\PkgSanction\Database\Seeders\SanctionAbsencesPrevisionnellesSeeder;
 use Modules\PkgAbsence\Database\Seeders\DatabaseSeederAbsence;
+use Modules\PkgSanction\Database\Seeders\DatabaseSeederSanction;
 
 class DatabaseSeeder extends Seeder
 {
@@ -36,13 +33,10 @@ class DatabaseSeeder extends Seeder
             ApprenantSeeder::class,
             ApprenantGroupeSeeder::class,
             DatabaseSeederJustificatif::class,
-            ReglesDeSanctionsSeeder::class,
             DureeSeancesSeeder::class,
             SeancesSeeder::class,
-            SanctionAbsencesSeeder::class,
-            SanctionAbsencesPrevisionnellesSeeder::class,
+            DatabaseSeederSanction::class,
             DatabaseSeederAbsence::class,
-            NotificationsSeeder::class,
             PkgEntretienInscritionDatabaseSeeder::class
         ]);
     }
