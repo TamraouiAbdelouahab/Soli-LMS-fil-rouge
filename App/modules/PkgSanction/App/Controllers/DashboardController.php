@@ -25,7 +25,7 @@ class DashboardController extends BaseController
 
         return Inertia::render('PkgSanction::Dashboard', [
             'sanctionsAbsenceCount' => $this->sanctionService->sanctionAbsenceCount(),
-            'sanctionsAbsencePrevisionnelleCount' => $this->sanctionService->sanctionAbsencePrevisionnelleCount(),
+            'sanctionsAbsenceCalculeeCount' => $this->sanctionService->sanctionAbsenceCalculeeCount(),
             'recentSanctions' => $this->sanctionService->getRecentSanctions(),
             'recentSanctionsCount' => $this->sanctionService->recentSanctionsCount(),
             'activeSanctionCount' => $this->sanctionService->activeSanctionCount(),

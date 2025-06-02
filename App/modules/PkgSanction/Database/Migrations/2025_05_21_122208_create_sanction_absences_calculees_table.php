@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sanction_absences_previsionnelles', function (Blueprint $table) {
+        Schema::create('sanction_absences_calculees', function (Blueprint $table) {
             $table->id();
             $table->foreignId('regle_de_sanction_id')->constrained('regles_de_sanctions')->onDelete('cascade');
             // $table->foreignId('absence_id')->constrained('absences')->onDelete('cascade');
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('sanction_absences_previsionnelles');
+        Schema::dropIfExists('sanction_absences_calculees');
     }
 };
