@@ -43,7 +43,7 @@
                             <div>
                                 <div class="text-sm font-medium text-charcoal-900">{{ rule.titre }}</div>
                                 <div class="text-sm text-gray-500 max-w-xs truncate">
-                                    {{ rule.description.length > 24 ? rule.description.slice(0, 24) + '...' :
+                                    {{ rule.description && rule.description.length > 24 ? rule.description.slice(0, 24) + '...' :
                                         rule.description }}
                                 </div>
                             </div>
