@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('seances', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('duree_seance_id')->constrained('duree_seances')->onDelete('cascade');
+            $table->dateTime('date_debut');
+            $table->dateTime('date_fin');
             $table->timestamps();
         });
     }
