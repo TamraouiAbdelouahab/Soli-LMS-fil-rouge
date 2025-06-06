@@ -23,11 +23,14 @@ class CreateAbsencesTable extends Migration
             // ✅ Justification booléenne
             $table->boolean('justifie')->default(false);
 
+            // 🟢 Absence sanctionnée
+            $table->boolean('est_sanctionnée')->default(false);
+
             // 🟠 Sanction réelle
             $table->foreignId('sanction_absence_id')->nullable()->constrained('sanction_absences')->nullOnDelete();
 
             // 🔵 Sanction prévisionnelle
-            $table->foreignId('sanction_absence_previsionnelle_id')->nullable()->constrained('sanction_absences_previsionnelles')->nullOnDelete();
+            $table->foreignId('sanction_absences_calculees_id')->nullable()->constrained('sanction_absences_calculees')->nullOnDelete();
 
             $table->timestamps();
         });
