@@ -33,9 +33,9 @@
                                         Type de sanction
                                     </dt>
                                     <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                        <span :class="getSanctionTypeColor(sanction.type)"
+                                        <span :class="getSanctionTypeColor(sanction.regle.sanction_type)"
                                             class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium">
-                                            {{ sanction.type }}
+                                            {{ sanction.regle.sanction_type }}
                                         </span>
                                     </dd>
                                 </div>
@@ -46,16 +46,16 @@
                                     <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                                         <span :class="getStatusColor(sanction.status)"
                                             class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium">
-                                            {{ sanction.status }}
+                                            {{ sanction.statut }}
                                         </span>
                                     </dd>
                                 </div>
                                 <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
                                     <dt class="text-sm font-medium text-gray-500">
-                                        Motif
+                                        Règle
                                     </dt>
                                     <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                        {{ sanction.reason }}
+                                        {{ sanction.regle.titre }}
                                     </dd>
                                 </div>
                                 <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
@@ -63,15 +63,7 @@
                                         Description
                                     </dt>
                                     <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                        {{ sanction.description }}
-                                    </dd>
-                                </div>
-                                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                                    <dt class="text-sm font-medium text-gray-500">
-                                        Remarques
-                                    </dt>
-                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                        {{ sanction.notes }}
+                                        {{ sanction.regle.description }}
                                     </dd>
                                 </div>
                             </dl>
@@ -87,7 +79,7 @@
                                         </div>
                                         <div class="ml-4">
                                             <div class="text-sm font-medium text-gray-900">Calculée le</div>
-                                            <div class="text-sm text-gray-500">{{ formatDate(sanction.calculatedOn) }}
+                                            <div class="text-sm text-gray-500">{{ formatDate(sanction.created_at) }}
                                             </div>
                                         </div>
                                     </div>
