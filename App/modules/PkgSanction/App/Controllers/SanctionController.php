@@ -25,4 +25,22 @@ class SanctionController extends BaseController
             'sanctionsCalculees' => $this->sanctionCalculeeService->getSanctionsCalculees(),
         ]);
     }
+
+    public function calculateSanctions()
+    {
+        $this->sanctionCalculeeService->calculateSanctions();
+        return redirect()->back()->with('success', 'Sanctions calculated successfully.');
+    }
+
+    public function applicationSanction($id)
+    {
+        $this->sanctionCalculeeService->applicationSanction($id);
+        return redirect()->back()->with('success', 'Sanctions applied successfully.');
+    }
+
+    public function destroy($id)
+    {
+        $this->sanctionCalculeeService->deleteSanctionCalculee($id);
+        return redirect()->back()->with('success', 'Sanction deleted successfully.');
+    }
 }

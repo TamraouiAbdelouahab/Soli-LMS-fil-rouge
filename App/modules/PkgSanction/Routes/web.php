@@ -24,6 +24,9 @@ Route::prefix('sanction/rules')->middleware(['auth', 'verified'])->group(functio
 
 Route::prefix('sanction/tracking')->middleware(['auth', 'verified'])->group(function () {
     Route::get('/', [SanctionController::class, 'index'])->name('sanction.tracking.index');
+    Route::post('/calculate', [SanctionController::class, 'calculateSanctions'])->name('sanction.tracking.calculate');
+    Route::post('/apply/{id}', [SanctionController::class, 'applicationSanction'])->name('sanction.tracking.apply');
+    Route::delete('/{id}', [SanctionController::class, 'destroy'])->name('sanction.tracking.destroy');
 
 });
 

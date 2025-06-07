@@ -21,7 +21,7 @@ class Absence extends Model
         'justifie',
         'est_sanctionnée',
         'sanction_absence_id',
-        'sanction_absences_calculees_id',
+        'sanction_absence_calculee_id',
     ];
 
     protected $casts = [
@@ -52,6 +52,6 @@ class Absence extends Model
 
     public function sanctionPrevisionnelle()
     {
-        return $this->belongsTo(SanctionAbsenceCalculee::class, 'sanction_absences_calculees_id');
+        return $this->belongsTo(SanctionAbsenceCalculee::class, 'sanction_absence_calculee_id');
     }
 }

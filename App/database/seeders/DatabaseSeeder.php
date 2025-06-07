@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Modules\Core\App\Models\User;
 use Modules\Core\Database\Seeders\UsersTableSeeder;
 use Modules\PkgApprenant\Database\Seeders\GroupeSeeder;
 use Modules\PkgApprenant\Database\Seeders\ApprenantSeeder;
@@ -26,6 +27,12 @@ class DatabaseSeeder extends Seeder
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
+
+        User::create([
+            'name' => 'Admin',
+            'email' => 'admin@gmail.com',
+            'password' => bcrypt('password'),
+        ]);
 
         $this->call([
             UsersTableSeeder::class,

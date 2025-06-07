@@ -16,7 +16,7 @@
                         Exporter
                     </button>
 
-                    <button @click="refreshData"
+                    <button @click="submitCalcul"
                         class="inline-flex items-center px-4 py-2 bg-teal-600 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">
                         <RefreshCw class="h-4 w-4 mr-2" />
                         Actualiser
@@ -117,6 +117,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
+import { router } from '@inertiajs/vue3'
 import {
     Download,
     RefreshCw,
@@ -135,7 +136,7 @@ const props = defineProps({
     sanctionsCalculees: Object,
 })
 
-console.log('Sanctions appliquées:', props.sanctionsCalculees);
+console.log('Sanctions appliquées:', props.sanctionsCalculees.data);
 // Reactive state
 const activeTab = ref('pending');
 const searchQuery = ref('');
@@ -145,50 +146,6 @@ const appliedStatusFilter = ref('');
 const showViewModal = ref(false);
 const showApplyModal = ref(false);
 const selectedSanction = ref(null);
-
-// Sample pending sanctions data
-// const pendingSanctions = ref([
-//     {
-//         id: 1,
-//         learner: 'Jean Dupont',
-//         class: '1A',
-//         sanctionType: 'Avertissement',
-//         reason: 'Absences répétées (5/5)',
-//         calculatedOn: new Date('2024-01-25'),
-//         rule: "Règle d'absentéisme niveau 1",
-//         absenceCount: 5
-//     },
-//     {
-//         id: 2,
-//         learner: 'Marie Martin',
-//         class: '2B',
-//         sanctionType: 'Blâme',
-//         reason: 'Retards chroniques (8/8)',
-//         calculatedOn: new Date('2024-01-24'),
-//         rule: 'Règle retards répétés',
-//         absenceCount: 8
-//     },
-//     {
-//         id: 3,
-//         learner: 'Pierre Durand',
-//         class: '1B',
-//         sanctionType: 'Exclusion',
-//         reason: 'Absence examen important',
-//         calculatedOn: new Date('2024-01-23'),
-//         rule: 'Règle absence examens',
-//         absenceCount: 3
-//     },
-//     {
-//         id: 4,
-//         learner: 'Sophie Leroy',
-//         class: '2A',
-//         sanctionType: 'Avertissement',
-//         reason: 'Absences non justifiées (5/5)',
-//         calculatedOn: new Date('2024-01-22'),
-//         rule: "Règle d'absentéisme niveau 1",
-//         absenceCount: 5
-//     }
-// ]);
 
 // const sanctionsApplied = ref({});
 
@@ -201,21 +158,13 @@ const filteredPendingSanctions = computed(() => {
     });
 });
 
-// Computed: Filtered Applied Sanctions based on selected filter and search query
-// const filteredAppliedSanctions = computed(() => {
-//     return appliedSanctions.value.filter(sanction => {
-//         const matchesStatus = appliedStatusFilter.value ? sanction.status === appliedStatusFilter.value : true;
-//         return matchesStatus;
-//     });
-// });
-
 // Methods
 function exportSanctions() {
     alert('Fonction d\'export des sanctions déclenchée.');
 }
 
-function refreshData() {
-    alert('Données rafraîchies.');
+const submitCalcul = () => {
+    router.post(route('sanction.tracking.calculate'));
 }
 
 function applySanction(sanction) {
@@ -224,7 +173,7 @@ function applySanction(sanction) {
 }
 
 function ignoreSanction(sanction) {
-    alert(`Sanction ID ${sanction.id} ignorée.`);
+    router.delete(route('sanction.tracking.destroy', sanction.id));
 }
 
 function viewSanction(sanction) {
@@ -232,9 +181,16 @@ function viewSanction(sanction) {
     showViewModal.value = true;
 }
 
-function confirmApplySanction() {
-    alert(`Sanction ID ${selectedSanction.value.id} appliquée.`);
-    showApplyModal.value = false;
+function confirmApplySanction(sanction) {
+    router.post(route('sanction.tracking.apply', sanction.id), {}, {
+        onSuccess: () => {
+            showApplyModal.value = false;
+            selectedSanction.value = null;
+        },
+        onError: (errors) => {
+            console.error('Error applying sanction:', errors);
+        }
+    });
 }
 
 function liftSanction(sanction) {

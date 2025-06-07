@@ -15,7 +15,7 @@ class ReglesDeSanctionsSeeder extends Seeder
         ReglesDeSanction::insert([
             [
                 'titre' => 'Mise en garde niveau 1',
-                'sanction_type' => SanctionType::AVERTISSEMENT->value,
+                'sanction_type' => SanctionType::MISE_EN_GARDE->value,
                 'description' => 'Première mise en garde suite à des absences répétées.',
                 'absences_max' => 3,
                 'seuil_de_notification' => 2,
@@ -26,7 +26,7 @@ class ReglesDeSanctionsSeeder extends Seeder
             ],
             [
                 'titre' => 'Mise en garde niveau 2',
-                'sanction_type' => SanctionType::AVERTISSEMENT->value,
+                'sanction_type' => SanctionType::MISE_EN_GARDE->value,
                 'description' => 'Deuxième mise en garde en cas de récidive.',
                 'absences_max' => 6,
                 'seuil_de_notification' => 5,
@@ -59,7 +59,7 @@ class ReglesDeSanctionsSeeder extends Seeder
             ],
             [
                 'titre' => 'Blâme',
-                'sanction_type' => SanctionType::SUSPENSION->value,
+                'sanction_type' => SanctionType::BLAME->value,
                 'description' => 'Blâme inscrit dans le dossier de l\'apprenant.',
                 'absences_max' => 15,
                 'seuil_de_notification' => 13,

@@ -46,7 +46,7 @@
                                     <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                                         <span :class="getStatusColor(sanction.status)"
                                             class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium">
-                                            {{ sanction.statut }}
+                                            {{ sanction.statut ?? 'Pending' }}
                                         </span>
                                     </dd>
                                 </div>
@@ -66,13 +66,35 @@
                                         {{ sanction.regle.description }}
                                     </dd>
                                 </div>
+
+
+                                <!-- Apprenant Info -->
+
+
+                                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                                    <dt class="text-sm font-medium text-gray-500">
+                                        Nom complet de l'apprenante
+                                    </dt>
+                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                        {{ sanction.absences[0]?.apprenant.prenom }} {{
+                                            sanction.absences[0]?.apprenant.nom }}
+                                    </dd>
+                                </div>
+                                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                                    <dt class="text-sm font-medium text-gray-500">
+                                        Groupe
+                                    </dt>
+                                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                        {{ sanction.absences[0]?.apprenant.groupes[0].nom }}
+                                    </dd>
+                                </div>
                             </dl>
 
                             <!-- Timeline section -->
                             <div class="mt-6">
                                 <h4 class="text-md font-semibold text-gray-700 mb-3">Timeline</h4>
                                 <div class="space-y-3">
-                                    <div v-if="sanction.calculatedOn" class="flex items-center">
+                                    <div v-if="sanction.absences[0]?.est_sanctionnée === 0" class="flex items-center">
                                         <div
                                             class="flex-shrink-0 w-8 h-8 bg-light-blue-100 rounded-full flex items-center justify-center">
                                             <Calculator class="h-4 w-4 text-teal-600" />
@@ -84,14 +106,14 @@
                                         </div>
                                     </div>
 
-                                    <div v-if="sanction.appliedOn" class="flex items-center">
+                                    <div v-if="sanction.absences[0]?.est_sanctionnée === 1" class="flex items-center">
                                         <div
                                             class="flex-shrink-0 w-8 h-8 bg-teal-100 rounded-full flex items-center justify-center">
                                             <CheckCircle class="h-4 w-4 text-teal-600" />
                                         </div>
                                         <div class="ml-4">
                                             <div class="text-sm font-medium text-gray-900">Appliquée le</div>
-                                            <div class="text-sm text-gray-500">{{ formatDate(sanction.appliedOn) }}
+                                            <div class="text-sm text-gray-500">{{ formatDate(sanction.created_at) }}
                                             </div>
                                         </div>
                                     </div>
@@ -197,7 +219,6 @@ export default defineComponent({
 </script>
 
 <style scoped>
-
 /* Modal animation */
 @keyframes modalSlideIn {
     from {

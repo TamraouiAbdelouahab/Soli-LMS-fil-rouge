@@ -26,7 +26,7 @@ class AbsenceService
         $seancesNonTraitees = $totalSeances - $seancesAvecAbsences;
 
         // KPI 4 : Absences saisies aujourd’hui
-        $absencesAujourdhui = Absence::whereDate('date_absence', $today)->count();
+        $absencesAujourdhui = Absence::whereDate('created_at', $today)->count();
 
         // KPI 5 : Top 5 groupes avec plus d’absences
         $topGroupes = DB::table('absences')
@@ -40,8 +40,8 @@ class AbsenceService
             ->get();
 
         // KPI 6 : Évolution des absences cette semaine (chart ligne)
-        $evolutionHebdo = Absence::whereBetween('date_absence', [$startOfWeek, $endOfWeek])
-            ->select(DB::raw('DATE(date_absence) as date'), DB::raw('COUNT(*) as total'))
+        $evolutionHebdo = Absence::whereBetween('created_at', [$startOfWeek, $endOfWeek])
+            ->select(DB::raw('DATE(created_at) as date'), DB::raw('COUNT(*) as total'))
             ->groupBy('date')
             ->orderBy('date')
             ->get();

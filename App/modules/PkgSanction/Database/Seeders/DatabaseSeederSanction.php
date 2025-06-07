@@ -15,9 +15,9 @@ class DatabaseSeederSanction extends Seeder
         // Appel des seeders dans l'ordre logique
         $this->call([
             ReglesDeSanctionsSeeder::class,
-            SanctionAbsencesCalculeesSeeder::class,
-            SanctionAbsencesSeeder::class,
-            NotificationsSeeder::class,
+            // SanctionAbsencesCalculeesSeeder::class,
+            // SanctionAbsencesSeeder::class,
+            // NotificationsSeeder::class,
         ]);
     }
 }

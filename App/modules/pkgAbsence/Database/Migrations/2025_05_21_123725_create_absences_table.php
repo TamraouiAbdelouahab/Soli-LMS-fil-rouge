@@ -30,7 +30,7 @@ class CreateAbsencesTable extends Migration
             $table->foreignId('sanction_absence_id')->nullable()->constrained('sanction_absences')->nullOnDelete();
 
             // 🔵 Sanction prévisionnelle
-            $table->foreignId('sanction_absences_calculees_id')->nullable()->constrained('sanction_absences_calculees')->nullOnDelete();
+            $table->foreignId('sanction_absence_calculee_id')->nullable()->constrained('sanction_absences_calculees')->nullOnDelete();
 
             $table->timestamps();
         });
