@@ -7,13 +7,13 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                 <SummaryCard title="Sanctions actives"
                     :value="recentSanctionsCount ? `${activeSanctionCount}/${sanctionsAbsenceCount}` : '0/0'"
-                    trend="voir les détails" color="blue" icon="Gavel" />
+                    trend="Voir les détails" color="teal" icon="Gavel" />
                 <SummaryCard title="Sanctions  semaine" :value="recentSanctionsCount ?? 0"
                     trend="Baisse de 5% cette semaine" color="orange" icon="Calendar" />
                 <SummaryCard title="Sanctions non résolues" :value="sanctionsAbsenceCalculeeCount ?? 0"
-                    trend="voir les détails" color="red" icon="AlertTriangle" />
-                <SummaryCard title="Taux de récurrence" value="15%" trend="Baisse de 2% ce trimestre"
-                    color="green" icon="Percent" />
+                    trend="Voir les détails" color="red" icon="AlertTriangle" />
+                <SummaryCard title="Apprenants Concerné" :value="learnersSanctionedCount ?? 0" trend="Voir les détails"
+                    color="blue" icon="Users" />
             </div>
 
             <!-- Charts Section -->
@@ -57,7 +57,10 @@ const props = defineProps({
     activeSanctionCount: Number,
     monthlySanctions: Array,
     sanctionsByTypes: Array,
+    learnersSanctionedCount: Number,
 });
+
+console.log(props.learnersSanctionedCount);
 
 const monthlySanctionsChartData = computed(() => {
     if (!props.monthlySanctions || !props.monthlySanctions.length) {
@@ -73,8 +76,8 @@ const monthlySanctionsChartData = computed(() => {
             {
                 label: 'Sanctions',
                 data: props.monthlySanctions.map(item => item.count),
-                borderColor: '#3b82f6',
-                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                borderColor: '#00B3C6',
+                backgroundColor: '#F0FAFB',
                 borderWidth: 2,
                 tension: 0.3,
                 fill: true,

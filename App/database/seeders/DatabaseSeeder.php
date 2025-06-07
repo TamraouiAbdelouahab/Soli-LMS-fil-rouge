@@ -33,7 +33,6 @@ class DatabaseSeeder extends Seeder
             ApprenantSeeder::class,
             ApprenantGroupeSeeder::class,
             DatabaseSeederJustificatif::class,
-            DureeSeancesSeeder::class,
             SeancesSeeder::class,
             DatabaseSeederSanction::class,
             DatabaseSeederAbsence::class,

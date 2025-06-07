@@ -31,6 +31,7 @@ class DashboardController extends BaseController
             'activeSanctionCount' => $this->sanctionService->activeSanctionCount(),
             'monthlySanctions' => $this->sanctionChartService->getMonthlySanctions(),
             'sanctionsByTypes' => $this->sanctionChartService->getSanctionsByTypes(),
+            'learnersSanctionedCount' => $this->sanctionService->learnersSanctionedCount(),
         ]);
     }
 }

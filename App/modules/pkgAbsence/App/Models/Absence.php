@@ -4,7 +4,7 @@ namespace Modules\PkgAbsence\App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Modules\PkgSanction\App\Models\SanctionAbsencePrevisionnelle;
+use Modules\PkgSanction\App\Models\SanctionAbsenceCalculee;
 use Modules\PkgSanction\App\Models\SanctionAbsence;
 use Modules\PkgApprenant\App\Models\Apprenant;
 use App\Models\Seance;
@@ -19,8 +19,9 @@ class Absence extends Model
         'apprenant_id', // 👨‍🎓 apprenant concerné par l’absence
         'seance_id',
         'justifie',
+        'est_sanctionnée',
         'sanction_absence_id',
-        'sanction_absence_previsionnelle_id',
+        'sanction_absences_calculees_id',
     ];
 
     protected $casts = [
@@ -51,6 +52,6 @@ class Absence extends Model
 
     public function sanctionPrevisionnelle()
     {
-        return $this->belongsTo(SanctionAbsencePrevisionnelle::class, 'sanction_absence_previsionnelle_id');
+        return $this->belongsTo(SanctionAbsenceCalculee::class, 'sanction_absences_calculees_id');
     }
 }

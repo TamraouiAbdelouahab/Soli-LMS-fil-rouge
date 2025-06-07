@@ -19,7 +19,7 @@ import {
     Gavel,
     Calendar,
     AlertTriangle,
-    Percent
+    Users,
 } from 'lucide-vue-next';
 
 const props = defineProps({
@@ -50,15 +50,15 @@ const iconComponent = computed(() => {
         'Gavel': Gavel,
         'Calendar': Calendar,
         'AlertTriangle': AlertTriangle,
-        'Percent': Percent
+        'Users': Users
     };
     return icons[props.icon] || Gavel;
 });
 
 const colorClasses = {
-    blue: {
-        bg: 'bg-blue-500',
-        iconBg: 'bg-blue-400'
+    teal: {
+        bg: 'bg-teal-500',
+        iconBg: 'bg-teal-400'
     },
     orange: {
         bg: 'bg-orange-500',
@@ -68,9 +68,9 @@ const colorClasses = {
         bg: 'bg-red-500',
         iconBg: 'bg-red-400'
     },
-    green: {
-        bg: 'bg-green-500',
-        iconBg: 'bg-green-400'
+    blue: {
+        bg: 'bg-light-blue-600',
+        iconBg: 'bg-light-blue-400'
     }
 };
 
