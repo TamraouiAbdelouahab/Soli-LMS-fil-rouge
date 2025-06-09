@@ -36,13 +36,13 @@
                         <td class="px-4 py-3 whitespace-nowrap">
                             <span
                                 :class="`inline-flex px-2 py-1 text-xs rounded-full
-                                    ${justification.statut === 'EN_ATTENTE' ? 'bg-yellow-300 text-yellow-800' :
-                                     justification.statut === 'ACCEPTE' ?'bg-green-300 text-green-800' :
+                                    ${justification.status === 'EN_ATTENTE' ? 'bg-yellow-300 text-yellow-800' :
+                                     justification.status === 'ACCEPTE' ?'bg-green-300 text-green-800' :
                                      'bg-red-300 text-red-800'
                                     }`">
-                                {{  (justification.statut == "ACCEPTE") ? "accepté" :
-                                    (justification.statut == "EN_ATTENTE") ? "en attente" :
-                                    (justification.statut == "REJETE") ? "rejeté" :""}}
+                                {{  (justification.status == "ACCEPTE") ? "accepté" :
+                                    (justification.status == "EN_ATTENTE") ? "en attente" :
+                                    (justification.status == "REJETE") ? "rejeté" :""}}
                             </span>
                         </td>
                         <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{{ justification.raison.libelle }}</td>
@@ -52,7 +52,7 @@
                                 <button class="text-blue-600 hover:text-blue-800">
                                     <Edit class="h-4 w-4" />
                                 </button>
-                                <button class="text-red-600 hover:text-red-800">
+                                <button class="text-red-600 hover:text-red-800" @click="deleteJustification(justification.id)">
                                     <Trash2 class="h-4 w-4" />
                                 </button>
                             </div>
@@ -66,11 +66,17 @@
 
 <script setup>
 import { FileText, FileSpreadsheet, Edit, Trash2 } from 'lucide-vue-next';
-
-defineProps({
+import { router } from '@inertiajs/vue3'
+const props = defineProps({
     justifications: {
         type: Array,
         required: true
     }
 });
+
+const deleteJustification = (id) => {
+    router.delete(id)
+};
+
+console.log(props.justifications)
 </script>

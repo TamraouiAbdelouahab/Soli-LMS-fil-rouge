@@ -9,7 +9,6 @@ use Modules\PkgApprenant\App\Models\Apprenant;
 class Justificatif extends Model
 {
     protected $fillable = [
-        'titre',
         'dateDepot',
         'dateDebut',
         'dateFin',
@@ -17,7 +16,7 @@ class Justificatif extends Model
         'description',
         'apprenant_id',
         'raison_id',
-        'statut'
+        'status'
     ];
 
     public function apprenant()

@@ -49,9 +49,9 @@ const props = defineProps({
     apprenants:Object,
 });
 
-const justificationEnAttente = props.justifications.filter(justification => justification.statut === 'EN_ATTENTE').length;
-const justificationRejete = props.justifications.filter(justification => justification.statut === 'REJETE').length;
-const justificationAccepte = props.justifications.filter(justification => justification.statut === 'ACCEPTE').length;
+const justificationEnAttente = props.justifications.filter(justification => justification.status === 'EN_ATTENTE').length;
+const justificationRejete = props.justifications.filter(justification => justification.status === 'REJETE').length;
+const justificationAccepte = props.justifications.filter(justification => justification.status === 'ACCEPTE').length;
 
 console.log(props.justifications);
 console.log(props.apprenants);
