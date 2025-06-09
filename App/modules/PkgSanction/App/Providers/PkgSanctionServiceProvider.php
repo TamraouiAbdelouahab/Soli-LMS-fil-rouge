@@ -2,6 +2,7 @@
 
 namespace Modules\PkgSanction\App\Providers;
 
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Route;
 use Modules\PkgSanction\App\Console\Commands\RunDailySanctionCheck;
@@ -29,6 +30,11 @@ class PkgSanctionServiceProvider extends ServiceProvider
         // $this->registerRoutes();
 
         $this->loadViewsFrom(__DIR__ . '/../../Resources/Views', 'pkg-sanction');
+
+        $this->app->booted(function () {
+            $schedule = app(Schedule::class);
+            $schedule->command(RunDailySanctionCheck::class)->everyFiveMinutes();
+        });
     }
 
     /**
