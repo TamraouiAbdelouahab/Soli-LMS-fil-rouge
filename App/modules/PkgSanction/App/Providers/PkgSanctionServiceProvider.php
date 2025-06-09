@@ -4,15 +4,18 @@ namespace Modules\PkgSanction\App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Route;
+use Modules\PkgSanction\App\Console\Commands\RunDailySanctionCheck;
 
 class PkgSanctionServiceProvider extends ServiceProvider
 {
+
+    protected $commands = [RunDailySanctionCheck::class];
     /**
      * Register services.
      */
     public function register(): void
     {
-        // Register any bindings or services
+        $this->commands($this->commands);
     }
 
     /**
