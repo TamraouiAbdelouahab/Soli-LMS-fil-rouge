@@ -14,7 +14,7 @@ class ApprenantGroupeSeeder extends Seeder
         $groupes = Groupe::all();
 
         foreach ($apprenants as $apprenant) {
-            $randomGroupes = $groupes->random(rand(1, min(2, $groupes->count())))->pluck('id')->toArray();
+            $randomGroupes = $groupes->random(rand(1, min(1, $groupes->count())))->pluck('id')->toArray();
             $apprenant->groupes()->sync($randomGroupes);
         }
     }
