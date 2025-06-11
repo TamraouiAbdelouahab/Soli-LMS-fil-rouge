@@ -3,6 +3,7 @@
 namespace Modules\PkgSanction\App\Services;
 
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Modules\PkgAbsence\App\Models\Absence;
 use Modules\PkgSanction\App\Models\ReglesDeSanction;
@@ -11,10 +12,24 @@ use Modules\PkgSanction\App\Models\SanctionAbsenceCalculee;
 
 class SanctionCalculeeService
 {
-    public function getSanctionsCalculees()
+    public function getSanctionsCalculees(Request $request)
     {
-        $SanctionsCalculees = SanctionAbsenceCalculee::with('absences.apprenant.groupes', 'regle')->orderBy('updated_at', 'desc')->paginate(10);
-        return $SanctionsCalculees;
+        $query = SanctionAbsenceCalculee::with(['absences.apprenant.groupes', 'regle']);
+
+        if ($request->filled('sanction_type')) {
+            $query->whereHas('regle', function ($q) use ($request) {
+                $q->where('sanction_type', $request->sanction_type);
+            });
+        }
+
+        // Group filter - fixed ambiguous column issue
+        if ($request->filled('groupe_id')) {
+            $query->whereHas('absences.apprenant.groupes', function ($q) use ($request) {
+                $q->where('groupes.id', $request->groupe_id);
+            });
+        }
+
+        return $query->paginate(10);
     }
 
     public function calculateSanctions()

@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Modules\PkgApprenant\App\Models\Apprenant;
 use Modules\PkgSanction\App\Models\SanctionAbsence;
 use Modules\PkgSanction\App\Models\SanctionAbsenceCalculee;
+use Illuminate\Http\Request;
 
 class SanctionService
 {
@@ -54,17 +55,35 @@ class SanctionService
         return $learnersSanctionedCount;
     }
 
-    public function getSanctionsApplied()
+    public function getSanctionsApplied(Request $request)
     {
-        $SanctionsApplied = SanctionAbsence::with('absences.apprenant.groupes', 'regle')->orderBy('date_fin', 'desc')->paginate(10);
+        $query = SanctionAbsence::with(['absences.apprenant.groupes', 'regle']);
+        $now = Carbon::now();
 
-        foreach ($SanctionsApplied as $Sanction) {
-            if ($Sanction) {
-                $Statut = Carbon::parse($Sanction->date_fin)->lt(Carbon::now()) ? 'Expirée' : 'Active';
-                $Sanction->statut = $Statut;
+        // Status filter
+        if ($request->filled('status_type')) {
+            switch ($request->status_type) {
+                case 'active':
+                    $query->where('date_fin', '>=', $now)
+                        ->where('lifted', false);
+                    break;
+                case 'expired':
+                    $query->where('date_fin', '<', $now)
+                        ->where('lifted', false);
+                    break;
+                case 'lifted':
+                    $query->where('lifted', true);
+                    break;
             }
         }
 
-        return $SanctionsApplied;
+        // Group filter - fixed ambiguous column issue
+        if ($request->filled('groupe_id')) {
+            $query->whereHas('absences.apprenant.groupes', function ($q) use ($request) {
+                $q->where('groupes.id', $request->groupe_id); // Explicitly specify table
+            });
+        }
+
+        return $query->orderBy('date_fin', 'desc')->paginate(10);
     }
 }

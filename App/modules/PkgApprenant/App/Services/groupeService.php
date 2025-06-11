@@ -9,4 +9,9 @@ class groupeService
         $groups = Groupe::with("apprenants")->get();
         return $groups;
     }
+
+    public function getAllGroups()
+    {
+        return Groupe::all();
+    }
 }

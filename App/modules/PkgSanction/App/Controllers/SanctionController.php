@@ -2,8 +2,11 @@
 
 namespace Modules\PkgSanction\App\Controllers;
 
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Modules\Core\App\Controllers\BaseController;
+use Modules\PkgApprenant\App\Services\groupeService;
+use Modules\PkgSanction\App\Enum\SanctionType;
 use Modules\PkgSanction\App\Services\SanctionCalculeeService;
 use Modules\PkgSanction\App\Services\SanctionService;
 
@@ -11,18 +14,26 @@ class SanctionController extends BaseController
 {
     protected $sanctionService;
     protected $sanctionCalculeeService;
+    protected $groupeService;
 
-    public function __construct(SanctionService $sanctionService, SanctionCalculeeService $sanctionCalculeeService)
+    public function __construct(SanctionService $sanctionService, SanctionCalculeeService $sanctionCalculeeService, groupeService $groupeService)
     {
         $this->sanctionService = $sanctionService;
         $this->sanctionCalculeeService = $sanctionCalculeeService;
+        $this->groupeService = $groupeService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
         return Inertia::render('PkgSanction::SanctionTracking', [
-            'sanctionsApplied' => $this->sanctionService->getSanctionsApplied(),
-            'sanctionsCalculees' => $this->sanctionCalculeeService->getSanctionsCalculees(),
+            'sanctionsApplied' => $this->sanctionService->getSanctionsApplied($request),
+            'sanctionsCalculees' => $this->sanctionCalculeeService->getSanctionsCalculees($request),
+            'filters' => $request->only(['status_type', 'groupe_id', 'sanction_type']),
+            'groupes' => $this->groupeService->getAllGroups(),
+            'sanctionTypes' => array_map(fn($case) => [
+                'value' => $case->value,
+                'label' => $case->value
+            ], SanctionType::cases()),
         ]);
     }
 

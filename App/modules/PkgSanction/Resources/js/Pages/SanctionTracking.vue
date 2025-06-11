@@ -69,18 +69,28 @@
                         <div class="flex items-center justify-between px-6 py-4">
                             <h2 class="text-lg font-semibold text-charcoal-900">Sanctions en attente d'application</h2>
                             <div class="flex items-center space-x-2">
-                                <select v-model="pendingStatusFilter"
+                                <!-- For Pending Sanctions Tab -->
+                                <select v-model="appliedFilters.sanction_type"
                                     class="text-sm border border-gray-300 rounded-md ps-3 pe-7 py-1 focus:outline-none focus:ring-2 focus:ring-teal-500">
                                     <option value="">Tous les types</option>
-                                    <option value="Avertissement">Avertissement</option>
-                                    <option value="Blâme">Blâme</option>
-                                    <option value="Exclusion">Exclusion</option>
+                                    <option v-for="type in sanctionTypes" :key="type.value" :value="type.value">
+                                        {{ type.label }}
+                                    </option>
+                                </select>
+
+                                <!-- Groupe filter -->
+                                <select v-model="appliedFilters.groupe_id"
+                                    class="text-sm border rounded px-2 py-1 focus:ring-teal-500">
+                                    <option value="">Tous les groupes</option>
+                                    <option v-for="g in groupes" :key="g.id" :value="g.id">
+                                        {{ g.nom }}
+                                    </option>
                                 </select>
                             </div>
                         </div>
 
-                        <PendingSanctionsTable :sanctions="sanctionsCalculees.data" @apply="applySanction"
-                            @ignore="ignoreSanction" @view="viewSanction" :links="sanctionsApplied.links" />
+                        <PendingSanctionsTable :sanctions="filteredPendingSanctions" @apply="applySanction"
+                            @ignore="ignoreSanction" @view="viewSanction" :links="sanctionsCalculees.links" />
                     </div>
 
                     <!-- Applied Sanctions Tab -->
@@ -88,12 +98,23 @@
                         <div class="flex items-center justify-between px-6 py-4">
                             <h2 class="text-lg font-semibold text-charcoal-900">Sanctions appliquées</h2>
                             <div class="flex items-center space-x-2">
-                                <select v-model="appliedStatusFilter"
-                                    class="text-sm border border-gray-300 rounded-md ps-3 pe-7 py-1 focus:outline-none focus:ring-2 focus:ring-teal-500">
+                                <!-- For Applied Sanctions Tab -->
+                                <select v-model="appliedFilters.status_type"
+                                    class="text-sm border border-gray-300 rounded-md px-3 py-1 focus:outline-none focus:ring-2 focus:ring-teal-500">
                                     <option value="">Tous les statuts</option>
-                                    <option value="Active">Active</option>
-                                    <option value="Expired">Expirée</option>
-                                    <option value="Lifted">Levée</option>
+                                    <option value="active">Active</option>
+                                    <option value="expired">Expirée</option>
+                                    <option value="lifted">Levée</option>
+                                </select>
+
+
+                                <!-- Groupe filter -->
+                                <select v-model="appliedFilters.groupe_id"
+                                    class="text-sm border rounded px-2 py-1 focus:ring-teal-500">
+                                    <option value="">Tous les groupes</option>
+                                    <option v-for="g in groupes" :key="g.id" :value="g.id">
+                                        {{ g.nom }}
+                                    </option>
                                 </select>
                             </div>
                         </div>
@@ -116,8 +137,8 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
-import { router } from '@inertiajs/vue3'
+import { ref, computed, watch } from 'vue';
+import { router } from '@inertiajs/vue3';
 import {
     Download,
     RefreshCw,
@@ -134,28 +155,44 @@ import ApplySanctionModal from '../Components/Sanction/ApplySanctionModal.vue';
 const props = defineProps({
     sanctionsApplied: Object,
     sanctionsCalculees: Object,
-})
+    filters: Object,
+    groupes: Array,
+    sanctionTypes: Array,
+});
 
-console.log('Sanctions appliquées:', props.sanctionsCalculees.data);
-// Reactive state
 const activeTab = ref('pending');
-const searchQuery = ref('');
-const classFilter = ref('');
 const pendingStatusFilter = ref('');
-const appliedStatusFilter = ref('');
 const showViewModal = ref(false);
 const showApplyModal = ref(false);
 const selectedSanction = ref(null);
 
-// const sanctionsApplied = ref({});
+const appliedFilters = ref({
+    status_type: props.filters.status_type || '', // 'active', 'expired', or 'lifted'
+    groupe_id: props.filters.groupe_id || '',
+    sanction_type: props.filters.sanction_type || '', // For pending sanctions
+});
 
-// Computed: Filtered Pending Sanctions based on selected filter and search query
-const filteredPendingSanctions = computed(() => {
-    return pendingSanctions.value.filter(sanction => {
-        const matchesStatus = pendingStatusFilter.value ? sanction.sanctionType === pendingStatusFilter.value : true;
-        // Extend with search or class filter if needed
-        return matchesStatus;
+// Watch for filter changes
+watch(appliedFilters, (newVal) => {
+    const filters = {
+        status_type: activeTab.value === 'applied' ? newVal.status_type : '',
+        groupe_id: newVal.groupe_id,
+        sanction_type: activeTab.value === 'pending' ? newVal.sanction_type : ''
+    };
+
+    router.get(route('sanction.tracking.index'), filters, {
+        preserveState: true,
+        replace: true,
+        preserveScroll: true,
     });
+}, { deep: true });
+
+// Client-side filter for pending sanctions only
+const filteredPendingSanctions = computed(() => {
+    return props.sanctionsCalculees.data.filter(sanction =>
+        pendingStatusFilter.value === '' ||
+        sanction.regle.sanction_type === pendingStatusFilter.value
+    );
 });
 
 // Methods
@@ -163,7 +200,7 @@ function exportSanctions() {
     alert('Fonction d\'export des sanctions déclenchée.');
 }
 
-const submitCalcul = () => {
+function submitCalcul() {
     router.post(route('sanction.tracking.calculate'));
 }
 
@@ -196,23 +233,18 @@ function confirmApplySanction(sanction) {
 function liftSanction(sanction) {
     alert(`Sanction ID ${sanction.id} levée.`);
 }
-
-
 </script>
 
 <style scoped>
 .bg-light-blue-50 {
     background-color: #e0f2fe;
-    /* Tailwind's light blue 50 */
 }
 
 .text-charcoal-900 {
     color: #2e2e2e;
-    /* Custom charcoal color */
 }
 
 .bg-golden-yellow {
     background-color: #FFC107;
-    /* Example golden yellow */
 }
 </style>
