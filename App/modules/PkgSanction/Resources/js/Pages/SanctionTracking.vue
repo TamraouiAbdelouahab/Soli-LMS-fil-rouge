@@ -104,7 +104,7 @@
                                     <option value="">Tous les statuts</option>
                                     <option value="active">Active</option>
                                     <option value="expired">Expirée</option>
-                                    <option value="lifted">Levée</option>
+                                    <!-- <option value="lifted">Levée</option> -->
                                 </select>
 
 
@@ -159,7 +159,7 @@ const props = defineProps({
     groupes: Array,
     sanctionTypes: Array,
 });
-
+console.log('Sanction Tracking Props:', props.sanctionsApplied);
 const activeTab = ref('pending');
 const pendingStatusFilter = ref('');
 const showViewModal = ref(false);
@@ -167,9 +167,9 @@ const showApplyModal = ref(false);
 const selectedSanction = ref(null);
 
 const appliedFilters = ref({
-    status_type: props.filters.status_type || '', // 'active', 'expired', or 'lifted'
+    status_type: props.filters.status_type || '',
     groupe_id: props.filters.groupe_id || '',
-    sanction_type: props.filters.sanction_type || '', // For pending sanctions
+    sanction_type: props.filters.sanction_type || '',
 });
 
 // Watch for filter changes

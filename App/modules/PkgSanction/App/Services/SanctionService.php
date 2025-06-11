@@ -17,7 +17,7 @@ class SanctionService
 
         foreach ($RecentSanctions as $Sanction) {
             if ($Sanction) {
-                $Statut = Carbon::parse($Sanction->date_fin)->lt(Carbon::now()) ? 'Expirée' : 'Active';
+                $Statut = Carbon::parse($Sanction->date_fin)->lt(Carbon::now()) ? 'expired' : 'active';
                 $Sanction->statut = $Statut;
             }
         }
@@ -60,19 +60,15 @@ class SanctionService
         $query = SanctionAbsence::with(['absences.apprenant.groupes', 'regle']);
         $now = Carbon::now();
 
-        // Status filter
-        if ($request->filled('status_type')) {
-            switch ($request->status_type) {
+        // Simplified status filter (only active/expired)
+        if ($request->filled('status')) {
+            switch ($request->status) {
                 case 'active':
-                    $query->where('date_fin', '>=', $now)
-                        ->where('lifted', false);
+                    $query->where('date_fin', '>=', $now);
                     break;
+
                 case 'expired':
-                    $query->where('date_fin', '<', $now)
-                        ->where('lifted', false);
-                    break;
-                case 'lifted':
-                    $query->where('lifted', true);
+                    $query->where('date_fin', '<', $now);
                     break;
             }
         }

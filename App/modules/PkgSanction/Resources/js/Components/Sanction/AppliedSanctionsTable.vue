@@ -60,11 +60,11 @@
                     <td class="px-6 py-4 whitespace-nowrap">
                         <span :class="[
                             'inline-flex px-2 py-1 text-xs font-semibold rounded-full',
-                            getStatusColor(sanction.statut)
+                            getStatusColor(sanction.status)
                         ]">
-                            {{ getStatusLabel(sanction.statut) }}
+                            {{ getStatusLabel(sanction.status) }}
                         </span>
-                        <div v-if="sanction.statut === 'Active'" class="text-xs text-gray-500 mt-1">
+                        <div v-if="sanction.status === 'active'" class="text-xs text-gray-500 mt-1">
                             Fin: {{ formatDate(sanction.date_fin) }}
                         </div>
                     </td>
