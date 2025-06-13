@@ -24,7 +24,7 @@
                             Vous êtes sur le point d'appliquer une sanction de type
                             <strong>{{ sanction.regle.sanction_type }}</strong> à
                             <strong>{{ sanction.absences[0].apprenant.nom }} {{ sanction.absences[0].apprenant.prenom
-                            }}</strong>
+                                }}</strong>
                             (Groupe {{ sanction.absences[0].apprenant.groupes[0].nom }}).
                         </p>
                     </div>
@@ -32,7 +32,7 @@
             </div>
 
             <!-- Timeline Preview -->
-            <div class="bg-teal-50 rounded-lg p-4 mt-4">
+            <div class="bg-teal-50 border border-teal-100 rounded-lg p-4 mt-4 mb-4">
                 <div class="space-y-2">
                     <div class="flex items-center text-sm">
                         <Calendar class="h-4 w-4 text-teal-600 mr-2" />
@@ -66,7 +66,6 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
 import {
     CheckCircle,
     X,
@@ -79,12 +78,14 @@ const props = defineProps({
     sanction: {
         type: Object,
         required: true
-    }
+    },
+    formatDate: {
+        type: Function,
+        required: true
+    },
 });
 
 const emit = defineEmits(['close', 'confirm']);
-
-const appliedBy = ref('');
 
 const closeModal = () => {
     emit('close');
@@ -103,23 +104,16 @@ const getEndDate = () => {
     return endDate;
 };
 
-const formatDate = (date) => {
-    return new Intl.DateTimeFormat('fr-FR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-    }).format(date);
-};
 </script>
 
 <style scoped>
-.focus\:ring-teal-500:focus {
+/* .focus\:ring-teal-500:focus {
     --tw-ring-color: #00B3C6;
 }
 
 .focus\:border-teal-500:focus {
     border-color: #00B3C6;
-}
+} */
 
 @keyframes modalSlideIn {
     from {

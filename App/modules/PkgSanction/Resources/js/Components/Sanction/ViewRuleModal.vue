@@ -16,7 +16,7 @@
             </div>
 
             <!-- Modal Body -->
-            <div class="mt-4 space-y-6">
+            <div class="mt-4 mb-4 max-h-96 overflow-y-auto space-y-6">
                 <!-- Basic Information -->
                 <div>
                     <h4 class="text-lg font-medium text-gray-900 mb-3">Informations Générales</h4>
@@ -135,6 +135,10 @@ const props = defineProps({
     rule: {
         type: Object,
         required: true
+    },
+    formatDate: {
+        type: Function,
+        required: true
     }
 });
 
@@ -144,16 +148,6 @@ const emit = defineEmits(['close']);
 // Methods
 const closeModal = () => {
     emit('close');
-};
-
-const formatDate = (date) => {
-    const parsed = new Date(date);
-    if (isNaN(parsed.getTime())) return 'Date invalide';
-    return new Intl.DateTimeFormat('fr-FR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-    }).format(parsed);
 };
 
 </script>

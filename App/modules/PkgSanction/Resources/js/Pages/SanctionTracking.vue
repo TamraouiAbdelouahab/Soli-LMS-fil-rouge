@@ -80,17 +80,22 @@
 
                                 <!-- Groupe filter -->
                                 <select v-model="appliedFilters.groupe_id"
-                                    class="text-sm border rounded px-2 py-1 focus:ring-teal-500">
+                                    class="text-sm border rounded border-gray-300 ps-3 pe-7 py-1 focus:ring-teal-500">
                                     <option value="">Tous les groupes</option>
                                     <option v-for="g in groupes" :key="g.id" :value="g.id">
                                         {{ g.nom }}
                                     </option>
                                 </select>
+
+                                <!-- Clear Filters Button -->
+                                <XCircle v-if="isAnyFilterApplied" @click="clearFilters"
+                                    class="w-5 h-5 text-gray-400 hover:text-red-500 cursor-pointer transition-colors" />
                             </div>
                         </div>
 
-                        <PendingSanctionsTable :sanctions="filteredPendingSanctions" @apply="applySanction"
-                            @ignore="ignoreSanction" @view="viewSanction" :links="sanctionsCalculees.links" />
+                        <PendingSanctionsTable :sanctions="sanctionsCalculees.data" @apply="applySanction"
+                            :sanctionTypeColor="getSanctionTypeColor" @ignore="ignoreSanction" @view="viewSanction"
+                            :links="sanctionsCalculees.links" :formatDate="formatDate" />
                     </div>
 
                     <!-- Applied Sanctions Tab -->
@@ -99,39 +104,44 @@
                             <h2 class="text-lg font-semibold text-charcoal-900">Sanctions appliquées</h2>
                             <div class="flex items-center space-x-2">
                                 <!-- For Applied Sanctions Tab -->
-                                <select v-model="appliedFilters.status_type"
-                                    class="text-sm border border-gray-300 rounded-md px-3 py-1 focus:outline-none focus:ring-2 focus:ring-teal-500">
+                                <select v-model="appliedFilters.status"
+                                    class="text-sm border border-gray-300 rounded-md ps-3 pe-7 py-1 focus:outline-none focus:ring-2 focus:ring-teal-500">
                                     <option value="">Tous les statuts</option>
                                     <option value="active">Active</option>
-                                    <option value="expired">Expirée</option>
+                                    <option value="expirée">Expirée</option>
                                     <!-- <option value="lifted">Levée</option> -->
                                 </select>
 
-
                                 <!-- Groupe filter -->
                                 <select v-model="appliedFilters.groupe_id"
-                                    class="text-sm border rounded px-2 py-1 focus:ring-teal-500">
+                                    class="text-sm border rounded border-gray-300 ps-3 pe-7 py-1 focus:ring-teal-500">
                                     <option value="">Tous les groupes</option>
                                     <option v-for="g in groupes" :key="g.id" :value="g.id">
                                         {{ g.nom }}
                                     </option>
                                 </select>
+
+                                <!-- Clear Filters Button -->
+                                <XCircle v-if="isAnyFilterApplied" @click="clearFilters"
+                                    class="w-5 h-5 text-gray-400 hover:text-red-500 cursor-pointer transition-colors" />
                             </div>
                         </div>
 
                         <AppliedSanctionsTable :sanctions="sanctionsApplied.data" :links="sanctionsApplied.links"
-                            @view="viewSanction" @lift="liftSanction" />
+                            :statusColor="getStatusColor" :statusLabel="getStatusLabel" @view="viewSanction"
+                            @lift="liftSanction" :formatDate="formatDate" :sanctionTypeColor="getSanctionTypeColor" />
                     </div>
                 </div>
             </div>
 
             <!-- View Sanction Modal -->
             <ViewSanctionModal v-if="showViewModal && selectedSanction" :sanction="selectedSanction"
-                @close="showViewModal = false" />
+                :sanctionTypeColor="getSanctionTypeColor" :statusColor="getStatusColor" :statusLabel="getStatusLabel"
+                @close="showViewModal = false" :formatDate="formatDate" />
 
             <!-- Apply Sanction Modal -->
             <ApplySanctionModal v-if="showApplyModal && selectedSanction" :sanction="selectedSanction"
-                @close="showApplyModal = false" @confirm="confirmApplySanction" />
+                @close="showApplyModal = false" @confirm="confirmApplySanction" :formatDate="formatDate"/>
         </div>
     </AuthenticatedLayout>
 </template>
@@ -143,7 +153,8 @@ import {
     Download,
     RefreshCw,
     Clock,
-    CheckCircle
+    CheckCircle,
+    XCircle
 } from 'lucide-vue-next';
 
 import AuthenticatedLayout from '@core/Layouts/AuthenticatedLayout.vue';
@@ -159,15 +170,14 @@ const props = defineProps({
     groupes: Array,
     sanctionTypes: Array,
 });
-console.log('Sanction Tracking Props:', props.sanctionsApplied);
+
 const activeTab = ref('pending');
-const pendingStatusFilter = ref('');
 const showViewModal = ref(false);
 const showApplyModal = ref(false);
 const selectedSanction = ref(null);
 
 const appliedFilters = ref({
-    status_type: props.filters.status_type || '',
+    status: props.filters.status || '',
     groupe_id: props.filters.groupe_id || '',
     sanction_type: props.filters.sanction_type || '',
 });
@@ -175,7 +185,7 @@ const appliedFilters = ref({
 // Watch for filter changes
 watch(appliedFilters, (newVal) => {
     const filters = {
-        status_type: activeTab.value === 'applied' ? newVal.status_type : '',
+        status: activeTab.value === 'applied' ? newVal.status : '',
         groupe_id: newVal.groupe_id,
         sanction_type: activeTab.value === 'pending' ? newVal.sanction_type : ''
     };
@@ -187,12 +197,10 @@ watch(appliedFilters, (newVal) => {
     });
 }, { deep: true });
 
-// Client-side filter for pending sanctions only
-const filteredPendingSanctions = computed(() => {
-    return props.sanctionsCalculees.data.filter(sanction =>
-        pendingStatusFilter.value === '' ||
-        sanction.regle.sanction_type === pendingStatusFilter.value
-    );
+const isAnyFilterApplied = computed(() => {
+    return appliedFilters.value.status !== ''
+        || appliedFilters.value.groupe_id !== ''
+        || appliedFilters.value.sanction_type !== '';
 });
 
 // Methods
@@ -233,6 +241,53 @@ function confirmApplySanction(sanction) {
 function liftSanction(sanction) {
     alert(`Sanction ID ${sanction.id} levée.`);
 }
+
+function clearFilters() {
+    appliedFilters.value = {
+        status: '',
+        groupe_id: '',
+        sanction_type: '',
+    };
+}
+
+const statusStyles = {
+    active: {
+        label: 'Active',
+        color: 'bg-teal-100 text-teal-800'
+    },
+    expirée: {
+        label: 'Expirée',
+        color: 'bg-gray-100 text-gray-800'
+    },
+    lifted: {
+        label: 'Levée',
+        color: 'bg-light-blue-100 text-light-blue-800'
+    }
+};
+
+const getStatusColor = (status) => statusStyles[status]?.color || 'bg-gray-100 text-gray-800';
+
+const getStatusLabel = (status) => statusStyles[status]?.label || status;
+
+const formatDate = (date) => {
+    const parsedDate = new Date(date);
+    if (isNaN(parsedDate)) return 'Date invalide';
+    return new Intl.DateTimeFormat('fr-FR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    }).format(parsedDate);
+};
+
+const getSanctionTypeColor = (type) => {
+    const colors = {
+        'Avertissement': 'bg-bright-yellow-100 text-yellow-800',
+        'Blâme': 'bg-golden-yellow-200 text-yellow-900',
+        'Exclusion': 'bg-red-orange-100 text-red-orange-800'
+    };
+    return colors[type] || 'bg-gray-100 text-gray-800';
+};
+
 </script>
 
 <style scoped>

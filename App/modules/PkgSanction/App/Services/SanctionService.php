@@ -17,7 +17,7 @@ class SanctionService
 
         foreach ($RecentSanctions as $Sanction) {
             if ($Sanction) {
-                $Statut = Carbon::parse($Sanction->date_fin)->lt(Carbon::now()) ? 'expired' : 'active';
+                $Statut = Carbon::parse($Sanction->date_fin)->lt(Carbon::now()) ? 'expirée' : 'active';
                 $Sanction->statut = $Statut;
             }
         }
@@ -60,23 +60,21 @@ class SanctionService
         $query = SanctionAbsence::with(['absences.apprenant.groupes', 'regle']);
         $now = Carbon::now();
 
-        // Simplified status filter (only active/expired)
         if ($request->filled('status')) {
             switch ($request->status) {
                 case 'active':
                     $query->where('date_fin', '>=', $now);
                     break;
 
-                case 'expired':
+                case 'expirée':
                     $query->where('date_fin', '<', $now);
                     break;
             }
         }
 
-        // Group filter - fixed ambiguous column issue
         if ($request->filled('groupe_id')) {
             $query->whereHas('absences.apprenant.groupes', function ($q) use ($request) {
-                $q->where('groupes.id', $request->groupe_id); // Explicitly specify table
+                $q->where('groupes.id', $request->groupe_id);
             });
         }
 

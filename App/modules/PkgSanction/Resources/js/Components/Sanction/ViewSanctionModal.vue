@@ -33,7 +33,7 @@
                                         Type de sanction
                                     </dt>
                                     <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                        <span :class="getSanctionTypeColor(sanction.regle.sanction_type)"
+                                        <span :class="sanctionTypeColor(sanction.regle.sanction_type)"
                                             class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium">
                                             {{ sanction.regle.sanction_type }}
                                         </span>
@@ -44,9 +44,9 @@
                                         Status
                                     </dt>
                                     <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                        <span :class="getStatusColor(sanction.status)"
+                                        <span :class="statusColor(sanction.status)"
                                             class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium">
-                                            {{ sanction.statut ?? 'Pending' }}
+                                            {{ statusLabel(sanction.status) ?? 'Pending' }}
                                         </span>
                                     </dd>
                                 </div>
@@ -67,10 +67,7 @@
                                     </dd>
                                 </div>
 
-
                                 <!-- Apprenant Info -->
-
-
                                 <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
                                     <dt class="text-sm font-medium text-gray-500">
                                         Nom complet de l'apprenante
@@ -118,7 +115,7 @@
                                         </div>
                                     </div>
 
-                                    <div v-if="sanction.endDate && sanction.status === 'Active'"
+                                    <div v-if="sanction.date_fin && sanction.status === 'active'"
                                         class="flex items-center">
                                         <div
                                             class="flex-shrink-0 w-8 h-8 bg-golden-yellow-100 rounded-full flex items-center justify-center">
@@ -126,7 +123,7 @@
                                         </div>
                                         <div class="ml-4">
                                             <div class="text-sm font-medium text-gray-900">Expire le</div>
-                                            <div class="text-sm text-gray-500">{{ formatDate(sanction.endDate) }}</div>
+                                            <div class="text-sm text-gray-500">{{ formatDate(sanction.date_fin) }}</div>
                                         </div>
                                     </div>
 
@@ -157,10 +154,7 @@
     </div>
 </template>
 
-<script>
-import { defineComponent } from 'vue';
-import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+<script setup>
 import {
     Eye,
     Calculator,
@@ -170,52 +164,31 @@ import {
     X
 } from 'lucide-vue-next';
 
-export default defineComponent({
-    components: {
-        X,
-        Eye,
-        Calculator,
-        CheckCircle,
-        Calendar,
-        Shield
+const props = defineProps({
+    sanction: {
+        type: Object,
+        required: true
     },
-    props: {
-        sanction: {
-            type: Object,
-            required: true
-        }
+    statusColor: {
+        type: Function,
+        required: true
     },
-    setup() {
-        const formatDate = (dateString) => {
-            const date = new Date(dateString);
-            return format(date, 'd MMMM yyyy', { locale: fr });
-        };
-
-        const getSanctionTypeColor = (type) => {
-            const colors = {
-                'Avertissement': 'bg-bright-yellow text-charcoal-900',
-                'Blâme': 'bg-golden-yellow text-white',
-                'Exclusion': 'bg-red-orange text-white'
-            };
-            return colors[type] || 'bg-gray-100 text-gray-800';
-        };
-
-        const getStatusColor = (status) => {
-            const colors = {
-                'Active': 'bg-teal-100 text-teal-800',
-                'Expired': 'bg-gray-100 text-gray-800',
-                'Lifted': 'bg-light-blue-100 text-light-blue-800'
-            };
-            return colors[status] || 'bg-gray-100 text-gray-800';
-        };
-
-        return {
-            formatDate,
-            getSanctionTypeColor,
-            getStatusColor
-        };
+    statusLabel: {
+        type: Function,
+        required: true
+    },
+    formatDate: {
+        type: Function,
+        required: true
+    },
+        sanctionTypeColor: {
+        type: Function,
+        required: true
     }
 });
+
+const emit = defineEmits(['close']);
+
 </script>
 
 <style scoped>

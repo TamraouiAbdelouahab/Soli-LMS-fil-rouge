@@ -42,7 +42,7 @@
                     <td class="px-6 py-4 whitespace-nowrap">
                         <span :class="[
                             'inline-flex px-2 py-1 text-xs font-semibold rounded-full',
-                            getSanctionTypeColor(sanction.regle.sanction_type)
+                            sanctionTypeColor(sanction.regle.sanction_type)
                         ]">
                             {{ sanction.regle.sanction_type }}
                         </span>
@@ -112,29 +112,17 @@ defineProps({
         type: Array,
         required: true,
         default: () => []
+    },
+    formatDate: {
+        type: Function,
+        required: true
+    },
+    sanctionTypeColor: {
+        type: Function,
+        required: true
     }
 });
 
 defineEmits(['apply', 'ignore', 'view']);
 
-const getSanctionTypeColor = (type) => {
-    const colors = {
-        'Avertissement': 'bg-bright-yellow-100 text-yellow-800',
-        'Blâme': 'bg-golden-yellow-200 text-yellow-900',
-        'Exclusion': 'bg-red-orange-100 text-red-orange-800'
-    };
-    return colors[type] || 'bg-gray-100 text-gray-800';
-};
-
-const formatDate = (date) => {
-    const parsedDate = new Date(date);
-    if (isNaN(parsedDate)) return 'Date invalide';
-    return new Intl.DateTimeFormat('fr-FR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-    }).format(parsedDate);
-};
 </script>
-
-<style scoped></style>

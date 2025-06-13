@@ -16,7 +16,7 @@
             </div>
 
             <!-- Modal Body -->
-            <div class="mt-4 max-h-96 overflow-y-auto px-1">
+            <div class="mt-4 mb-4 max-h-96 overflow-y-auto px-1">
                 <form @submit.prevent="handleSubmit" class="space-y-6">
                     <!-- Titre -->
                     <div>

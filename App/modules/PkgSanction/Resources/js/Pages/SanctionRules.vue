@@ -37,23 +37,24 @@
 
       <!-- Rules Table -->
       <RulesTable :rules="sanctionRules" @view="viewRule" @edit="editRule" @toggle-status="toggleRuleStatus"
-        @delete="deleteRule" />
+        @delete="deleteRule" :formatDate="formatDate"/>
 
       <!-- Add Rule Modal -->
-      <AddRuleModal v-if="showAddRuleModal" :sanctionTypes="sanctionTypes" @close="showAddRuleModal = false" @submit="handleAddRule" />
+      <AddRuleModal v-if="showAddRuleModal" :sanctionTypes="sanctionTypes" @close="showAddRuleModal = false"
+        @submit="handleAddRule" />
 
       <!-- View Rule Modal -->
-      <ViewRuleModal v-if="showViewModal && selectedRule" :rule="selectedRule" @close="showViewModal = false" />
+      <ViewRuleModal v-if="showViewModal && selectedRule" :rule="selectedRule" @close="showViewModal = false" :formatDate="formatDate"/>
 
       <!-- Edit Rule Modal -->
-      <EditRuleModal v-if="showEditModal && selectedRule" :sanctionTypes="sanctionTypes" :rule="selectedRule" @close="showEditModal = false"
-        @submit="handleEditRule" />
+      <EditRuleModal v-if="showEditModal && selectedRule" :sanctionTypes="sanctionTypes" :rule="selectedRule"
+        @close="showEditModal = false" @submit="handleEditRule" />
     </div>
   </AuthenticatedLayout>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref } from 'vue';
 import { router, useForm } from '@inertiajs/vue3';
 import {
   Home,
@@ -102,7 +103,6 @@ const rules = ref([]);
 const formatDate = (date) => {
   const parsedDate = new Date(date);
   if (isNaN(parsedDate)) return 'Date invalide';
-
   return new Intl.DateTimeFormat('fr-FR', {
     day: '2-digit',
     month: '2-digit',
@@ -171,15 +171,9 @@ const exportRules = () => {
   window.URL.revokeObjectURL(url);
 };
 
-onMounted(() => {
-  // Load rules from API if needed
-  console.log('Rules page mounted');
-});
 </script>
 
 <style scoped>
-
-
 /* Custom scrollbar for table */
 .overflow-x-auto::-webkit-scrollbar {
   height: 6px;
