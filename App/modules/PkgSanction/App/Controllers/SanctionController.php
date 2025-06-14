@@ -28,7 +28,7 @@ class SanctionController extends BaseController
         return Inertia::render('PkgSanction::SanctionTracking', [
             'sanctionsApplied' => $this->sanctionService->getSanctionsApplied($request),
             'sanctionsCalculees' => $this->sanctionCalculeeService->getSanctionsCalculees($request),
-            'filters' => $request->only(['status', 'groupe_id', 'sanction_type']),
+            'filters' => $request->only(['status', 'groupe_id', 'sanction_type', 'search']),
             'groupes' => $this->groupeService->getAllGroups(),
             'sanctionTypes' => array_map(fn($case) => [
                 'value' => $case->value,
@@ -53,5 +53,12 @@ class SanctionController extends BaseController
     {
         $this->sanctionCalculeeService->deleteSanctionCalculee($id);
         return redirect()->back()->with('success', 'Sanction deleted successfully.');
+    }
+
+    public function learnerIndex($learnerId)
+    {
+        return Inertia::render('PkgSanction::LearnerSanctions', [
+            'sanctions' => $this->sanctionService->getLearnerSanctions($learnerId),
+        ]);
     }
 }

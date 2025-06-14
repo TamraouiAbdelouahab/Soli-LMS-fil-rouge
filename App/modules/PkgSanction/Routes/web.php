@@ -30,6 +30,11 @@ Route::prefix('sanction/tracking')->middleware(['auth', 'verified'])->group(func
 
 });
 
+Route::prefix('learner')->middleware(['auth', 'verified'])->group(function () {
+    Route::get('/sanctions/{learnerId}', [SanctionController::class, 'learnerIndex'])->name('sanction.learner.index');
+
+});
+
 // Route::get('sanction/tracking', function () {
 //     return Inertia::render('PkgSanction::SanctionTracking');
 // })->middleware(['auth', 'verified'])->name('sanction.tracking.index');

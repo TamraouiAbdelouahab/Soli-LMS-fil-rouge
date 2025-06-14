@@ -103,7 +103,7 @@
         <div v-if="links && links.length > 0" class="flex justify-end py-4 px-6">
             <nav class="inline-flex rounded-md shadow-sm">
                 <button v-for="(link, index) in links" :key="index" v-html="link.label" :disabled="!link.url"
-                    @click="changePage(link.url)" :class="[
+                    @click="onPageClick(link.url)" :class="[
                         'px-4 py-2 border text-sm',
                         link.active
                             ? 'bg-teal-600 text-white border-teal-600'
@@ -119,15 +119,6 @@
 <script setup>
 import { Eye, Shield, CheckCircle } from 'lucide-vue-next';
 import { router } from '@inertiajs/vue3';
-
-function changePage(url) {
-    if (url) {
-        router.visit(url, {
-            preserveScroll: true,
-            preserveState: true,
-        });
-    }
-}
 
 defineProps({
     sanctions: {
@@ -158,6 +149,10 @@ defineProps({
     }
 });
 
-defineEmits(['view', 'lift']);
+const emit = defineEmits(['view', 'lift', 'page-change']);
+
+const onPageClick = (url) => {
+    if (url) emit('page-change', url)
+}
 
 </script>

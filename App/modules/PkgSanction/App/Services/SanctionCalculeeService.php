@@ -29,7 +29,16 @@ class SanctionCalculeeService
             });
         }
 
-        return $query->paginate(10);
+        if ($request->filled('search')) {
+            $search = $request->search;
+
+            $query->whereHas('absences.apprenant', function ($q) use ($search) {
+                $q->where('nom', 'like', "%{$search}%")
+                    ->orWhere('prenom', 'like', "%{$search}%");
+            });
+        }
+
+        return $query->paginate(2, ['*'], 'pending_page');
     }
 
     public function calculateSanctions()

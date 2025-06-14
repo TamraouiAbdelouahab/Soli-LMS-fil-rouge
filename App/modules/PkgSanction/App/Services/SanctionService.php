@@ -78,6 +78,25 @@ class SanctionService
             });
         }
 
-        return $query->orderBy('date_fin', 'desc')->paginate(10);
+        if ($request->filled('search')) {
+            $search = $request->search;
+
+            $query->whereHas('absences.apprenant', function ($q) use ($search) {
+                $q->where('nom', 'like', "%{$search}%")
+                    ->orWhere('prenom', 'like', "%{$search}%");
+            });
+        }
+
+        return $query->orderBy('date_fin', 'desc')->paginate(2, ['*'], 'applied_page');
+    }
+
+    public function getLearnerSanctions($learnerId)
+    {
+        return SanctionAbsence::with(['absences.apprenant.groupes', 'regle'])
+            ->whereHas('absences.apprenant', function ($query) use ($learnerId) {
+                $query->where('id', $learnerId);
+            })
+            ->orderBy('date_fin', 'desc')
+            ->get();
     }
 }

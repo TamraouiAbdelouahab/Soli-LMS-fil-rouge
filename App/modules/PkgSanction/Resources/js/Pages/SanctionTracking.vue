@@ -68,8 +68,11 @@
                     <div v-if="activeTab === 'pending'">
                         <div class="flex items-center justify-between px-6 py-4">
                             <h2 class="text-lg font-semibold text-charcoal-900">Sanctions en attente d'application</h2>
-                            <div class="flex items-center space-x-2">
-                                <!-- For Pending Sanctions Tab -->
+                            <div class="flex flex-wrap items-center gap-2">
+                                <!-- Search input -->
+                                <input type="text" v-model="appliedFilters.search" placeholder="Rechercher..."
+                                    class="text-sm border border-gray-300 rounded-md px-3 py-1 focus:outline-none focus:ring-2 focus:ring-teal-500" />
+
                                 <select v-model="appliedFilters.sanction_type"
                                     class="text-sm border border-gray-300 rounded-md ps-3 pe-7 py-1 focus:outline-none focus:ring-2 focus:ring-teal-500">
                                     <option value="">Tous les types</option>
@@ -95,7 +98,7 @@
 
                         <PendingSanctionsTable :sanctions="sanctionsCalculees.data" @apply="applySanction"
                             :sanctionTypeColor="getSanctionTypeColor" @ignore="ignoreSanction" @view="viewSanction"
-                            :links="sanctionsCalculees.links" :formatDate="formatDate" />
+                            @page-change="changePage" :links="sanctionsCalculees.links" :formatDate="formatDate" />
                     </div>
 
                     <!-- Applied Sanctions Tab -->
@@ -103,7 +106,10 @@
                         <div class="flex items-center justify-between px-6 py-4">
                             <h2 class="text-lg font-semibold text-charcoal-900">Sanctions appliquées</h2>
                             <div class="flex items-center space-x-2">
-                                <!-- For Applied Sanctions Tab -->
+                                <!-- Search input -->
+                                <input type="text" v-model="appliedFilters.search" placeholder="Rechercher..."
+                                    class="text-sm border border-gray-300 rounded-md px-3 py-1 focus:outline-none focus:ring-2 focus:ring-teal-500" />
+
                                 <select v-model="appliedFilters.status"
                                     class="text-sm border border-gray-300 rounded-md ps-3 pe-7 py-1 focus:outline-none focus:ring-2 focus:ring-teal-500">
                                     <option value="">Tous les statuts</option>
@@ -129,7 +135,8 @@
 
                         <AppliedSanctionsTable :sanctions="sanctionsApplied.data" :links="sanctionsApplied.links"
                             :statusColor="getStatusColor" :statusLabel="getStatusLabel" @view="viewSanction"
-                            @lift="liftSanction" :formatDate="formatDate" :sanctionTypeColor="getSanctionTypeColor" />
+                            @page-change="changePage" @lift="liftSanction" :formatDate="formatDate"
+                            :sanctionTypeColor="getSanctionTypeColor" />
                     </div>
                 </div>
             </div>
@@ -141,7 +148,7 @@
 
             <!-- Apply Sanction Modal -->
             <ApplySanctionModal v-if="showApplyModal && selectedSanction" :sanction="selectedSanction"
-                @close="showApplyModal = false" @confirm="confirmApplySanction" :formatDate="formatDate"/>
+                @close="showApplyModal = false" @confirm="confirmApplySanction" :formatDate="formatDate" />
         </div>
     </AuthenticatedLayout>
 </template>
@@ -149,6 +156,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue';
 import { router } from '@inertiajs/vue3';
+import debounce from 'lodash/debounce'
 import {
     Download,
     RefreshCw,
@@ -180,14 +188,29 @@ const appliedFilters = ref({
     status: props.filters.status || '',
     groupe_id: props.filters.groupe_id || '',
     sanction_type: props.filters.sanction_type || '',
+    search: props.filters.search || '',
 });
+
+// Debounced handler
+const updateSearch = debounce(() => {
+    router.get(route('your.route.name'), appliedFilters.value, {
+        preserveState: true,
+        replace: true,
+    })
+}, 400)
+
+// Watch search input
+watch(() => appliedFilters.value.search, () => {
+    updateSearch()
+})
 
 // Watch for filter changes
 watch(appliedFilters, (newVal) => {
     const filters = {
         status: activeTab.value === 'applied' ? newVal.status : '',
         groupe_id: newVal.groupe_id,
-        sanction_type: activeTab.value === 'pending' ? newVal.sanction_type : ''
+        sanction_type: activeTab.value === 'pending' ? newVal.sanction_type : '',
+        search: newVal.search,
     };
 
     router.get(route('sanction.tracking.index'), filters, {
@@ -200,7 +223,8 @@ watch(appliedFilters, (newVal) => {
 const isAnyFilterApplied = computed(() => {
     return appliedFilters.value.status !== ''
         || appliedFilters.value.groupe_id !== ''
-        || appliedFilters.value.sanction_type !== '';
+        || appliedFilters.value.sanction_type !== ''
+        || appliedFilters.value.search !== '';
 });
 
 // Methods
@@ -247,6 +271,7 @@ function clearFilters() {
         status: '',
         groupe_id: '',
         sanction_type: '',
+        search: '',
     };
 }
 
@@ -288,6 +313,14 @@ const getSanctionTypeColor = (type) => {
     return colors[type] || 'bg-gray-100 text-gray-800';
 };
 
+function changePage(url) {
+    if (url) {
+        router.visit(url, {
+            preserveScroll: true,
+            preserveState: true,
+        });
+    }
+}
 </script>
 
 <style scoped>
