@@ -11,7 +11,7 @@ use Modules\PkgSanction\App\Controllers\SanctionRulesController;
 // })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('sanction/dashboard', [DashboardController::class, 'index'])
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth', 'verified', 'role:responsable des apprenants|responsable de formation'])
     ->name('sanction.dashboard');
 
 Route::prefix('sanction/rules')->middleware(['auth', 'verified', 'role:responsable des apprenants|responsable de formation'])->group(function () {
@@ -30,7 +30,7 @@ Route::prefix('sanction/tracking')->middleware(['auth', 'verified', 'role:respon
 });
 
 Route::prefix('learner')->middleware(['auth', 'verified', 'role:apprenant'])->group(function () {
-    Route::get('/sanctions/{learnerId}', [SanctionController::class, 'learnerIndex'])->name('sanction.learner.index');
+    Route::get('/sanctions', [SanctionController::class, 'learnerIndex'])->name('sanction.learner.index');
 });
 
 // Route::get('sanction/tracking', function () {

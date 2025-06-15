@@ -9,6 +9,7 @@ use Modules\PkgApprenant\App\Services\groupeService;
 use Modules\PkgSanction\App\Enum\SanctionType;
 use Modules\PkgSanction\App\Services\SanctionCalculeeService;
 use Modules\PkgSanction\App\Services\SanctionService;
+use Illuminate\Support\Facades\Auth;
 
 class SanctionController extends BaseController
 {
@@ -57,10 +58,17 @@ class SanctionController extends BaseController
         return redirect()->back()->with('success', 'Sanction deleted successfully.');
     }
 
-    public function learnerIndex($learnerId)
+    public function learnerIndex()
     {
+        $user = Auth::user();
+        $apprenant = $user->apprenant;
+
+        if (!$apprenant) {
+            abort(404, 'Apprenant profile not found.');
+        }
+
         return Inertia::render('PkgSanction::LearnerSanctions', [
-            'sanctions' => $this->sanctionService->getLearnerSanctions($learnerId),
+            'sanctions' => $this->sanctionService->getLearnerSanctions($apprenant->id),
         ]);
     }
 }
