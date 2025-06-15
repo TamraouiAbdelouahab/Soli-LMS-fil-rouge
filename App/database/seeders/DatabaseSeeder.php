@@ -3,15 +3,14 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
 use Illuminate\Database\Seeder;
 use Modules\Core\App\Models\User;
-use Modules\Core\Database\Seeders\UsersTableSeeder;
-use Modules\PkgApprenant\Database\Seeders\GroupeSeeder;
-use Modules\PkgApprenant\Database\Seeders\ApprenantSeeder;
+use Modules\Core\Database\Seeders\DatabaseSeederCore;
 use Modules\PkgJustificatif\Database\Seeders\DatabaseSeederJustificatif;
-use Modules\PkgApprenant\Database\Seeders\ApprenantGroupeSeeder;
 use Modules\PkgEntretienInscrition\Database\Seeders\PkgEntretienInscritionDatabaseSeeder;
 use Modules\PkgAbsence\Database\Seeders\DatabaseSeederAbsence;
+use Modules\PkgApprenant\Database\Seeders\DatabaseSeederApprenant;
 use Modules\PkgSanction\Database\Seeders\DatabaseSeederSanction;
 
 class DatabaseSeeder extends Seeder
@@ -28,17 +27,9 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
 
-        User::create([
-            'name' => 'Admin',
-            'email' => 'admin@gmail.com',
-            'password' => bcrypt('password'),
-        ]);
-
         $this->call([
-            UsersTableSeeder::class,
-            GroupeSeeder::class,
-            ApprenantSeeder::class,
-            ApprenantGroupeSeeder::class,
+            DatabaseSeederCore::class,
+            DatabaseSeederApprenant::class,
             DatabaseSeederJustificatif::class,
             SeancesSeeder::class,
             DatabaseSeederSanction::class,

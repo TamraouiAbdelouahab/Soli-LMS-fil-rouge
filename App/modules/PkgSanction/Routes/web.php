@@ -14,7 +14,7 @@ Route::get('sanction/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('sanction.dashboard');
 
-Route::prefix('sanction/rules')->middleware(['auth', 'verified'])->group(function () {
+Route::prefix('sanction/rules')->middleware(['auth', 'verified', 'role:responsable des apprenants|responsable de formation'])->group(function () {
     Route::get('/', [SanctionRulesController::class, 'index'])->name('sanction.rules.index');
     Route::post('/', [SanctionRulesController::class, 'store'])->name('sanction.rules.store');
     Route::put('/{id}', [SanctionRulesController::class, 'update'])->name('sanction.rules.update');
@@ -22,17 +22,15 @@ Route::prefix('sanction/rules')->middleware(['auth', 'verified'])->group(functio
     Route::delete('/{id}', [SanctionRulesController::class, 'destroy'])->name('sanction.rules.destroy');
 });
 
-Route::prefix('sanction/tracking')->middleware(['auth', 'verified'])->group(function () {
+Route::prefix('sanction/tracking')->middleware(['auth', 'verified', 'role:responsable des apprenants|responsable de formation'])->group(function () {
     Route::get('/', [SanctionController::class, 'index'])->name('sanction.tracking.index');
     Route::post('/calculate', [SanctionController::class, 'calculateSanctions'])->name('sanction.tracking.calculate');
     Route::post('/apply/{id}', [SanctionController::class, 'applicationSanction'])->name('sanction.tracking.apply');
     Route::delete('/{id}', [SanctionController::class, 'destroy'])->name('sanction.tracking.destroy');
-
 });
 
-Route::prefix('learner')->middleware(['auth', 'verified'])->group(function () {
+Route::prefix('learner')->middleware(['auth', 'verified', 'role:apprenant'])->group(function () {
     Route::get('/sanctions/{learnerId}', [SanctionController::class, 'learnerIndex'])->name('sanction.learner.index');
-
 });
 
 // Route::get('sanction/tracking', function () {
