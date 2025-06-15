@@ -40,7 +40,7 @@
                                 Sanctions à appliquer
                                 <span
                                     class="ml-2 bg-golden-yellow text-white text-xs font-medium px-2 py-1 rounded-full">
-                                    {{ sanctionsCalculees.data.length }}
+                                    {{ sanctionsCalculeesCount ?? 0 }}
                                 </span>
                             </div>
                         </button>
@@ -55,7 +55,7 @@
                                 <CheckCircle class="h-4 w-4 mr-2" />
                                 Sanctions appliquées
                                 <span class="ml-2 bg-teal-500 text-white text-xs font-medium px-2 py-1 rounded-full">
-                                    {{ sanctionsApplied.data.length }}
+                                    {{ sanctionsAppliedCount ?? 0}}
                                 </span>
                             </div>
                         </button>
@@ -177,6 +177,8 @@ const props = defineProps({
     filters: Object,
     groupes: Array,
     sanctionTypes: Array,
+    sanctionsAppliedCount: Number,
+    sanctionsCalculeesCount: Number,
 });
 
 const activeTab = ref('pending');

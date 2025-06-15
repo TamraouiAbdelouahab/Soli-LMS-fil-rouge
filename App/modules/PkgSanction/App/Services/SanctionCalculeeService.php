@@ -38,7 +38,8 @@ class SanctionCalculeeService
             });
         }
 
-        return $query->paginate(2, ['*'], 'pending_page');
+        return $query->paginate(10, ['*'], 'pending_page')
+            ->appends($request->only(['sanction_type', 'groupe_id', 'search']));;
     }
 
     public function calculateSanctions()
@@ -131,5 +132,10 @@ class SanctionCalculeeService
             // 5. Delete the calculated sanction
             $sanctionCalculee->delete();
         });
+    }
+
+    public function sanctionAbsenceCalculeeCount()
+    {
+        return SanctionAbsenceCalculee::count();
     }
 }

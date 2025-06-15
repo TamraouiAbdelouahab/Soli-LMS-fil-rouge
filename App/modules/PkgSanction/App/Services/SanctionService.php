@@ -41,11 +41,6 @@ class SanctionService
         return SanctionAbsence::count();
     }
 
-    public function sanctionAbsenceCalculeeCount()
-    {
-        return SanctionAbsenceCalculee::count();
-    }
-
     public function learnersSanctionedCount()
     {
         $learnersSanctionedCount = Apprenant::whereHas('absences', function ($query) {
@@ -87,7 +82,9 @@ class SanctionService
             });
         }
 
-        return $query->orderBy('date_fin', 'desc')->paginate(2, ['*'], 'applied_page');
+        return $query->orderBy('date_fin', 'desc')
+            ->paginate(10, ['*'], 'applied_page')
+            ->appends($request->only(['status', 'groupe_id', 'search']));;
     }
 
     public function getLearnerSanctions($learnerId)

@@ -27,7 +27,9 @@ class SanctionController extends BaseController
     {
         return Inertia::render('PkgSanction::SanctionTracking', [
             'sanctionsApplied' => $this->sanctionService->getSanctionsApplied($request),
+            'sanctionsAppliedCount' => $this->sanctionService->sanctionAbsenceCount(),
             'sanctionsCalculees' => $this->sanctionCalculeeService->getSanctionsCalculees($request),
+            'sanctionsCalculeesCount' => $this->sanctionCalculeeService->sanctionAbsenceCalculeeCount(),
             'filters' => $request->only(['status', 'groupe_id', 'sanction_type', 'search']),
             'groupes' => $this->groupeService->getAllGroups(),
             'sanctionTypes' => array_map(fn($case) => [
