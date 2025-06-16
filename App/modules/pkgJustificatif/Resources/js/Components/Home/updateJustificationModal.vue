@@ -2,10 +2,10 @@
   <div
   v-if="show"
   >
-    <form  @submit.prevent="addJustification" method="POST"
-      class="fixed inset-0 py-8 flex items-center justify-center bg-black bg-opacity-80 z-40 "
+    <form  @submit.prevent="updateJustification" method="POST"
+        enctype="multipart/form-data"
+        class="fixed inset-0 py-8 flex items-center justify-center bg-black bg-opacity-80 z-40 "
     >
-
       <div :class="['bg-white animate-popup m-4 p-6 rounded-lg shadow-xl w-3/4 overflow-y-auto max-h-[calc(100vh-2vh)] dark:bg-gray-800',animatingOut ? 'animate-popupOut' : 'animate-popupIn']">
         <div class="flex justify-between gap-4 w-full items-center">
             <h2 class="text-xl font-semibold mb-4 dark:text-white">Ajouter un justification</h2>
@@ -55,10 +55,6 @@
                   <option v-for="reason in props.reasons" :value="reason.id" :key="reason.id">{{reason.libelle}}</option>
                 </select>
                 <small class="text-red-500" v-if="form.errors.raison">{{ form.errors.raison }}</small>
-                <!-- <button
-                      class="bg-blue-500 text-white px-4 py-2 rounded">
-                      +
-                </button> -->
               </div>
           </div>
         </div>
@@ -86,7 +82,7 @@
               Fichier
             </label>
             <input  type="file" name="fichier" @change="handleFileUpload" id="fichier" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-2"
-                    placeholder=".png,.jpg,.pdf" required  />
+                    placeholder=".png,.jpg,.pdf" required />
             <small class="text-red-500" v-if="form.errors.fichier">{{ form.errors.fichier }}</small>
         </div>
         <div>
@@ -97,8 +93,6 @@
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-2"
             ></textarea>
             <small class="text-red-500" v-if="form.errors.description">{{ form.errors.description }}</small>
-            <!-- <input type="text" id="description" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-2"
-                    placeholder="description" required /> -->
         </div>
         <div class="flex items-center justify-end">
             <button
@@ -113,20 +107,19 @@
   </div>
 </template>
 
+
+
 <script setup>
     import { computed } from 'vue';
-    import { ref } from 'vue';
+    import { ref,watch  } from 'vue';
     import { useForm } from '@inertiajs/vue3';
-
-    const props = defineProps(['show','reasons','groups'])
-
+    const props = defineProps(['show','reasons','groups','justification'])
+    const emit = defineEmits(['close','closeAddConfirmationVisible','openAddConfirmationVisible']);
     const statuses = ref({
     "EN_ATTENTE": "en attente",
     "ACCEPTE": "accepte",
     "REJETE": "rejete",
     })
-
-    const emit = defineEmits(['close','closeAddConfirmationVisible','openAddConfirmationVisible']);
     const groupe = ref(props.groups[0].id);
     const apprenantsDuGroupe =ref( computed(() => {
     const selectedGroup = props.groups.find(g => g.id === groupe.value);
@@ -136,27 +129,25 @@
     const isSubmitting = ref(false);
     const form = useForm({
     dateDepot: new Date().toISOString().split('T')[0],
-    dateDebut: '',
-    dateFin: '',
-    description: '',
-    status: 'EN_ATTENTE',
-    raison: props.reasons[0].id,
-    apprenant: apprenantsDuGroupe.value[0].id,
-    fichier: null,
+    dateDebut: props.justification.dateDebut || '',
+    dateFin : props.justification.dateFin || '',
+    description : props.justification.description || '',
+    status: props.justification.status || 'EN_ATTENTE',
+    raison: props.justification.raison?.id || props.reasons[0].id,
+    apprenant: props.justification.apprenant?.id || apprenantsDuGroupe.value[0]?.id,
+    fichier: props.justification.fichier || null,
     });
-    const addJustification = () => {
-        if (isSubmitting.value) return; // Sécurité supplémentaire
-            isSubmitting.value = true;
-        form.post(route('Justificatifs.store'), {
 
+    const updateJustification = () => {
+        if (isSubmitting.value) return;
+            isSubmitting.value = true;
+
+         form.post(route('Justificatifs.update', props.justification.id), {
+            forceFormData: true,
+            _method: 'put',
             onSuccess: () => {
-                form.reset();
                 animatingOut.value = true;
                 emit('close');
-                // emit('openAddConfirmationVisible');
-                // setTimeout(() => {
-                //     emit('closeAddConfirmationVisible');
-                // }, 500);
                 animatingOut.value = false;
                 isSubmitting.value = false;
             },
@@ -173,12 +164,25 @@
     }
     function closePopup() {
         animatingOut.value = true;
-
         setTimeout(() => {
         emit('close');
         animatingOut.value = false;
         }, 200);
     }
+    watch(() => props.justification, (newJustification) => {
+    if (newJustification) {
+        form.dateDepot = newJustification.dateDepot || new Date().toISOString().split('T')[0];
+        form.dateDebut = newJustification.dateDebut || '';
+        form.dateFin = newJustification.dateFin || '';
+        form.description = newJustification.description || '';
+        form.status = newJustification.status || 'EN_ATTENTE';
+        form.raison = newJustification.raison?.id || props.reasons[0].id;
+        form.apprenant = newJustification.apprenant?.id || apprenantsDuGroupe.value[0]?.id;
+        form.fichier = newJustification.fichier || null;
+    }
+    },
+    { immediate: true }
+    )
 </script>
 
 

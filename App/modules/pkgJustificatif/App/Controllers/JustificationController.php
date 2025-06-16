@@ -3,11 +3,14 @@
 namespace Modules\PkgJustificatif\App\Controllers;
 
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Redirect;
 use Modules\Core\App\Controllers\BaseController;
 use Modules\PkgApprenant\App\Services\groupeService;
+use Modules\PkgJustificatif\App\Models\Justificatif;
 use Modules\PkgJustificatif\App\Services\justificatifService;
 use Modules\PkgJustificatif\App\Services\raisonService;
 use Modules\PkgJustificatif\App\Requests\JustificationRequest;
+use Illuminate\Http\Request;
 class JustificationController extends  BaseController
 {
     protected $justificationService,$raisonService,$groupeService;
@@ -21,7 +24,8 @@ class JustificationController extends  BaseController
     public function index()
     {
         return Inertia::render('PkgJustificatif::Home', [
-            'justifications'=> $this->justificationService->Alljustifications(),
+            // 'justifications'=> $this->justificationService->Alljustifications(),
+            'justifications'=> Justificatif::with('raison','apprenant.groupes')->paginate(5),
             'reasons' =>$this->raisonService->Allreason(),
             'groups' => $this->groupeService->Allgroups(),
         ]);
@@ -37,13 +41,14 @@ class JustificationController extends  BaseController
     public function update($id,JustificationRequest $request)
     {
         $validateData = $request->validated();
-        $justification = $this->justificationService->update($id,$validateData);
-        return Inertia::redirect('Justificatifs.home');
+        $this->justificationService->update($id,$validateData);
+        // return Inertia::redirect('Justificatifs.home');
     }
     public function destroy($id)
     {
-        $justification = $this->justificationService->delete($id);
-        // return Inertia::redirect('Justificatifs.home');
+        $this->justificationService->delete($id);
+        return Redirect::route('Justificatifs.home');
+        // return Inertia::redirect()->route('Justificatifs.home');
     }
 }
 
