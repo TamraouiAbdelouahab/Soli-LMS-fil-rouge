@@ -30,8 +30,14 @@ Route::prefix('sanction/tracking')->middleware(['auth', 'verified', 'role:respon
 });
 
 Route::prefix('learner')->middleware(['auth', 'verified', 'role:apprenant'])->group(function () {
-    Route::get('/sanctions', [SanctionController::class, 'learnerIndex'])->name('sanction.learner.index');
+    Route::get('/sanctions', [SanctionController::class, 'learnerIndex'])->name('learner.sanction.index');
 });
+
+Route::post('/notifications/{id}/mark-as-read', function ($id) {
+    $notification = auth()->user()->notifications()->findOrFail($id);
+    $notification->markAsRead();
+    return response()->noContent();
+})->middleware(['auth'])->name('notifications.markAsRead');
 
 // Route::get('sanction/tracking', function () {
 //     return Inertia::render('PkgSanction::SanctionTracking');

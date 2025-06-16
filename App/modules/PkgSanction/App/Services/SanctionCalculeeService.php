@@ -9,6 +9,7 @@ use Modules\PkgAbsence\App\Models\Absence;
 use Modules\PkgSanction\App\Models\ReglesDeSanction;
 use Modules\PkgSanction\App\Models\SanctionAbsence;
 use Modules\PkgSanction\App\Models\SanctionAbsenceCalculee;
+use Modules\PkgSanction\App\Notifications\SanctionAppliedNotification;
 
 class SanctionCalculeeService
 {
@@ -101,9 +102,10 @@ class SanctionCalculeeService
     {
         DB::transaction(function () use ($sanctionId) {
             // 1. Fetch the calculated sanction with absences and the rule
-            $sanctionCalculee = SanctionAbsenceCalculee::with(['absences', 'regle'])->findOrFail($sanctionId);
+            $sanctionCalculee = SanctionAbsenceCalculee::with(['absences.apprenant.user', 'regle'])->findOrFail($sanctionId);
             $absences = $sanctionCalculee->absences;
             $regle = $sanctionCalculee->regle;
+            $apprenant = $absences->first()?->apprenant->user;
 
             if ($absences->isEmpty()) {
                 throw new \Exception("No absences found for this sanction.");
@@ -131,6 +133,11 @@ class SanctionCalculeeService
 
             // 5. Delete the calculated sanction
             $sanctionCalculee->delete();
+
+            // send the notification
+            if ($apprenant) {
+                $apprenant->notify(new SanctionAppliedNotification($sanction));
+            }
         });
     }
 

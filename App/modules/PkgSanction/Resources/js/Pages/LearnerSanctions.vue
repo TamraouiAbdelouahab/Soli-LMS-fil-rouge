@@ -65,7 +65,8 @@ const props = defineProps({
     sanctions: {
         type: Array,
         default: () => []
-    }
+    },
+    highlight: [String, Number],
 });
 
 console.log('Sanctions:', props.sanctions);
@@ -141,4 +142,13 @@ const getSanctionIcon = (type) => {
     return icons[type] || AlertTriangle;
 };
 
+onMounted(() => {
+    if (props.highlight) {
+        const target = props.sanctions.find(s => String(s.id) === String(props.highlight))
+        if (target) {
+            selectedSanction.value = target
+            showModal.value = true
+        }
+    }
+})
 </script>
