@@ -16,7 +16,7 @@
             </div>
 
             <!-- Modal Body -->
-            <div class="mt-4 max-h-96 overflow-y-auto px-1">
+            <div class="mt-4 mb-4 max-h-96 overflow-y-auto px-1">
                 <form @submit.prevent="handleSubmit" class="space-y-6">
                     <!-- Titre -->
                     <div>
@@ -135,7 +135,7 @@
                     Annuler
                 </button>
                 <button @click="handleSubmit" :disabled="isSubmitting || !isFormValid"
-                    class="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white text-sm font-medium rounded-md focus:outline-none focus:ring-1 focus:ring-teal-500 disabled:cursor-not-allowed flex items-center">
+                    class="px-4 py-2 bg-teal-600 hover:bg-teal-700 disabled:bg-teal-400 text-white text-sm font-medium rounded-md focus:outline-none focus:ring-1 focus:ring-teal-500 disabled:cursor-not-allowed flex items-center">
                     <Loader2 v-if="isSubmitting" class="h-4 w-4 mr-2 animate-spin" />
                     <Save v-else class="h-4 w-4 mr-2" />
                     {{ isSubmitting ? 'Mise à jour...' : 'Mettre à jour' }}

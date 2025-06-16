@@ -49,7 +49,7 @@
                     <td class="px-6 py-4 whitespace-nowrap">
                         <span :class="[
                             'inline-flex px-2 py-1 text-xs font-semibold rounded-full',
-                            getSanctionTypeColor(sanction.regle.sanction_type)
+                            sanctionTypeColor(sanction.regle.sanction_type)
                         ]">
                             {{ sanction.regle.sanction_type }}
                         </span>
@@ -60,16 +60,16 @@
                     <td class="px-6 py-4 whitespace-nowrap">
                         <span :class="[
                             'inline-flex px-2 py-1 text-xs font-semibold rounded-full',
-                            getStatusColor(sanction.statut)
+                            statusColor(sanction.status)
                         ]">
-                            {{ getStatusLabel(sanction.statut) }}
+                            {{ statusLabel(sanction.status) }}
                         </span>
-                        <div v-if="sanction.statut === 'Active'" class="text-xs text-gray-500 mt-1">
+                        <div v-if="sanction.status === 'active'" class="text-xs text-gray-500 mt-1">
                             Fin: {{ formatDate(sanction.date_fin) }}
                         </div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {{ sanction.regle.duree_sanction }} jour{{ sanction.regle.duree_sanction > 1 ? 's' : '' }}
+                        {{ sanction.duree }} jour{{ sanction.duree > 1 ? 's' : '' }}
                     </td>
                     <!-- <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
 
@@ -103,7 +103,7 @@
         <div v-if="links && links.length > 0" class="flex justify-end py-4 px-6">
             <nav class="inline-flex rounded-md shadow-sm">
                 <button v-for="(link, index) in links" :key="index" v-html="link.label" :disabled="!link.url"
-                    @click="changePage(link.url)" :class="[
+                    @click="onPageClick(link.url)" :class="[
                         'px-4 py-2 border text-sm',
                         link.active
                             ? 'bg-teal-600 text-white border-teal-600'
@@ -120,15 +120,6 @@
 import { Eye, Shield, CheckCircle } from 'lucide-vue-next';
 import { router } from '@inertiajs/vue3';
 
-function changePage(url) {
-    if (url) {
-        router.visit(url, {
-            preserveScroll: true,
-            preserveState: true,
-        });
-    }
-}
-
 defineProps({
     sanctions: {
         type: Array,
@@ -139,46 +130,29 @@ defineProps({
         type: Array,
         required: true,
         default: () => []
+    },
+    statusColor: {
+        type: Function,
+        required: true
+    },
+    statusLabel: {
+        type: Function,
+        required: true
+    },
+    formatDate: {
+        type: Function,
+        required: true
+    },
+    sanctionTypeColor: {
+        type: Function,
+        required: true
     }
 });
 
-defineEmits(['view', 'lift']);
+const emit = defineEmits(['view', 'lift', 'page-change']);
 
-const getSanctionTypeColor = (type) => {
-    const colors = {
-        'Avertissement': 'bg-bright-yellow-100 text-yellow-800',
-        'Blame': 'bg-golden-yellow-200 text-yellow-900',
-        'Exclusion': 'bg-red-orange-100 text-red-orange-800'
-    };
-    return colors[type] || 'bg-gray-100 text-gray-800';
-};
+const onPageClick = (url) => {
+    if (url) emit('page-change', url)
+}
 
-const statusStyles = {
-    Active: {
-        label: 'Active',
-        color: 'bg-teal-100 text-teal-800'
-    },
-    Expired: {
-        label: 'Expirée',
-        color: 'bg-gray-100 text-gray-800'
-    },
-    Lifted: {
-        label: 'Levée',
-        color: 'bg-light-blue-100 text-light-blue-800'
-    }
-};
-
-const getStatusColor = (status) => statusStyles[status]?.color || 'bg-gray-100 text-gray-800';
-const getStatusLabel = (status) => statusStyles[status]?.label || status;
-
-
-const formatDate = (date) => {
-    const parsedDate = new Date(date);
-    if (isNaN(parsedDate)) return 'Date invalide';
-    return new Intl.DateTimeFormat('fr-FR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-    }).format(parsedDate);
-};
 </script>

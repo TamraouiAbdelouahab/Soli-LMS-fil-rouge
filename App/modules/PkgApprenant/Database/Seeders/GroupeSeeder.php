@@ -15,19 +15,31 @@ class GroupeSeeder extends Seeder
     {
         Groupe::insert([
             [
-                'nom' => 'Groupe A',
+                'nom' => 'DW 101',
                 'description' => 'Groupe des apprenants de la première année.',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
             [
-                'nom' => 'Groupe B',
-                'description' => 'Groupe des apprenants spécialisés en développement web.',
+                'nom' => 'DW 102',
+                'description' => 'Groupe des apprenants de la première année.',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+                        [
+                'nom' => 'DW 103',
+                'description' => 'Groupe des apprenants de la première année.',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+                        [
+                'nom' => 'DW 104',
+                'description' => 'Groupe des apprenants de la première année.',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
             [
-                'nom' => 'Groupe C',
+                'nom' => 'DM 101',
                 'description' => 'Groupe des apprenants de la deuxième année.',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),

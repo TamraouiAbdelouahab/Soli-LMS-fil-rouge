@@ -16,7 +16,7 @@
                         Exporter
                     </button>
 
-                    <button @click="refreshData"
+                    <button @click="submitCalcul"
                         class="inline-flex items-center px-4 py-2 bg-teal-600 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">
                         <RefreshCw class="h-4 w-4 mr-2" />
                         Actualiser
@@ -40,7 +40,7 @@
                                 Sanctions à appliquer
                                 <span
                                     class="ml-2 bg-golden-yellow text-white text-xs font-medium px-2 py-1 rounded-full">
-                                    {{ sanctionsCalculees.data.length }}
+                                    {{ sanctionsCalculeesCount ?? 0 }}
                                 </span>
                             </div>
                         </button>
@@ -55,7 +55,7 @@
                                 <CheckCircle class="h-4 w-4 mr-2" />
                                 Sanctions appliquées
                                 <span class="ml-2 bg-teal-500 text-white text-xs font-medium px-2 py-1 rounded-full">
-                                    {{ sanctionsApplied.data.length }}
+                                    {{ sanctionsAppliedCount ?? 0}}
                                 </span>
                             </div>
                         </button>
@@ -68,19 +68,37 @@
                     <div v-if="activeTab === 'pending'">
                         <div class="flex items-center justify-between px-6 py-4">
                             <h2 class="text-lg font-semibold text-charcoal-900">Sanctions en attente d'application</h2>
-                            <div class="flex items-center space-x-2">
-                                <select v-model="pendingStatusFilter"
+                            <div class="flex flex-wrap items-center gap-2">
+                                <!-- Search input -->
+                                <input type="text" v-model="appliedFilters.search" placeholder="Rechercher..."
+                                    class="text-sm border border-gray-300 rounded-md px-3 py-1 focus:outline-none focus:ring-2 focus:ring-teal-500" />
+
+                                <select v-model="appliedFilters.sanction_type"
                                     class="text-sm border border-gray-300 rounded-md ps-3 pe-7 py-1 focus:outline-none focus:ring-2 focus:ring-teal-500">
                                     <option value="">Tous les types</option>
-                                    <option value="Avertissement">Avertissement</option>
-                                    <option value="Blâme">Blâme</option>
-                                    <option value="Exclusion">Exclusion</option>
+                                    <option v-for="type in sanctionTypes" :key="type.value" :value="type.value">
+                                        {{ type.label }}
+                                    </option>
                                 </select>
+
+                                <!-- Groupe filter -->
+                                <select v-model="appliedFilters.groupe_id"
+                                    class="text-sm border rounded border-gray-300 ps-3 pe-7 py-1 focus:ring-teal-500">
+                                    <option value="">Tous les groupes</option>
+                                    <option v-for="g in groupes" :key="g.id" :value="g.id">
+                                        {{ g.nom }}
+                                    </option>
+                                </select>
+
+                                <!-- Clear Filters Button -->
+                                <XCircle v-if="isAnyFilterApplied" @click="clearFilters"
+                                    class="w-5 h-5 text-gray-400 hover:text-red-500 cursor-pointer transition-colors" />
                             </div>
                         </div>
 
                         <PendingSanctionsTable :sanctions="sanctionsCalculees.data" @apply="applySanction"
-                            @ignore="ignoreSanction" @view="viewSanction" :links="sanctionsApplied.links" />
+                            :sanctionTypeColor="getSanctionTypeColor" @ignore="ignoreSanction" @view="viewSanction"
+                            @page-change="changePage" :links="sanctionsCalculees.links" :formatDate="formatDate" />
                     </div>
 
                     <!-- Applied Sanctions Tab -->
@@ -88,40 +106,63 @@
                         <div class="flex items-center justify-between px-6 py-4">
                             <h2 class="text-lg font-semibold text-charcoal-900">Sanctions appliquées</h2>
                             <div class="flex items-center space-x-2">
-                                <select v-model="appliedStatusFilter"
+                                <!-- Search input -->
+                                <input type="text" v-model="appliedFilters.search" placeholder="Rechercher..."
+                                    class="text-sm border border-gray-300 rounded-md px-3 py-1 focus:outline-none focus:ring-2 focus:ring-teal-500" />
+
+                                <select v-model="appliedFilters.status"
                                     class="text-sm border border-gray-300 rounded-md ps-3 pe-7 py-1 focus:outline-none focus:ring-2 focus:ring-teal-500">
                                     <option value="">Tous les statuts</option>
-                                    <option value="Active">Active</option>
-                                    <option value="Expired">Expirée</option>
-                                    <option value="Lifted">Levée</option>
+                                    <option value="active">Active</option>
+                                    <option value="expirée">Expirée</option>
+                                    <!-- <option value="lifted">Levée</option> -->
                                 </select>
+
+                                <!-- Groupe filter -->
+                                <select v-model="appliedFilters.groupe_id"
+                                    class="text-sm border rounded border-gray-300 ps-3 pe-7 py-1 focus:ring-teal-500">
+                                    <option value="">Tous les groupes</option>
+                                    <option v-for="g in groupes" :key="g.id" :value="g.id">
+                                        {{ g.nom }}
+                                    </option>
+                                </select>
+
+                                <!-- Clear Filters Button -->
+                                <XCircle v-if="isAnyFilterApplied" @click="clearFilters"
+                                    class="w-5 h-5 text-gray-400 hover:text-red-500 cursor-pointer transition-colors" />
                             </div>
                         </div>
 
                         <AppliedSanctionsTable :sanctions="sanctionsApplied.data" :links="sanctionsApplied.links"
-                            @view="viewSanction" @lift="liftSanction" />
+                            :statusColor="getStatusColor" :statusLabel="getStatusLabel" @view="viewSanction"
+                            @page-change="changePage" @lift="liftSanction" :formatDate="formatDate"
+                            :sanctionTypeColor="getSanctionTypeColor" />
                     </div>
                 </div>
             </div>
 
             <!-- View Sanction Modal -->
             <ViewSanctionModal v-if="showViewModal && selectedSanction" :sanction="selectedSanction"
-                @close="showViewModal = false" />
+                :sanctionTypeColor="getSanctionTypeColor" :statusColor="getStatusColor" :statusLabel="getStatusLabel"
+                @close="showViewModal = false" :formatDate="formatDate" />
 
             <!-- Apply Sanction Modal -->
             <ApplySanctionModal v-if="showApplyModal && selectedSanction" :sanction="selectedSanction"
-                @close="showApplyModal = false" @confirm="confirmApplySanction" />
+                @close="showApplyModal = false" @confirm="confirmApplySanction" :formatDate="formatDate" />
         </div>
     </AuthenticatedLayout>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, watch } from 'vue';
+import { router } from '@inertiajs/vue3';
+import debounce from 'lodash/debounce'
 import {
     Download,
     RefreshCw,
     Clock,
-    CheckCircle
+    CheckCircle,
+    XCircle
 } from 'lucide-vue-next';
 
 import AuthenticatedLayout from '@core/Layouts/AuthenticatedLayout.vue';
@@ -133,89 +174,68 @@ import ApplySanctionModal from '../Components/Sanction/ApplySanctionModal.vue';
 const props = defineProps({
     sanctionsApplied: Object,
     sanctionsCalculees: Object,
-})
+    filters: Object,
+    groupes: Array,
+    sanctionTypes: Array,
+    sanctionsAppliedCount: Number,
+    sanctionsCalculeesCount: Number,
+});
 
-console.log('Sanctions appliquées:', props.sanctionsCalculees);
-// Reactive state
 const activeTab = ref('pending');
-const searchQuery = ref('');
-const classFilter = ref('');
-const pendingStatusFilter = ref('');
-const appliedStatusFilter = ref('');
 const showViewModal = ref(false);
 const showApplyModal = ref(false);
 const selectedSanction = ref(null);
 
-// Sample pending sanctions data
-// const pendingSanctions = ref([
-//     {
-//         id: 1,
-//         learner: 'Jean Dupont',
-//         class: '1A',
-//         sanctionType: 'Avertissement',
-//         reason: 'Absences répétées (5/5)',
-//         calculatedOn: new Date('2024-01-25'),
-//         rule: "Règle d'absentéisme niveau 1",
-//         absenceCount: 5
-//     },
-//     {
-//         id: 2,
-//         learner: 'Marie Martin',
-//         class: '2B',
-//         sanctionType: 'Blâme',
-//         reason: 'Retards chroniques (8/8)',
-//         calculatedOn: new Date('2024-01-24'),
-//         rule: 'Règle retards répétés',
-//         absenceCount: 8
-//     },
-//     {
-//         id: 3,
-//         learner: 'Pierre Durand',
-//         class: '1B',
-//         sanctionType: 'Exclusion',
-//         reason: 'Absence examen important',
-//         calculatedOn: new Date('2024-01-23'),
-//         rule: 'Règle absence examens',
-//         absenceCount: 3
-//     },
-//     {
-//         id: 4,
-//         learner: 'Sophie Leroy',
-//         class: '2A',
-//         sanctionType: 'Avertissement',
-//         reason: 'Absences non justifiées (5/5)',
-//         calculatedOn: new Date('2024-01-22'),
-//         rule: "Règle d'absentéisme niveau 1",
-//         absenceCount: 5
-//     }
-// ]);
-
-// const sanctionsApplied = ref({});
-
-// Computed: Filtered Pending Sanctions based on selected filter and search query
-const filteredPendingSanctions = computed(() => {
-    return pendingSanctions.value.filter(sanction => {
-        const matchesStatus = pendingStatusFilter.value ? sanction.sanctionType === pendingStatusFilter.value : true;
-        // Extend with search or class filter if needed
-        return matchesStatus;
-    });
+const appliedFilters = ref({
+    status: props.filters.status || '',
+    groupe_id: props.filters.groupe_id || '',
+    sanction_type: props.filters.sanction_type || '',
+    search: props.filters.search || '',
 });
 
-// Computed: Filtered Applied Sanctions based on selected filter and search query
-// const filteredAppliedSanctions = computed(() => {
-//     return appliedSanctions.value.filter(sanction => {
-//         const matchesStatus = appliedStatusFilter.value ? sanction.status === appliedStatusFilter.value : true;
-//         return matchesStatus;
-//     });
-// });
+// Debounced handler
+const updateSearch = debounce(() => {
+    router.get(route('your.route.name'), appliedFilters.value, {
+        preserveState: true,
+        replace: true,
+    })
+}, 400)
+
+// Watch search input
+watch(() => appliedFilters.value.search, () => {
+    updateSearch()
+})
+
+// Watch for filter changes
+watch(appliedFilters, (newVal) => {
+    const filters = {
+        status: activeTab.value === 'applied' ? newVal.status : '',
+        groupe_id: newVal.groupe_id,
+        sanction_type: activeTab.value === 'pending' ? newVal.sanction_type : '',
+        search: newVal.search,
+    };
+
+    router.get(route('sanction.tracking.index'), filters, {
+        preserveState: true,
+        replace: true,
+        preserveScroll: true,
+    });
+}, { deep: true });
+
+const isAnyFilterApplied = computed(() => {
+    return appliedFilters.value.status !== ''
+        || appliedFilters.value.groupe_id !== ''
+        || appliedFilters.value.sanction_type !== ''
+        || appliedFilters.value.search !== '';
+});
 
 // Methods
 function exportSanctions() {
     alert('Fonction d\'export des sanctions déclenchée.');
 }
 
-function refreshData() {
-    alert('Données rafraîchies.');
+function submitCalcul() {
+    router.post(route('sanction.tracking.calculate'));
 }
 
 function applySanction(sanction) {
@@ -224,7 +244,7 @@ function applySanction(sanction) {
 }
 
 function ignoreSanction(sanction) {
-    alert(`Sanction ID ${sanction.id} ignorée.`);
+    router.delete(route('sanction.tracking.destroy', sanction.id));
 }
 
 function viewSanction(sanction) {
@@ -232,31 +252,89 @@ function viewSanction(sanction) {
     showViewModal.value = true;
 }
 
-function confirmApplySanction() {
-    alert(`Sanction ID ${selectedSanction.value.id} appliquée.`);
-    showApplyModal.value = false;
+function confirmApplySanction(sanction) {
+    router.post(route('sanction.tracking.apply', sanction.id), {}, {
+        onSuccess: () => {
+            showApplyModal.value = false;
+            selectedSanction.value = null;
+        },
+        onError: (errors) => {
+            console.error('Error applying sanction:', errors);
+        }
+    });
 }
 
 function liftSanction(sanction) {
     alert(`Sanction ID ${sanction.id} levée.`);
 }
 
+function clearFilters() {
+    appliedFilters.value = {
+        status: '',
+        groupe_id: '',
+        sanction_type: '',
+        search: '',
+    };
+}
 
+const statusStyles = {
+    active: {
+        label: 'Active',
+        color: 'bg-teal-100 text-teal-800'
+    },
+    expirée: {
+        label: 'Expirée',
+        color: 'bg-gray-100 text-gray-800'
+    },
+    lifted: {
+        label: 'Levée',
+        color: 'bg-light-blue-100 text-light-blue-800'
+    }
+};
+
+const getStatusColor = (status) => statusStyles[status]?.color || 'bg-gray-100 text-gray-800';
+
+const getStatusLabel = (status) => statusStyles[status]?.label || status;
+
+const formatDate = (date) => {
+    const parsedDate = new Date(date);
+    if (isNaN(parsedDate)) return 'Date invalide';
+    return new Intl.DateTimeFormat('fr-FR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    }).format(parsedDate);
+};
+
+const getSanctionTypeColor = (type) => {
+    const colors = {
+        'Avertissement': 'bg-bright-yellow-100 text-yellow-800',
+        'Blâme': 'bg-golden-yellow-200 text-yellow-900',
+        'Exclusion': 'bg-red-orange-100 text-red-orange-800'
+    };
+    return colors[type] || 'bg-gray-100 text-gray-800';
+};
+
+function changePage(url) {
+    if (url) {
+        router.visit(url, {
+            preserveScroll: true,
+            preserveState: true,
+        });
+    }
+}
 </script>
 
 <style scoped>
 .bg-light-blue-50 {
     background-color: #e0f2fe;
-    /* Tailwind's light blue 50 */
 }
 
 .text-charcoal-900 {
     color: #2e2e2e;
-    /* Custom charcoal color */
 }
 
 .bg-golden-yellow {
     background-color: #FFC107;
-    /* Example golden yellow */
 }
 </style>

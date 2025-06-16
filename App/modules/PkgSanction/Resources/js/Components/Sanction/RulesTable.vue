@@ -43,7 +43,8 @@
                             <div>
                                 <div class="text-sm font-medium text-charcoal-900">{{ rule.titre }}</div>
                                 <div class="text-sm text-gray-500 max-w-xs truncate">
-                                    {{ rule.description && rule.description.length > 24 ? rule.description.slice(0, 24) + '...' :
+                                    {{ rule.description && rule.description.length > 24 ? rule.description.slice(0, 24)
+                                        + '...' :
                                         rule.description }}
                                 </div>
                             </div>
@@ -121,16 +122,30 @@
                     </tr>
                 </tbody>
             </table>
+
+            <!-- Empty State -->
+            <div v-if="rules.length === 0" class="text-center py-12">
+                <FileText class="mx-auto h-12 w-12 text-gray-400" />
+                <h3 class="mt-2 text-sm font-medium text-gray-900">Aucune règle définie</h3>
+                <p class="mt-1 text-sm text-gray-500">Les règles de sanction apparaîtront ici.</p>
+            </div>
         </div>
     </div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue';
-import { Users, Bell, Calendar, Eye, Edit, Power, Trash2 } from 'lucide-vue-next';
+import { Users, Bell, Calendar, Eye, Edit, Power, Trash2, FileText } from 'lucide-vue-next';
 
 const props = defineProps({
-    rules: Array
+    rules: {
+        type: Array,
+        required: true
+    },
+    formatDate: {
+        type: Function,
+        required: true
+    },
 });
 
 const localStatusFilter = ref('');
@@ -142,15 +157,4 @@ const computedRules = computed(() => {
     );
 });
 
-const formatDate = (date) => {
-    const parsedDate = new Date(date);
-    if (isNaN(parsedDate)) return 'Date invalide';
-    return new Intl.DateTimeFormat('fr-FR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-    }).format(parsedDate);
-};
 </script>
-
-<style scoped></style>

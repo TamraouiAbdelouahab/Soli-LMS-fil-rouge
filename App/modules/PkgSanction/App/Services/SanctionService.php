@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Modules\PkgApprenant\App\Models\Apprenant;
 use Modules\PkgSanction\App\Models\SanctionAbsence;
 use Modules\PkgSanction\App\Models\SanctionAbsenceCalculee;
+use Illuminate\Http\Request;
 
 class SanctionService
 {
@@ -16,7 +17,7 @@ class SanctionService
 
         foreach ($RecentSanctions as $Sanction) {
             if ($Sanction) {
-                $Statut = Carbon::parse($Sanction->date_fin)->lt(Carbon::now()) ? 'Expirée' : 'Active';
+                $Statut = Carbon::parse($Sanction->date_fin)->lt(Carbon::now()) ? 'expirée' : 'active';
                 $Sanction->statut = $Statut;
             }
         }
@@ -40,11 +41,6 @@ class SanctionService
         return SanctionAbsence::count();
     }
 
-    public function sanctionAbsenceCalculeeCount()
-    {
-        return SanctionAbsenceCalculee::count();
-    }
-
     public function learnersSanctionedCount()
     {
         $learnersSanctionedCount = Apprenant::whereHas('absences', function ($query) {
@@ -54,17 +50,50 @@ class SanctionService
         return $learnersSanctionedCount;
     }
 
-    public function getSanctionsApplied()
+    public function getSanctionsApplied(Request $request)
     {
-        $SanctionsApplied = SanctionAbsence::with('absences.apprenant.groupes', 'regle')->orderBy('date_fin', 'desc')->paginate(10);
+        $query = SanctionAbsence::with(['absences.apprenant.groupes', 'regle']);
+        $now = Carbon::now();
 
-        foreach ($SanctionsApplied as $Sanction) {
-            if ($Sanction) {
-                $Statut = Carbon::parse($Sanction->date_fin)->lt(Carbon::now()) ? 'Expirée' : 'Active';
-                $Sanction->statut = $Statut;
+        if ($request->filled('status')) {
+            switch ($request->status) {
+                case 'active':
+                    $query->where('date_fin', '>=', $now);
+                    break;
+
+                case 'expirée':
+                    $query->where('date_fin', '<', $now);
+                    break;
             }
         }
 
-        return $SanctionsApplied;
+        if ($request->filled('groupe_id')) {
+            $query->whereHas('absences.apprenant.groupes', function ($q) use ($request) {
+                $q->where('groupes.id', $request->groupe_id);
+            });
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+
+            $query->whereHas('absences.apprenant', function ($q) use ($search) {
+                $q->where('nom', 'like', "%{$search}%")
+                    ->orWhere('prenom', 'like', "%{$search}%");
+            });
+        }
+
+        return $query->orderBy('date_fin', 'desc')
+            ->paginate(10, ['*'], 'applied_page')
+            ->appends($request->only(['status', 'groupe_id', 'search']));;
+    }
+
+    public function getLearnerSanctions($learnerId)
+    {
+        return SanctionAbsence::with(['absences.apprenant.groupes', 'regle'])
+            ->whereHas('absences.apprenant', function ($query) use ($learnerId) {
+                $query->where('id', $learnerId);
+            })
+            ->orderBy('date_fin', 'desc')
+            ->get();
     }
 }

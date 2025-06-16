@@ -11,25 +11,10 @@ class UsersTableSeeder extends Seeder
     public function run()
     {
         // User::truncate();
-
         User::create([
-            'email' => 'ahmed.elamrani@gmail.com',
-            'password' => Hash::make('password'),
-        ]);
-
-        User::create([
-            'email' => 'fatimazahra.boulahdour@gmail.com',
-            'password' => Hash::make('password'),
-        ]);
-
-        User::create([
-            'email' => 'youssef.benjelloun@gmail.com',
-            'password' => Hash::make('password'),
-        ]);
-
-        User::create([
-            'email' => 'souad.amrani@gmail.com',
-            'password' => Hash::make('password'),
-        ]);
+            'name' => 'Admin',
+            'email' => 'admin@gmail.com',
+            'password' => bcrypt('password'),
+        ])->assignRole('responsable des apprenants');
     }
 }

@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
 import ApplicationLogo from '@core/Components/ApplicationLogo.vue';
 import Dropdown from '@core/Components/Dropdown.vue';
 import DropdownLink from '@core/Components/DropdownLink.vue';
@@ -22,6 +22,8 @@ import {
     ChevronLeft,
     Gavel
 } from 'lucide-vue-next';
+
+const page = usePage();
 
 const dashboardExpanded = ref(false)
 const sanctionExpanded = ref(false)
@@ -194,7 +196,7 @@ onUnmounted(() => {
 
                     <!-- Sanction Parent -->
                     <button @click="sanctionExpanded = !sanctionExpanded" :class="[
-                        route().current('sanction.rules.index') || route().current('sanction.tracking.index')
+                        route().current('sanction.rules.index') || route().current('sanction.tracking.index') || route().current('sanction.learner.index')
                             ? 'bg-blue-50 text-teal-700'
                             : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
                         sidebarOpen ? 'justify-start' : 'justify-center',
@@ -214,20 +216,33 @@ onUnmounted(() => {
                     <!-- Sublinks -->
                     <div v-show="sanctionExpanded" class="ml-8 space-y-1" v-if="sidebarOpen">
                         <!-- Page 1 -->
-                        <Link :href="route('sanction.rules.index')" :class="[
-                            route().current('sanction.rules.index') ? 'text-teal-700' : 'text-gray-600 hover:text-teal-600',
-                            'block text-sm py-1 transition'
-                        ]">
+                        <Link
+                            v-if="['responsable des apprenants', 'responsable de formation'].some(role => page.props.auth.user?.roles?.includes(role))"
+                            :href="route('sanction.rules.index')" :class="[
+                                route().current('sanction.rules.index') ? 'text-teal-700' : 'text-gray-600 hover:text-teal-600',
+                                'block text-sm py-1 transition'
+                            ]">
                         Règles de sanction
                         </Link>
+
                         <!-- Page 2 -->
-                        <Link :href="route('sanction.tracking.index')" :class="[
-                            route().current('sanction.tracking.index') ? 'text-teal-700' : 'text-gray-600 hover:text-teal-600',
-                            'block text-sm py-1 transition'
-                        ]">
+                        <Link
+                            v-if="['responsable des apprenants', 'responsable de formation'].some(role => page.props.auth.user?.roles?.includes(role))"
+                            :href="route('sanction.tracking.index')" :class="[
+                                route().current('sanction.tracking.index') ? 'text-teal-700' : 'text-gray-600 hover:text-teal-600',
+                                'block text-sm py-1 transition'
+                            ]">
                         Suivi des sanctions
                         </Link>
 
+                        <!-- Page 3 -->
+                        <Link v-if="page.props.auth.user?.roles?.includes('apprenant')"
+                            :href="route('sanction.learner.index')" :class="[
+                                route().current('sanction.learner.index') ? 'text-teal-700' : 'text-gray-600 hover:text-teal-600',
+                                'block text-sm py-1 transition'
+                            ]">
+                        Mes sanctions
+                        </Link>
                     </div>
 
                     <!-- Justificatif Parent -->
@@ -245,8 +260,10 @@ onUnmounted(() => {
                             'mr-3 h-5 w-5 flex-shrink-0'
                         ]" />
                         <span v-if="sidebarOpen">Justificatifs</span>
-                        <ChevronRight v-if="!justificatifsExpanded && sidebarOpen" class="ml-auto h-4 w-4 text-gray-400" />
-                        <ChevronDown v-if="justificatifsExpanded && sidebarOpen" class="ml-auto h-4 w-4 text-gray-400" />
+                        <ChevronRight v-if="!justificatifsExpanded && sidebarOpen"
+                            class="ml-auto h-4 w-4 text-gray-400" />
+                        <ChevronDown v-if="justificatifsExpanded && sidebarOpen"
+                            class="ml-auto h-4 w-4 text-gray-400" />
                     </button>
 
                     <!-- Sublinks -->

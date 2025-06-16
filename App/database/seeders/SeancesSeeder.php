@@ -10,19 +10,43 @@ class SeancesSeeder extends Seeder
 {
     public function run()
     {
-        Seance::create([
-            'date_debut' => Carbon::now()->setTime(9, 0), // date_debut : 9h00 aujourd'hui - date_fin : 11h15 aujourd'hui
-            'date_fin'   => Carbon::now()->setTime(11, 15),
-        ]);
+        $seances = [];
+        $startDate = Carbon::now()->startOfWeek(); // Start from Monday of current week
 
-        Seance::create([
-            'date_debut' => Carbon::now()->setTime(11, 35), // date_debut : 11h35 aujourd'hui - date_fin : 13h50 aujourd'hui
-            'date_fin'   => Carbon::now()->setTime(13, 50),
-        ]);
+        // Daily session time slots (3 sessions per day)
+        $dailySlots = [
+            ['start' => '09:00', 'end' => '11:00'],   // Morning session
+            ['start' => '11:30', 'end' => '14:00'],  // Midday session
+            ['start' => '14:30', 'end' => '17:00']   // Afternoon session
+        ];
 
-        Seance::create([
-            'date_debut' => Carbon::now()->setTime(14, 45), // date_debut : 14h45 demain - date_fin : 17h00 demain
-            'date_fin'   => Carbon::now()->setTime(17, 0),
-        ]);
+        // Create sessions for 10 weekdays (Monday-Friday across 2 weeks)
+        $createdDays = 0;
+        $dayOffset = 0;
+
+        while ($createdDays < 10) {
+            $currentDate = $startDate->copy()->addDays($dayOffset);
+            $dayOffset++;
+
+            // Skip weekends
+            if ($currentDate->isWeekend()) {
+                continue;
+            }
+
+            // Create 3 sessions for this weekday
+            foreach ($dailySlots as $slot) {
+                $seances[] = [
+                    'date_debut' => $currentDate->copy()->setTimeFromTimeString($slot['start']),
+                    'date_fin' => $currentDate->copy()->setTimeFromTimeString($slot['end']),
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ];
+            }
+
+            $createdDays++;
+        }
+
+        // Insert all seances
+        Seance::insert($seances);
     }
 }
