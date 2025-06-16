@@ -3,6 +3,7 @@
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use Modules\PkgSanction\App\Controllers\DashboardController;
+use Modules\PkgSanction\App\Controllers\NotificationController;
 use Modules\PkgSanction\App\Controllers\SanctionController;
 use Modules\PkgSanction\App\Controllers\SanctionRulesController;
 
@@ -33,11 +34,15 @@ Route::prefix('learner')->middleware(['auth', 'verified', 'role:apprenant'])->gr
     Route::get('/sanctions', [SanctionController::class, 'learnerIndex'])->name('learner.sanction.index');
 });
 
-Route::post('/notifications/{id}/mark-as-read', function ($id) {
-    $notification = auth()->user()->notifications()->findOrFail($id);
-    $notification->markAsRead();
-    return response()->noContent();
-})->middleware(['auth'])->name('notifications.markAsRead');
+// Route::post('/notifications/{id}/mark-as-read', function ($id) {
+//     $notification = auth()->user()->notifications()->findOrFail($id);
+//     $notification->markAsRead();
+//     return response()->noContent();
+// })->middleware(['auth'])->name('notifications.markAsRead');
+
+Route::post('/notifications/{id}/mark-as-read', [NotificationController::class, 'markAsRead'])
+    ->middleware(['auth'])
+    ->name('notifications.markAsRead');
 
 // Route::get('sanction/tracking', function () {
 //     return Inertia::render('PkgSanction::SanctionTracking');

@@ -38,7 +38,9 @@ class SanctionAppliedNotification extends Notification
             'title' => 'Nouvelle sanction appliquée',
             'message' => 'Une sanction vous a été appliquée pour absences injustifiées.',
             'sanction_id' => $this->sanction->id,
-            'url' => route('learner.sanction.index', ['highlight' => $this->sanction->id])
+            'url' => route('learner.sanction.index', [
+                'highlight' => $this->sanction->id
+            ], true)
         ];
     }
 

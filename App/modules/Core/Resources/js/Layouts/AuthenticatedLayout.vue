@@ -28,12 +28,11 @@ const notifications = page.props.notifications || []
 console.log(notifications)
 
 function handleClick(notification) {
-    router.post(route('notifications.markAsRead', notification.id), {}, {
-        preserveScroll: true,
-        onSuccess: () => {
-            router.visit(notification.url)
-        }
-    })
+    router.post(route('notifications.markAsRead', notification.id), {
+        redirect_url: notification.url
+    }, {
+        preserveScroll: true
+    });
 }
 
 const dashboardExpanded = ref(false)
