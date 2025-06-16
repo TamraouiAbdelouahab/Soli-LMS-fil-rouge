@@ -170,7 +170,7 @@ onUnmounted(() => {
                     <!-- Sublinks -->
                     <div v-show="dashboardExpanded" class="ml-8 space-y-1" v-if="sidebarOpen">
                         <!-- Page 1 -->
-                        <Link :href="route('sanction.dashboard')" :class="[
+                        <Link v-if="['responsable des apprenants', 'responsable de formation'].some(role => page.props.auth.user?.roles?.includes(role))" :href="route('sanction.dashboard')" :class="[
                             route().current('sanction.dashboard') ? 'text-teal-700' : 'text-gray-600 hover:text-teal-600',
                             'block text-sm py-1 transition'
                         ]">
@@ -178,7 +178,7 @@ onUnmounted(() => {
                         </Link>
 
                         <!-- Page 2 -->
-                        <Link :href="route('Justificatifs.dashboard')" :class="[
+                        <Link v-if="['responsable des apprenants', 'responsable de formation'].some(role => page.props.auth.user?.roles?.includes(role))" :href="route('Justificatifs.dashboard')" :class="[
                             route().current('Justificatifs.dashboard') ? 'text-teal-700' : 'text-gray-600 hover:text-teal-600',
                             'block text-sm py-1 transition'
                         ]">
@@ -186,7 +186,7 @@ onUnmounted(() => {
                         </Link>
 
                         <!-- Page 3 -->
-                        <Link :href="route('absence.dashboard')" :class="[
+                        <Link v-if="['responsable des apprenants', 'responsable de formation'].some(role => page.props.auth.user?.roles?.includes(role))" :href="route('absence.dashboard')" :class="[
                             route().current('absence.dashboard') ? 'text-teal-700' : 'text-gray-600 hover:text-teal-600',
                             'block text-sm py-1 transition'
                         ]">
