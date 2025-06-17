@@ -23,10 +23,9 @@
                                     @openDeleteConfirmation="deleteConfirmationMessageVisible = true"
                                     @closeDeleteConfirmation="deleteConfirmationMessageVisible = false"
                                     @openUpdateModal="handleOpenUpdateModal"
-
                                     />
             </div>
-         <AddModal :show="modalVisible" :reasons="props.reasons" :groups="props.groups "
+         <AddModal :show="modalVisible" :reasons="props.reasons" :groups="props.groups  "
                 @close="modalVisible = false"
                 @openConfirmation="ConfiredMessage=true"
                 @closeConfirmation="ConfiredMessage = false"

@@ -10,11 +10,9 @@
         <div class="flex justify-between gap-4 w-full items-center">
             <h2 class="text-xl font-semibold mb-4 dark:text-white">Ajouter un justification</h2>
             <div>
-<<<<<<< HEAD
+
             <button type="button" @click="closePopup()" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="popup-modal">
-=======
-            <button type="button" @click="closeModal()" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="popup-modal">
->>>>>>> c7a529c6119056e6b8fe443aec2059e508e67eff
+
                 <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
                 </svg>
@@ -145,22 +143,22 @@
     description: '',
     status: 'EN_ATTENTE',
     raison: props.reasons[0].id,
-    apprenant: computed(()=> apprenantsDuGroupe.value[0].id),
+    // apprenant: computed(()=> apprenantsDuGroupe.value[0].id),
+    apprenant: '',
     fichier: null,
     });
     const addJustification = () => {
-        if (isSubmitting.value) return; // Sécurité supplémentaire
+        if (isSubmitting.value) return; 
             isSubmitting.value = true;
         form.post(route('Justificatifs.store'), {
-
             onSuccess: () => {
                 form.reset();
                 animatingOut.value = true;
                 emit('close');
-                // emit('openAddConfirmationVisible');
-                // setTimeout(() => {
-                //     emit('closeAddConfirmationVisible');
-                // }, 500);
+                emit('openAddConfirmationVisible');
+                setTimeout(() => {
+                    emit('closeAddConfirmationVisible');
+                }, 1000);
                 animatingOut.value = false;
                 isSubmitting.value = false;
             },
@@ -174,7 +172,6 @@
         };
     function handleFileUpload(event) {
         form.fichier = event.target.files[0]
-<<<<<<< HEAD
     }
     function closePopup() {
         animatingOut.value = true;
@@ -183,13 +180,6 @@
         emit('close');
         animatingOut.value = false;
         }, 200);
-=======
-        }
-
-    function closeModal() {
-        form.reset();
-        emit('close');
->>>>>>> c7a529c6119056e6b8fe443aec2059e508e67eff
     }
 </script>
 

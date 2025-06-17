@@ -4,6 +4,7 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use Modules\PkgJustificatif\App\Controllers\DashboardController;
 use Modules\PkgJustificatif\App\Controllers\JustificationController;
+use Modules\PkgJustificatif\App\Controllers\raisonController;
 
 Route::get('justificatif/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
@@ -20,3 +21,6 @@ Route::delete('justificatif/{id}', [JustificationController::class, 'destroy'])
 Route::match(['POST', 'PUT'], 'justificatif/{id}', [JustificationController::class, 'update'])
     ->middleware(['auth', 'verified'])
     ->name('Justificatifs.update');
+Route::get('justificatif/reason', [raisonController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('reason.home');

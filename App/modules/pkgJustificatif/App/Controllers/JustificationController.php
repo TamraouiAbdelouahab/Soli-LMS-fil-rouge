@@ -47,7 +47,7 @@ class JustificationController extends  BaseController
     public function destroy($id)
     {
         $this->justificationService->delete($id);
-        return Redirect::route('Justificatifs.home');
+        // return Redirect::route('Justificatifs.home');
         // return Inertia::redirect()->route('Justificatifs.home');
     }
 }
