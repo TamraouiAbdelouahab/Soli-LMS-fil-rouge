@@ -58,7 +58,7 @@ class SanctionController extends BaseController
         return redirect()->back()->with('success', 'Sanction deleted successfully.');
     }
 
-    public function learnerIndex(Request $request)
+    public function learnerIndex()
     {
         $user = Auth::user();
         $apprenant = $user->apprenant;
@@ -69,7 +69,6 @@ class SanctionController extends BaseController
 
         return Inertia::render('PkgSanction::LearnerSanctions', [
             'sanctions' => $this->sanctionService->getLearnerSanctions($apprenant->id),
-            'highlight'  => $request->query('highlight'),
         ]);
     }
 }

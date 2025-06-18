@@ -3,6 +3,7 @@
 namespace Modules\PkgSanction\App\Controllers;
 
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 use Modules\Core\App\Controllers\BaseController;
 use Modules\PkgSanction\App\Services\NotificationService;
 
@@ -17,11 +18,8 @@ class NotificationController extends BaseController
 
     public function markAsRead(Request $request, $id)
     {
-        $redirectUrl = $this->notificationService->markAsRead(
-            $id,
-            $request->input('redirect_url')
-        );
+        $this->notificationService->markAsRead($id);
 
-        return redirect($redirectUrl);
+        return Inertia::location($request->input('redirect_url', route('learner.sanction.index')));
     }
 }

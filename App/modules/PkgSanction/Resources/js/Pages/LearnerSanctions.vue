@@ -50,7 +50,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
 import {
     FileX,
     AlertTriangle,
@@ -66,10 +66,7 @@ const props = defineProps({
         type: Array,
         default: () => []
     },
-    highlight: [String, Number],
 });
-
-console.log('Sanctions:', props.sanctions);
 
 const showDetailsModal = ref(false);
 const selectedSanction = ref(null);
@@ -142,13 +139,4 @@ const getSanctionIcon = (type) => {
     return icons[type] || AlertTriangle;
 };
 
-onMounted(() => {
-    if (props.highlight) {
-        const target = props.sanctions.find(s => String(s.id) === String(props.highlight))
-        if (target) {
-            selectedSanction.value = target
-            showModal.value = true
-        }
-    }
-})
 </script>

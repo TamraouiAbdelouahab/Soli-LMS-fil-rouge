@@ -6,20 +6,17 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use Modules\PkgSanction\App\Models\SanctionAbsence;
 
-class SanctionAppliedNotification extends Notification
+class AbsenceWarningNotification extends Notification
 {
     use Queueable;
 
     /**
      * Create a new notification instance.
      */
-    protected $sanction;
-
-    public function __construct(SanctionAbsence $sanction)
+    public function __construct()
     {
-        $this->sanction = $sanction;
+        //
     }
 
     /**
@@ -35,10 +32,8 @@ class SanctionAppliedNotification extends Notification
     public function toDatabase($notifiable)
     {
         return [
-            'title' => 'Nouvelle sanction appliquée',
-            'message' => 'Une sanction vous a été appliquée pour absences injustifiées.',
-            'sanction_id' => $this->sanction->id,
-            'url' => route('learner.sanction.index'),
+            'title' => 'Attention : absences injustifiées',
+            'message' => 'Vous approchez la limite maximale d’absences injustifiées. Veuillez régulariser votre situation.',
         ];
     }
 

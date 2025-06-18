@@ -5,12 +5,16 @@ namespace Modules\PkgSanction\App\Providers;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Route;
+use Modules\PkgSanction\App\Console\Commands\CalculateAbsenceWarnings;
 use Modules\PkgSanction\App\Console\Commands\RunDailySanctionCheck;
 
 class PkgSanctionServiceProvider extends ServiceProvider
 {
 
-    protected $commands = [RunDailySanctionCheck::class];
+    protected $commands = [
+        RunDailySanctionCheck::class,
+        CalculateAbsenceWarnings::class,
+    ];
     /**
      * Register services.
      */
@@ -33,7 +37,8 @@ class PkgSanctionServiceProvider extends ServiceProvider
 
         $this->app->booted(function () {
             $schedule = app(Schedule::class);
-            $schedule->command(RunDailySanctionCheck::class)->everyFiveMinutes();
+            $schedule->command(RunDailySanctionCheck::class)->everyMinute();
+            $schedule->command(CalculateAbsenceWarnings::class)->everyMinute();;
         });
     }
 

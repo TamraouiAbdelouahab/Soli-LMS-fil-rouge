@@ -30,8 +30,6 @@ console.log(notifications)
 function handleClick(notification) {
     router.post(route('notifications.markAsRead', notification.id), {
         redirect_url: notification.url
-    }, {
-        preserveScroll: true
     });
 }
 
