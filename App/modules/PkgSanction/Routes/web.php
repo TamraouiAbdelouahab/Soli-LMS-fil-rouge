@@ -3,6 +3,7 @@
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use Modules\PkgSanction\App\Controllers\DashboardController;
+use Modules\PkgSanction\App\Controllers\ExportController;
 use Modules\PkgSanction\App\Controllers\NotificationController;
 use Modules\PkgSanction\App\Controllers\SanctionController;
 use Modules\PkgSanction\App\Controllers\SanctionRulesController;
@@ -29,6 +30,7 @@ Route::prefix('sanction/tracking')->middleware(['auth', 'verified', 'role:respon
     Route::post('/apply/{id}', [SanctionController::class, 'applicationSanction'])->name('sanction.tracking.apply');
     Route::delete('/calculated/{id}', [SanctionController::class, 'destroyCalculatedSanction'])->name('sanction.tracking.destroyCalculatedSanction');
     Route::delete('/applied/{id}', [SanctionController::class, 'destroyAppliedSanction'])->name('sanction.tracking.destroyAppliedSanction');
+    Route::get('/export', [ExportController::class, 'exportSanctions'])->name('sanction.tracking.export');
 });
 
 Route::prefix('learner')->middleware(['auth', 'verified', 'role:apprenant'])->group(function () {

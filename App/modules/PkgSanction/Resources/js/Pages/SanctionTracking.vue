@@ -55,7 +55,7 @@
                                 <CheckCircle class="h-4 w-4 mr-2" />
                                 Sanctions appliquées
                                 <span class="ml-2 bg-teal-500 text-white text-xs font-medium px-2 py-1 rounded-full">
-                                    {{ sanctionsAppliedCount ?? 0}}
+                                    {{ sanctionsAppliedCount ?? 0 }}
                                 </span>
                             </div>
                         </button>
@@ -181,7 +181,6 @@ const props = defineProps({
     sanctionsCalculeesCount: Number,
 });
 
-console.log('Sanction Tracking Page Loaded', props.sanctionsApplied);
 const activeTab = ref('pending');
 const showViewModal = ref(false);
 const showApplyModal = ref(false);
@@ -232,7 +231,7 @@ const isAnyFilterApplied = computed(() => {
 
 // Methods
 function exportSanctions() {
-    alert('Fonction d\'export des sanctions déclenchée.');
+    window.location.href = route('sanction.tracking.export');
 }
 
 function submitCalcul() {

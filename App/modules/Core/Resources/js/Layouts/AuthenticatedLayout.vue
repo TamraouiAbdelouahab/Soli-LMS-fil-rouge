@@ -25,7 +25,6 @@ import {
 
 const page = usePage();
 const notifications = page.props.notifications || []
-console.log(notifications)
 
 function handleClick(notification) {
     router.post(route('notifications.markAsRead', notification.id), {
