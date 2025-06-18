@@ -71,7 +71,7 @@
             </div>
         </div>
     </div>
-    <Pagination :Links="props.justifications.links" />
+    <Pagination :Links="props.justifications.links"  v-show="props.justifications.links.length > 3" />
 
 </template>
 

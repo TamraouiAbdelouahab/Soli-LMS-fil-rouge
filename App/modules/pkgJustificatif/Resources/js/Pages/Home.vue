@@ -15,8 +15,8 @@
                             v-show = "ConfiredMessage" />
             <DeleteConfirmMessage @closeDeleteConfirmation="deleteConfirmationMessageVisible = false"
                             v-show = "deleteConfirmationMessageVisible" />
-            <DeleteConfirm @closeConfirmation = "deleteConfirmationVisible = false"
-                            v-show="deleteConfirmationVisible" />
+            <!-- <DeleteConfirm @closeConfirmation = "deleteConfirmationVisible = false"
+                            v-show="deleteConfirmationVisible" /> -->
             <AddConfirm @closeAddConfirmationVisible="addConfirmationVisible = false"
                             v-show = "addConfirmationVisible" />
             <JustificationsTable :justifications="props.justifications" class="mb-6"
@@ -53,7 +53,7 @@ import { Head } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import DeleteConfirmMessage from '../Components/Home/deleteConfirmMessage.vue';
 import AddConfirm from '../Components/Home/addConfirm.vue';
-import DeleteConfirm from '../Components/Home/deleteConfirm.vue';
+// import DeleteConfirm from '../Components/Home/deleteConfirm.vue';
 
 const props = defineProps({
     justifications:Object,
@@ -64,7 +64,7 @@ const props = defineProps({
 const modalVisible = ref(false)
 const ConfiredMessage = ref(false)
 const deleteConfirmationMessageVisible = ref(false)
-const deleteConfirmationVisible = ref(false)
+// const deleteConfirmationVisible = ref(false)
 const addConfirmationVisible = ref(false)
 const updateModalVisible = ref(false)
 const updateConfirmationMessageVisible = ref(false)
