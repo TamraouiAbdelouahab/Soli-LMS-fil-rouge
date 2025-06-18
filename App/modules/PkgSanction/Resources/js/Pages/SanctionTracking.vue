@@ -135,7 +135,7 @@
 
                         <AppliedSanctionsTable :sanctions="sanctionsApplied.data" :links="sanctionsApplied.links"
                             :statusColor="getStatusColor" :statusLabel="getStatusLabel" @view="viewSanction"
-                            @page-change="changePage" @lift="liftSanction" :formatDate="formatDate"
+                            @page-change="changePage" @delete="deleteSanction" :formatDate="formatDate"
                             :sanctionTypeColor="getSanctionTypeColor" />
                     </div>
                 </div>
@@ -181,6 +181,7 @@ const props = defineProps({
     sanctionsCalculeesCount: Number,
 });
 
+console.log('Sanction Tracking Page Loaded', props.sanctionsApplied);
 const activeTab = ref('pending');
 const showViewModal = ref(false);
 const showApplyModal = ref(false);
@@ -244,7 +245,7 @@ function applySanction(sanction) {
 }
 
 function ignoreSanction(sanction) {
-    router.delete(route('sanction.tracking.destroy', sanction.id));
+    router.delete(route('sanction.tracking.destroyCalculatedSanction', sanction.id));
 }
 
 function viewSanction(sanction) {
@@ -264,8 +265,8 @@ function confirmApplySanction(sanction) {
     });
 }
 
-function liftSanction(sanction) {
-    alert(`Sanction ID ${sanction.id} levée.`);
+function deleteSanction(sanction) {
+    router.delete(route('sanction.tracking.destroyAppliedSanction', sanction.id));
 }
 
 function clearFilters() {

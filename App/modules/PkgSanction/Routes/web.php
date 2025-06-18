@@ -27,7 +27,8 @@ Route::prefix('sanction/tracking')->middleware(['auth', 'verified', 'role:respon
     Route::get('/', [SanctionController::class, 'index'])->name('sanction.tracking.index');
     Route::post('/calculate', [SanctionController::class, 'calculateSanctions'])->name('sanction.tracking.calculate');
     Route::post('/apply/{id}', [SanctionController::class, 'applicationSanction'])->name('sanction.tracking.apply');
-    Route::delete('/{id}', [SanctionController::class, 'destroy'])->name('sanction.tracking.destroy');
+    Route::delete('/calculated/{id}', [SanctionController::class, 'destroyCalculatedSanction'])->name('sanction.tracking.destroyCalculatedSanction');
+    Route::delete('/applied/{id}', [SanctionController::class, 'destroyAppliedSanction'])->name('sanction.tracking.destroyAppliedSanction');
 });
 
 Route::prefix('learner')->middleware(['auth', 'verified', 'role:apprenant'])->group(function () {

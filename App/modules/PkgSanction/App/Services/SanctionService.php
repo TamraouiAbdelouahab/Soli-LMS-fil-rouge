@@ -96,4 +96,18 @@ class SanctionService
             ->orderBy('date_fin', 'desc')
             ->get();
     }
+
+    public function deleteSanction($sanctionId)
+    {
+        $sanction = SanctionAbsence::with('absences')->findOrFail($sanctionId);
+
+        foreach ($sanction->absences as $absence) {
+            $absence->update([
+                'sanction_absence_id' => null,
+                'est_sanctionnée' => false,
+            ]);
+        }
+
+        $sanction->delete();
+    }
 }

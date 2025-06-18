@@ -81,10 +81,10 @@
                                 <Eye class="h-3 w-3 mr-1 inline" />
                                 Voir
                             </button>
-                            <button v-if="sanction.status === 'Active'" @click="$emit('lift', sanction)"
-                                class="bg-golden-yellow-100 hover:bg-golden-yellow-200 text-golden-yellow-800 px-3 py-1 rounded-md text-xs font-medium transition-colors">
-                                <Shield class="h-3 w-3 mr-1 inline" />
-                                Lever
+                            <button @click="$emit('delete', sanction)"
+                                class="bg-red-orange-100 hover:bg-red-orange-200 text-red-orange-800 px-3 py-1 rounded-md text-xs font-medium transition-colors">
+                                <X class="h-3 w-3 mr-1 inline" />
+                                Supprimer
                             </button>
                         </div>
                     </td>
@@ -117,7 +117,7 @@
 </template>
 
 <script setup>
-import { Eye, Shield, CheckCircle } from 'lucide-vue-next';
+import { Eye, X, CheckCircle } from 'lucide-vue-next';
 import { router } from '@inertiajs/vue3';
 
 defineProps({
@@ -149,7 +149,7 @@ defineProps({
     }
 });
 
-const emit = defineEmits(['view', 'lift', 'page-change']);
+const emit = defineEmits(['view', 'delete', 'page-change']);
 
 const onPageClick = (url) => {
     if (url) emit('page-change', url)
