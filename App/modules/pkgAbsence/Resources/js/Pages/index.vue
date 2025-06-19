@@ -121,16 +121,11 @@
             </div>
 
             <!-- Frequent Absentees Table -->
-<!-- Top apprenants absents du mois -->
-    <div class="bg-white rounded-lg shadow p-4 mb-6">
-    <h2 class="text-lg font-semibold text-gray-700 mb-4">Top 5 apprenants absents ce mois</h2>
-    <ul class="divide-y divide-gray-200">
-        <li v-for="apprenant in topMonthlyLearners" :key="apprenant.apprenant_id" class="py-2 flex justify-between">
-        <span>{{ apprenant.nom }} {{ apprenant.prenom }}</span>
-        <span class="text-red-600 font-semibold">{{ apprenant.total }} absences</span>
-        </li>
-    </ul>
-    </div>
+            <div class="bg-white rounded-lg shadow p-4 mb-6">
+                <h2 class="text-lg font-semibold text-gray-700 mb-4">Apprenants fréquemment absents</h2>
+                <FrequentAbsenteesTable :absentees="frequentAbsentees" />
+            </div>
+
         </div>
     </AuthenticatedLayout>
 </template>

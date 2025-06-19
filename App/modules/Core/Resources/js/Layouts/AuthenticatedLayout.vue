@@ -260,6 +260,44 @@ onUnmounted(() => {
                         </Link>
 
                     </div>
+                    <!-- Absence Parent -->
+                    <button @click="absencesExpanded = !absencesExpanded" :class="[
+                        route().current('Absences.create') || route().current('Absences.index')
+                            ? 'bg-blue-50 text-teal-700'
+                            : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
+                        sidebarOpen ? 'justify-start' : 'justify-center',
+                        'w-full flex items-center rounded-md px-2 py-2 text-sm font-medium focus:outline-none transition'
+                    ]">
+                        <FileText :class="[
+                            route().current('Absences.create') || route().current('Absences.index')
+                                ? 'text-teal-700'
+                                : 'text-gray-500 group-hover:text-gray-500',
+                            'mr-3 h-5 w-5 flex-shrink-0'
+                        ]" />
+                        <span v-if="sidebarOpen">Absences</span>
+                        <ChevronRight v-if="!absencesExpanded && sidebarOpen" class="ml-auto h-4 w-4 text-gray-400" />
+                        <ChevronDown v-if="absencesExpanded && sidebarOpen" class="ml-auto h-4 w-4 text-gray-400" />
+                    </button>
+
+                    <!-- Sublinks Absences -->
+                    <div v-show="absencesExpanded" class="ml-8 space-y-1" v-if="sidebarOpen">
+                        <!-- Créer Absence -->
+                        <Link :href="route('Absences.create')" :class="[
+                            route().current('Absences.create') ? 'text-teal-700' : 'text-gray-600 hover:text-teal-600',
+                            'block text-sm py-1 transition'
+                        ]">
+                            Créer Absence
+                        </Link>
+                        
+                        <!-- Liste des Absences -->
+                        <Link :href="route('Absences.index')" :class="[
+                            route().current('Absences.index') ? 'text-teal-700' : 'text-gray-600 hover:text-teal-600',
+                            'block text-sm py-1 transition'
+                        ]">
+                            Liste des Absences
+                        </Link>
+                    </div>
+
                 </nav>
             </div>
 
