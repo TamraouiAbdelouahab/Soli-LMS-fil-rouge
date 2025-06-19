@@ -11,11 +11,19 @@ class="fixed top-0 right-0 z-50 flex justify-end items-start w-full p-4 h-screen
                 <span class="sr-only">Close modal</span>
             </button>
             <div class="p-4 md:p-5 text-center ">
-                <svg class="mx-auto mb-4 text-red-500 w-12 h-12 dark:text-red-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13l2 2l4-4M15 4H9m12 4H3m3 0v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V8" />
+                <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-12 h-12 text-red-600 mx-auto mb-4"
+                fill="none"
+                viewBox="0 0 24 24" 
+                stroke="currentColor"
+                >
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                 </svg>
                 <!-- <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to delete this product?</h3> -->
-                <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">le justification supprimée avec succès !</h3>
+                <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+                    Impossible de supprimer cette raison car elle est utilisée dans des justifications.
+                </h3>
             </div>
         </div>
     </div>

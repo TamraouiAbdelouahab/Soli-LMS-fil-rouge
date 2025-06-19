@@ -5,11 +5,10 @@ namespace Modules\PkgJustificatif\App\Controllers;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Modules\Core\App\Controllers\BaseController;
-use Modules\PkgApprenant\App\Services\groupeService;
 use Modules\PkgJustificatif\App\Models\Raison;
-use Modules\PkgJustificatif\App\Services\justificatifService;
 use Modules\PkgJustificatif\App\Services\raisonService;
-use Modules\PkgJustificatif\App\Requests\ReasonRequest;
+use Modules\PkgJustificatif\App\Requests\UpdateReasonRequest;
+use Modules\PkgJustificatif\App\Requests\StoreReasonRequest;
 
 class raisonController extends  BaseController
 {
@@ -25,15 +24,29 @@ class raisonController extends  BaseController
             'reasons' => Raison::paginate(5),
         ]);
     }
-    public function store(ReasonRequest $request)
+    public function store(StoreReasonRequest $request)
     {
         $validateData = $request->validated();
         $this->raisonService->create($validateData);
     }
+    public function update($id,UpdateReasonRequest $request)
+    {
+        $validateData = $request->validated();
+        $this->raisonService->update($id,$validateData);
+    }
     public function destroy($id)
     {
-        $this->raisonService->delete($id);
-        return Redirect::route('reasons.home');
+        $delete = $this->raisonService->delete($id);
+        if (!$delete) {
+        return response()->json(
+            [
+                'message' => "Impossible de supprimer cette raison car elle est utilisée dans des justifications."
+            ],  400
+        );
+         }
+        return response()->json(['message' => 'Raison supprimée avec succès.'],200);
+
     }
 }
 
+//Impossible de supprimer cette raison car elle est utilisée dans des justifications.

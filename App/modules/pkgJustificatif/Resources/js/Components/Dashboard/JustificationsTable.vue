@@ -1,5 +1,23 @@
 <template>
-    <div class="bg-white rounded-lg shadow p-4">
+    <ConfirmDelete @closeConfirmation = "deleteConfirmationVisible = false"
+                v-show="deleteConfirmationVisible"
+                @confirm="confirmDeleteJustification"
+                @cancel = "deleteConfirmationVisible = false"
+                />
+    <UpdateConfirmMessage @closeUpdateConfirmation = "updateConfirmationMessageVisible = false"
+                            v-show="updateConfirmationMessageVisible" />
+    <UpdateJustificationModal :show="updateModalVisible" :reasons="props.reasons" :groups="props.groups" :justification="UpdateModalJustification"
+                @close="updateModalVisible = false"
+                @openConfirmation="UpdateSuccess"
+                @closeConfirmation="updateConfirmationMessageVisible = false"
+                @closeUpdateConfirmationVisible="updateModalVisible = false"
+                @openUpdateConfirmationVisible="updateModalVisible = true"
+    />
+
+    <DeleteConfirmMessage @closeDeleteConfirmation="deleteConfirmationMessageVisible = false"
+                            v-show = "deleteConfirmationMessageVisible" />
+
+    <div class="bg-white rounded-lg shadow p-4" id="justifications">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
             <h2 class="text-lg font-semibold text-gray-700">justificatifs récentes</h2>
         </div>
@@ -22,7 +40,7 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                    <tr v-for="(justification, index) in justifications.slice(0,5)" :key="index">
+                    <tr v-for="(justification, index) in props.justifications.slice(-6,-1).reverse()" :key="index">
                         <td class="px-4 py-3 whitespace-nowrap">
                             <div class="flex items-center">
                                 <div
@@ -49,7 +67,9 @@
                         <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{{ justification.dateDepot }}</td>
                         <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
                             <div class="flex space-x-2">
-                                <button class="text-blue-600 hover:text-blue-800">
+                                <button class="text-blue-600 hover:text-blue-800"
+                                        @click="handleOpenUpdateModal(justification.id)"
+                                >
                                     <Edit class="h-4 w-4" />
                                 </button>
                                 <button class="text-red-600 hover:text-red-800"
@@ -79,19 +99,53 @@
 <script setup>
 import { FileText, FileSpreadsheet, Edit, Trash2 } from 'lucide-vue-next';
 import { Link,router } from '@inertiajs/vue3';
+import { ref } from 'vue';
+import ConfirmDelete from "../Home/deleteConfirm.vue"
+import DeleteConfirmMessage from "../Home/deleteConfirmMessage.vue"
+import UpdateJustificationModal from "../Home/updateJustificationModal.vue"
+import UpdateConfirmMessage from "../Home/updateConfirmMessage.vue"
+const deleteConfirmationVisible = ref(false)
+const deleteConfirmationMessageVisible = ref(false)
+const updateConfirmationMessageVisible = ref(false)
+const updateModalVisible = ref(false)
+const idToDelete = ref(null);
 
-defineProps({
-    justifications: {
-        type: Array,
-        required: true
-    }
+
+const props = defineProps({
+    justifications:Object,
+    reasons:Object,
+    groups:Object,
 });
 
 const deleteJustification = (id) => {
-    if (confirm('Voulez-vous vraiment supprimer cet élément ?')) {
-        router.delete(id)   
-      }
+    idToDelete.value = id;
+    deleteConfirmationVisible.value = true;
 };
+const confirmDeleteJustification = () => {
+    router.delete(idToDelete.value)
 
+    deleteConfirmationVisible.value = false;
+    setTimeout(() => {
+        deleteConfirmationMessageVisible.value = true;
+    }, 1000);
+    setTimeout(() => {
+        deleteConfirmationMessageVisible.value = false;
+    }, 2000)
+};
+const UpdateModalJustification = ref(props.justifications[0]);
+function handleOpenUpdateModal(id) {
+    updateModalVisible.value = true;
+    UpdateModalJustification.value = props.justifications.find(j => j.id == id);
+}
+
+function UpdateSuccess() {
+    router.visit("/justificatif/dashboard#justifications");
+    updateConfirmationMessageVisible.value = true;
+    setTimeout(() => {
+        updateConfirmationMessageVisible.value = false;
+        // router.push(route('Justificatifs.dashboard'));
+
+    }, 2000)
+}
 
 </script>

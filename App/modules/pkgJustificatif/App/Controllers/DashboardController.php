@@ -4,15 +4,19 @@ namespace Modules\PkgJustificatif\App\Controllers;
 
 use Inertia\Inertia;
 use Modules\Core\App\Controllers\BaseController;
+use Modules\PkgApprenant\App\Services\groupeService;
 use Modules\PkgJustificatif\App\Services\justificatifService;
+use Modules\PkgJustificatif\App\Services\raisonService;
 
 class DashboardController extends  BaseController
 {
-    protected $justificationService;
+    protected $justificationService,$raisonService,$groupeService;
 
-    public function __construct(justificatifService $justificationService)
+    public function __construct(justificatifService $justificationService,raisonService $raisonService,groupeService $groupeService)
     {
         $this->justificationService = $justificationService;
+        $this->raisonService = $raisonService;
+        $this->groupeService = $groupeService;
     }
     public function index()
     {
@@ -20,6 +24,8 @@ class DashboardController extends  BaseController
             'justifications'=> $this->justificationService->Alljustifications(),
             'apprenants' => $this->justificationService->ApprenantswithJustifications(),
             'countapprenant' => $this->justificationService->countapprenantwithjustification(),
+            'reasons' =>$this->raisonService->Allreason(),
+            'groups' => $this->groupeService->Allgroups(),
         ]);
     }
 }

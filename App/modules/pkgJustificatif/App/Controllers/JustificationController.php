@@ -9,8 +9,12 @@ use Modules\PkgApprenant\App\Services\groupeService;
 use Modules\PkgJustificatif\App\Models\Justificatif;
 use Modules\PkgJustificatif\App\Services\justificatifService;
 use Modules\PkgJustificatif\App\Services\raisonService;
-use Modules\PkgJustificatif\App\Requests\JustificationRequest;
+use Modules\PkgJustificatif\App\Requests\StoreJustificationRequest;
+use Modules\PkgJustificatif\App\Requests\UpdateJustificationRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
+
 class JustificationController extends  BaseController
 {
     protected $justificationService,$raisonService,$groupeService;
@@ -30,23 +34,43 @@ class JustificationController extends  BaseController
             'groups' => $this->groupeService->Allgroups(),
         ]);
     }
-    public function store(JustificationRequest $request)
+    public function store(StoreJustificationRequest $request)
     {
         $validateData = $request->validated();
-        $data = array_merge($validateData,['raison_id'=>$validateData['raison'],'apprenant_id'=>$validateData['apprenant']]);
-        $justification = $this->justificationService->create($data);
-        // return Inertia::redirect('Justificatifs.home');
+        $originalName = $request->file('fichier')->getClientOriginalName();
+        $timestamp = now()->format('YmdHis');
+        $newFileName = $timestamp . '_' . $originalName;
+        $path = $request->file('fichier')->storeAs('justifications', $newFileName, 'public');
+        $data = array_merge($validateData,['raison_id'=>$validateData['raison'],'apprenant_id'=>$validateData['apprenant'],'fichier' => $path,]);
+        $this->justificationService->create($data);
     }
 
-    public function update($id,JustificationRequest $request)
+    public function update($id,UpdateJustificationRequest $request)
     {
         $validateData = $request->validated();
-        $this->justificationService->update($id,$validateData);
-        // return Inertia::redirect('Justificatifs.home');
+        $path = "justifications/" . $request->file('fichier')->getClientOriginalName();
+        if($path != Justificatif::find($id)->fichier){
+            $originalName = $request->file('fichier')->getClientOriginalName();
+            $timestamp = now()->format('YmdHis');
+            $newFileName = $timestamp . '_' . $originalName;
+            $path = $request->file('fichier')->storeAs('justifications', $newFileName, 'public');
+            if (Justificatif::find($id)->fichier && Storage::disk('public')->exists(Justificatif::find($id)->fichier)) {
+                Storage::disk('public')->delete(Justificatif::find($id)->fichier);
+        }
+        }
+        $data = array_merge($validateData,['raison_id'=>$validateData['raison'],'apprenant_id'=>$validateData['apprenant'],'fichier' => $path,]);
+        $this->justificationService->update($id,$data);
     }
     public function destroy($id)
     {
         $this->justificationService->delete($id);
+        if(str_contains(url()->previous(), 'justificatif/dashboard')){
+            return Redirect::route('Justificatifs.dashboard');
+        }
+        elseif(str_contains(url()->previous(), 'justificatif/home')){
+            return Redirect::route('Justificatifs.home');
+        }
+
         // return Redirect::route('Justificatifs.home');
         // return Inertia::redirect()->route('Justificatifs.home');
     }

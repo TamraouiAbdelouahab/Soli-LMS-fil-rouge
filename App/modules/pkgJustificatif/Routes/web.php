@@ -18,9 +18,13 @@ Route::get('justificatif/reason', [raisonController::class, 'index'])
 Route::post('justificatif/reason', [raisonController::class, 'store'])
     ->middleware(['auth', 'verified'])
     ->name('reasons.store');
-Route::delete('justificatif/reason/{id}', [raisonController::class, 'destroy'])
+Route::delete('reason/{id}', [raisonController::class, 'destroy'])
     ->middleware(['auth', 'verified'])
     ->name('reasons.destroy');
+Route::match(['POST', 'PUT'], 'justificatif/reason/{id}', [raisonController::class, 'update'])
+    ->middleware(['auth', 'verified'])
+    ->name('reasons.update');
+
 
 
     // Justification Routes

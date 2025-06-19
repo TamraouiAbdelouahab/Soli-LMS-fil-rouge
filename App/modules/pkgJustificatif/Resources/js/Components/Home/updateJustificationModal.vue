@@ -82,9 +82,14 @@
               Fichier
             </label>
             <input  type="file" name="fichier" @change="handleFileUpload" id="fichier" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-2"
-                    placeholder=".png,.jpg,.pdf" required />
+                    placeholder=".png,.jpg,.pdf" />
             <small class="text-red-500" v-if="form.errors.fichier">{{ form.errors.fichier }}</small>
         </div>
+            <div v-if="props.justification.fichier" class="mb-2">
+                <a :href="'/storage/' + props.justification.fichier" target="_blank" class="text-blue-500 underline">
+                    Voir fichier actuel
+                </a>
+            </div>
         <div>
             <label  for="description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
               Description
@@ -99,7 +104,7 @@
                 type="submit"
                 class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
             >
-              Ajouter
+              Modifier
             </button>
         </div>
       </div>
@@ -107,14 +112,12 @@
   </div>
 </template>
 
-
-
 <script setup>
     import { computed } from 'vue';
     import { ref,watch  } from 'vue';
     import { useForm } from '@inertiajs/vue3';
     const props = defineProps(['show','reasons','groups','justification'])
-    const emit = defineEmits(['close','closeAddConfirmationVisible','openAddConfirmationVisible']);
+    const emit = defineEmits(['close','closeAddConfirmationVisible','openAddConfirmationVisible','openConfirmation','closeConfirmation']);
     const statuses = ref({
     "EN_ATTENTE": "en attente",
     "ACCEPTE": "accepte",
@@ -137,11 +140,9 @@
     apprenant: props.justification.apprenant?.id || apprenantsDuGroupe.value[0]?.id,
     fichier: props.justification.fichier || null,
     });
-
     const updateJustification = () => {
         if (isSubmitting.value) return;
             isSubmitting.value = true;
-
          form.post(route('Justificatifs.update', props.justification.id), {
             forceFormData: true,
             _method: 'put',
@@ -150,6 +151,10 @@
                 emit('close');
                 animatingOut.value = false;
                 isSubmitting.value = false;
+                emit('openConfirmation');
+                setTimeout(() => {
+                    emit('closeConfirmation');
+                }, 1000);
             },
             onError: () => {
                 isSubmitting.value = false;
@@ -169,6 +174,11 @@
         animatingOut.value = false;
         }, 200);
     }
+async function getFileFromUrl(url, fileName, mimeType) {
+  const response = await fetch(url);
+  const data = await response.blob();
+  return new File([data], fileName, { type: mimeType });
+}
     watch(() => props.justification, (newJustification) => {
     if (newJustification) {
         form.dateDepot = newJustification.dateDepot || new Date().toISOString().split('T')[0];
@@ -179,10 +189,25 @@
         form.raison = newJustification.raison?.id || props.reasons[0].id;
         form.apprenant = newJustification.apprenant?.id || apprenantsDuGroupe.value[0]?.id;
         form.fichier = newJustification.fichier || null;
+        groupe.value = newJustification.apprenant.groupes[0].id;
+        //
+        const url = `/storage/${props.justification.fichier}`;
+        const fileName = props.justification.fichier.split('/').pop();
+        const mimeType = 'application/pdf';
+        getFileFromUrl(url, fileName, mimeType).then(file => {
+        form.fichier = file;
+        });
     }
     },
     { immediate: true }
     )
+
+
+
+
+
+
+
 </script>
 
 

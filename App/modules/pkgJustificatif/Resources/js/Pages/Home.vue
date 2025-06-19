@@ -5,14 +5,12 @@
             <div class="flex flex-col md:flex-row items-center justify-between">
                 <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-6">Gestion des justificatifs</h1>
                 <button
-                    @click="modalVisible = true"
+                    @click="addModalVisible = true"
                     class="bg-blue-500 text-white px-4 py-2 rounded">
                     <!-- Ajouter un justification -->
                     +
                 </button>
             </div>
-            <ModifyConfirm @closeConfirmation="ConfiredMessage = false"
-                            v-show = "ConfiredMessage" />
             <DeleteConfirmMessage @closeDeleteConfirmation="deleteConfirmationMessageVisible = false"
                             v-show = "deleteConfirmationMessageVisible" />
             <!-- <DeleteConfirm @closeConfirmation = "deleteConfirmationVisible = false"
@@ -24,9 +22,12 @@
                                     @closeDeleteConfirmation="deleteConfirmationMessageVisible = false"
                                     @openUpdateModal="handleOpenUpdateModal"
                                     />
+            <UpdateConfirmMessage @closeUpdateConfirmation = "updateConfirmationMessageVisible = false"
+                            v-show="updateConfirmationMessageVisible"
+                            />
             </div>
-         <AddModal :show="modalVisible" :reasons="props.reasons" :groups="props.groups  "
-                @close="modalVisible = false"
+         <AddModal :show="addModalVisible" :reasons="props.reasons" :groups="props.groups  "
+                @close="addModalVisible = false"
                 @openConfirmation="ConfiredMessage=true"
                 @closeConfirmation="ConfiredMessage = false"
                 @closeAddConfirmationVisible="addConfirmationVisible = false"
@@ -44,16 +45,15 @@
 
 
 <script setup>
-import AuthenticatedLayout from '@core/Layouts/AuthenticatedLayout.vue';
-import JustificationsTable from '../Components/Home/JustificationsTable.vue';
-import ModifyConfirm from '../Components/Home/Modal.vue';
-import AddModal from '../Components/Home/AddJustificationModal.vue';
-import UpdateModal from '../Components/Home/updateJustificationModal.vue';
 import { Head } from '@inertiajs/vue3';
 import { ref } from 'vue';
+import AuthenticatedLayout from '@core/Layouts/AuthenticatedLayout.vue';
+import JustificationsTable from '../Components/Home/JustificationsTable.vue';
+import AddModal from '../Components/Home/AddJustificationModal.vue';
+import UpdateModal from '../Components/Home/updateJustificationModal.vue';
+import UpdateConfirmMessage from '../Components/Home/updateConfirmMessage.vue';
 import DeleteConfirmMessage from '../Components/Home/deleteConfirmMessage.vue';
 import AddConfirm from '../Components/Home/addConfirm.vue';
-// import DeleteConfirm from '../Components/Home/deleteConfirm.vue';
 
 const props = defineProps({
     justifications:Object,
@@ -61,19 +61,14 @@ const props = defineProps({
     reasons:Object,
     groups:Object
 });
-const modalVisible = ref(false)
-const ConfiredMessage = ref(false)
+const addModalVisible = ref(false)
 const deleteConfirmationMessageVisible = ref(false)
-// const deleteConfirmationVisible = ref(false)
 const addConfirmationVisible = ref(false)
 const updateModalVisible = ref(false)
 const updateConfirmationMessageVisible = ref(false)
-
 const UpdateModalJustification = ref(props.justifications.data[0]);
-console.log(props.justifications.data)
 function handleOpenUpdateModal(id) {
     updateModalVisible.value = true;
     UpdateModalJustification.value = props.justifications.data.find(j => j.id == id);
-
 }
 </script>

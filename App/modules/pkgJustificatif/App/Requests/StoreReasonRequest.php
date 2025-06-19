@@ -4,7 +4,7 @@ namespace Modules\PkgJustificatif\App\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ReasonRequest extends FormRequest
+class StoreReasonRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,7 +24,7 @@ class ReasonRequest extends FormRequest
         return [
             'code'=>'required | max:10 |string | unique:raisons',
             'libelle'=>'required | max:255 |string | unique:raisons',
-            'description'=>'string',
+            'description'=>'nullable | string',
         ];
     }
     public function messages()

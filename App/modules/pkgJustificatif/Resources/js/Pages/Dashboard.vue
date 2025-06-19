@@ -26,8 +26,8 @@
                         <TopStagiaire :apprenants="props.apprenants" />
                 </div>
             </div>
-            <JustificationsTable :justifications="justifications" class="mb-6" />
-            <AnalyticsBox :justifications="justifications" />
+            <JustificationsTable :justifications="justifications" :reasons="props.reasons" :groups="props.groups" class="mb-6" />
+            <AnalyticsBox :justifications="justifications" class="mt-6"/>
         </div>
     </AuthenticatedLayout>
 </template>
@@ -47,6 +47,8 @@ import TopStagiaire from '../Components/Dashboard/TopStagiaire.vue';
 const props = defineProps({
     justifications:Object,
     apprenants:Object,
+    reasons:Object,
+    groups:Object,
 });
 
 const justificationEnAttente = props.justifications.filter(justification => justification.status === 'EN_ATTENTE').length;

@@ -4,7 +4,7 @@ namespace Modules\PkgJustificatif\App\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class JustificationRequest extends FormRequest
+class UpdateJustificationRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -48,7 +48,6 @@ class JustificationRequest extends FormRequest
             'dateDepot.required' => 'La date de dépôt est obligatoire',
             'dateDebut.required' => 'La date de début est obligatoire',
             'dateFin.required' => 'La date de fin est obligatoire',
-            'fichier.required' => 'Le fichier est obligatoire',
             'description.required' => 'La description est obligatoire',
             'status.required' => 'Le statut est obligatoire',
             'raison_id.required' => 'La raison est obligatoire',

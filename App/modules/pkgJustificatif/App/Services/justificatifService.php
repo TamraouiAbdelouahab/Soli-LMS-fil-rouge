@@ -26,4 +26,5 @@ class justificatifService extends BaseService
         $count = $this->justificationRepository->countapprenantwithjustification();
         return $count;
     }
+    
 }

@@ -65,6 +65,7 @@ class BaseService
      */
     public function update(int $id, array $data)
     {
+
         return $this->repository->update($id, $data);
     }
 
@@ -74,7 +75,7 @@ class BaseService
      * @param int $id The unique identifier of the record.
      * @return bool True if deletion was successful, false otherwise.
      */
-    public function delete(int $id): bool
+    public function delete(int $id): mixed
     {
         return $this->repository->delete($id);
     }

@@ -26,4 +26,18 @@ class raisonService extends BaseService
         $raison = $this->reasonRepository->create($data);
         return $raison;
     }
+    public function update($id,$data)
+    {
+        $data['code'] = strtoupper($data['code']);
+        $raison = $this->reasonRepository->update($id,$data);
+        return $raison;
+    }
+    public function delete(int $id): mixed
+    {
+        $reason = $this->repository->find($id);
+        if ($reason && $reason->justifications()->exists()) {
+            return false;
+        }
+        return $this->repository->delete($id);
+    }
 }

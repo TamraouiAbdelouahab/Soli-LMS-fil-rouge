@@ -1,4 +1,4 @@
-<template>    
+<template>
     <div
     class="fixed top-0 right-0 z-50 flex justify-end items-start w-full p-4 h-screen animate-scaleIn">
         <div class="relative p-4 w-full max-w-md max-h-full ">
@@ -10,7 +10,7 @@
                     <span class="sr-only">Close modal</span>
                 </button>
                 <div class="p-4 md:p-5 text-center ">
-                    <svg class="mx-auto mb-4 text-gray-500 w-12 h-12 dark:text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg class="mx-auto mb-4 text-green-500 w-12 h-12 dark:text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                     </svg>
                         <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">la raison ajoutée avec succès !</h3>
@@ -22,7 +22,7 @@
 
     <script setup>
        const emit = defineEmits(['closeAddConfirmationVisible']);
-       
+
     </script>
     <style scoped>
     @keyframes scaleIn {
@@ -37,7 +37,7 @@
         opacity: 1;
       }
     }
-    
+
     .animate-scaleIn {
       animation: scaleIn 0.3s ease-out forwards;
     }

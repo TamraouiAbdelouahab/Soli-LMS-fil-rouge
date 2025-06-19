@@ -34,7 +34,7 @@
                             <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
                                 <div class="flex space-x-2">
                                     <button class="text-blue-600 hover:text-blue-800">
-                                        <Edit class="h-4 w-4"
+                                        <Edit class="h-4 w-4" @click="emit('openUpdateModal',reason.id)"
                                         />
                                     </button>
                                     <button class="text-red-600 hover:text-red-800"  @click="deleteReason(reason.id)" >
@@ -56,6 +56,9 @@ import { FileText, FileSpreadsheet, Edit, Trash2 } from 'lucide-vue-next';
 import { ref } from 'vue';
 import Pagination from './pagination.vue';
 import { router } from '@inertiajs/vue3'
+import axios from 'axios'
+import { Inertia } from '@inertiajs/inertia'
+
 import ConfirmDelete from "./deleteConfirm.vue"
 const props = defineProps({
     reasons: {
@@ -65,20 +68,45 @@ const props = defineProps({
 });
 const deleteConfirmationVisible = ref(false)
 const idToDelete = ref(null);
-const emit = defineEmits(['openDeleteConfirmation','closeDeleteConfirmation','openUpdateModal']);
-
+const emit = defineEmits(['openDeleteConfirmation','closeDeleteConfirmation','openUpdateModal','openDeleteMessageError','closeDeleteConfirmation']);
 const deleteReason = (id) => {
     idToDelete.value = id;
     deleteConfirmationVisible.value = true;
 };
 const confirmDeleteReason = () => {
-    router.delete(`/justificatif/reason/${idToDelete.value}`)
-    deleteConfirmationVisible.value = false;
-    setTimeout(() => {
-        emit('openDeleteConfirmation');
-    }, 1000);
-    setTimeout(() => {
-        emit('closeDeleteConfirmation');
-    }, 2000)
+    // router.delete(`/justificatif/reason/${idToDelete.value}`)
+    // deleteConfirmationVisible.value = false;
+    // setTimeout(() => {
+    //     emit('openDeleteConfirmation');
+    // }, 1000);
+    // setTimeout(() => {
+    //     emit('closeDeleteConfirmation');
+    // }, 2000)
+    console.log(idToDelete.value)
+    axios.delete(route('reasons.destroy',idToDelete.value))
+    .then(response => {
+        deleteConfirmationVisible.value = false;
+        props.reasons.data = props.reasons.data.filter(reason => reason.id !== idToDelete.value);
+
+        setTimeout(() => {
+            emit('openDeleteConfirmation');
+            router.visit(route('reasons.home'))
+        }, 1000);
+        setTimeout(() => {
+            emit('closeDeleteConfirmation');
+        }, 2000)
+        // props.reasons.value  = props.reasons.data.filter(reason => reason.id != idToDelete.value);
+    })
+    .catch(error => {
+        if (error.response.status == 400) {
+            deleteConfirmationVisible.value = false;
+            setTimeout(() => {
+            emit('openDeleteMessageError');
+            }, 500);
+            setTimeout(() => {
+                emit('closeDeleteMessageError');
+            }, 2500)
+        }
+    });
 };
 </script>

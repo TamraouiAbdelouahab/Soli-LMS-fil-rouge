@@ -69,13 +69,10 @@ const dureeMoyenne = computed(() => {
     return somme + duree;
   }, 0);
 
-  return totalJours / props.justifications.length + " jours";
+  return (totalJours / props.justifications.length).toFixed(2) + " jours";
 });
 
-
 const justificationEnAttente = props.justifications.filter(justification => justification.status === 'EN_ATTENTE').length;
-
-
 
 const analyticsData = ref({
     "tendance": {
