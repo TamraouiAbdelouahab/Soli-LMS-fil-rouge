@@ -9,7 +9,7 @@
                     <Link :href="route('login')" class="text-gray-600 hover:text-teal-600 transition">Connexion</Link>
                 </template>
                 <template v-else-if="!$page.props.auth.user.roles.includes('apprenant')">
-                    <Link :href="route('dashboard')" class="text-gray-600 hover:text-teal-600 transition">Tableau de
+                    <Link :href="route('sanction.dashboard')" class="text-gray-600 hover:text-teal-600 transition">Tableau de
                     bord</Link>
                 </template>
             </nav>
@@ -36,7 +36,7 @@
                 Mon Espace
                 </Link>
 
-                <Link v-else :href="route('dashboard')"
+                <Link v-else :href="route('sanction.dashboard')"
                     class="px-6 py-2 bg-teal-600 text-white rounded-lg shadow hover:bg-teal-700 transition">
                 Aller au Tableau de bord
                 </Link>
