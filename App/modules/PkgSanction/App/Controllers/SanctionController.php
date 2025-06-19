@@ -52,10 +52,16 @@ class SanctionController extends BaseController
         return redirect()->back()->with('success', 'Sanctions applied successfully.');
     }
 
-    public function destroy($id)
+    public function destroyCalculatedSanction($id)
     {
         $this->sanctionCalculeeService->deleteSanctionCalculee($id);
-        return redirect()->back()->with('success', 'Sanction deleted successfully.');
+        return redirect()->back()->with('success', 'Sanction supprimé avec succès.');
+    }
+
+    public function destroyAppliedSanction($id)
+    {
+        $this->sanctionService->deleteSanction($id);
+        return redirect()->back()->with('success', 'Sanction supprimé avec succès.');
     }
 
     public function learnerIndex()

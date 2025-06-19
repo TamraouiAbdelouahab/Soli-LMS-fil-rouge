@@ -1,19 +1,19 @@
 <template>
     <AuthenticatedLayout>
         <div class="min-h-screen bg-gray-50 p-4 md:p-6">
-            <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-6">Tableau de bord</h1>
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-6">Tableau de bord - sanctions</h1>
 
             <!-- Summary Cards -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                 <SummaryCard title="Sanctions actives"
                     :value="recentSanctionsCount ? `${activeSanctionCount}/${sanctionsAbsenceCount}` : '0/0'"
-                    trend="Voir les détails" color="teal" icon="Gavel" />
+                    trend="Voir les détails" color="teal" icon="Gavel" clickable @view-details="goToSanctions" />
                 <SummaryCard title="Sanctions  semaine" :value="recentSanctionsCount ?? 0"
-                    trend="Baisse de 5% cette semaine" color="orange" icon="Calendar" />
+                    trend="Voir les détails" color="orange" icon="Calendar" clickable @view-details="goToSanctions"/>
                 <SummaryCard title="Sanctions non résolues" :value="sanctionsAbsenceCalculeeCount ?? 0"
-                    trend="Voir les détails" color="red" icon="AlertTriangle" />
+                    trend="Voir les détails" color="red" icon="AlertTriangle" clickable @view-details="goToSanctions" />
                 <SummaryCard title="Apprenants Concerné" :value="learnersSanctionedCount ?? 0" trend="Voir les détails"
-                    color="blue" icon="Users" />
+                    color="blue" icon="Users" clickable @view-details="goToSanctions" />
             </div>
 
             <!-- Charts Section -->
@@ -34,20 +34,27 @@
             </div>
 
             <!-- Recent Sanctions Table -->
-            <SanctionsTable :sanctions="recentSanctions" class="mb-6" />
+            <SanctionsTable :sanctions="recentSanctions" :statusColor="getStatusColor" :statusLabel="getStatusLabel"
+                @view="viewSanction" @page-change="changePage" @delete="deleteSanction" :formatDate="formatDate"
+                :sanctionTypeColor="getSanctionTypeColor" class="mb-6" />
 
+            <ViewSanctionModal v-if="showViewModal && selectedSanction" :sanction="selectedSanction"
+                :sanctionTypeColor="getSanctionTypeColor" :statusColor="getStatusColor" :statusLabel="getStatusLabel"
+                @close="showViewModal = false" :formatDate="formatDate" />
         </div>
     </AuthenticatedLayout>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue';
-import AuthenticatedLayout from '@core/Layouts/AuthenticatedLayout.vue';
+import { router } from '@inertiajs/vue3';
 
+import AuthenticatedLayout from '@core/Layouts/AuthenticatedLayout.vue';
 import SummaryCard from '../Components/Dashboard/SummaryCard.vue';
 import SanctionsTable from '../Components/Dashboard/SanctionsTable.vue';
 import LineChart from '../Components/Dashboard/LineChart.vue';
 import PieChart from '../Components/Dashboard/PieChart.vue';
+import ViewSanctionModal from '../Components/Sanction/ViewSanctionModal.vue';
 
 const props = defineProps({
     sanctionsAbsenceCount: Number,
@@ -60,7 +67,10 @@ const props = defineProps({
     learnersSanctionedCount: Number,
 });
 
-console.log(props.learnersSanctionedCount);
+// console.log(props.learnersSanctionedCount);
+
+const showViewModal = ref(false);
+const selectedSanction = ref(null);
 
 const monthlySanctionsChartData = computed(() => {
     if (!props.monthlySanctions || !props.monthlySanctions.length) {
@@ -104,4 +114,54 @@ const sanctionsByTypesChartData = computed(() => {
     };
 });
 
+function deleteSanction(sanction) {
+    router.delete(route('sanction.tracking.destroyAppliedSanction', sanction.id));
+}
+
+function viewSanction(sanction) {
+    selectedSanction.value = sanction;
+    showViewModal.value = true;
+}
+
+const statusStyles = {
+    active: {
+        label: 'Active',
+        color: 'bg-teal-100 text-teal-800'
+    },
+    expirée: {
+        label: 'Expirée',
+        color: 'bg-gray-100 text-gray-800'
+    },
+    lifted: {
+        label: 'Levée',
+        color: 'bg-light-blue-100 text-light-blue-800'
+    }
+};
+
+const getStatusColor = (status) => statusStyles[status]?.color || 'bg-gray-100 text-gray-800';
+
+const getStatusLabel = (status) => statusStyles[status]?.label || status;
+
+const formatDate = (date) => {
+    const parsedDate = new Date(date);
+    if (isNaN(parsedDate)) return 'Date invalide';
+    return new Intl.DateTimeFormat('fr-FR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    }).format(parsedDate);
+};
+
+const getSanctionTypeColor = (type) => {
+    const colors = {
+        'Avertissement': 'bg-bright-yellow-100 text-yellow-800',
+        'Blâme': 'bg-golden-yellow-200 text-yellow-900',
+        'Exclusion': 'bg-red-orange-100 text-red-orange-800'
+    };
+    return colors[type] || 'bg-gray-100 text-gray-800';
+};
+
+function goToSanctions() {
+    router.get(route('sanction.tracking.index'));
+}
 </script>

@@ -55,7 +55,7 @@
                                 <CheckCircle class="h-4 w-4 mr-2" />
                                 Sanctions appliquées
                                 <span class="ml-2 bg-teal-500 text-white text-xs font-medium px-2 py-1 rounded-full">
-                                    {{ sanctionsAppliedCount ?? 0}}
+                                    {{ sanctionsAppliedCount ?? 0 }}
                                 </span>
                             </div>
                         </button>
@@ -135,7 +135,7 @@
 
                         <AppliedSanctionsTable :sanctions="sanctionsApplied.data" :links="sanctionsApplied.links"
                             :statusColor="getStatusColor" :statusLabel="getStatusLabel" @view="viewSanction"
-                            @page-change="changePage" @lift="liftSanction" :formatDate="formatDate"
+                            @page-change="changePage" @delete="deleteSanction" :formatDate="formatDate"
                             :sanctionTypeColor="getSanctionTypeColor" />
                     </div>
                 </div>
@@ -231,7 +231,7 @@ const isAnyFilterApplied = computed(() => {
 
 // Methods
 function exportSanctions() {
-    alert('Fonction d\'export des sanctions déclenchée.');
+    window.location.href = route('sanction.tracking.export');
 }
 
 function submitCalcul() {
@@ -244,7 +244,7 @@ function applySanction(sanction) {
 }
 
 function ignoreSanction(sanction) {
-    router.delete(route('sanction.tracking.destroy', sanction.id));
+    router.delete(route('sanction.tracking.destroyCalculatedSanction', sanction.id));
 }
 
 function viewSanction(sanction) {
@@ -264,8 +264,8 @@ function confirmApplySanction(sanction) {
     });
 }
 
-function liftSanction(sanction) {
-    alert(`Sanction ID ${sanction.id} levée.`);
+function deleteSanction(sanction) {
+    router.delete(route('sanction.tracking.destroyAppliedSanction', sanction.id));
 }
 
 function clearFilters() {

@@ -65,10 +65,8 @@ const props = defineProps({
     sanctions: {
         type: Array,
         default: () => []
-    }
+    },
 });
-
-console.log('Sanctions:', props.sanctions);
 
 const showDetailsModal = ref(false);
 const selectedSanction = ref(null);
