@@ -75,7 +75,7 @@ onUnmounted(() => {
                             <X v-else class="h-6 w-6" />
                         </button>
 
-                        <Link :href="route('dashboard')" class="flex items-center">
+                        <Link :href="route('home')" class="flex items-center">
                         <ApplicationLogo class="block h-9 w-auto fill-current text-gray-800 lg:ps-4" />
                         </Link>
                     </div>
@@ -163,7 +163,7 @@ onUnmounted(() => {
         ]">
             <!-- Sidebar header -->
             <div class="flex h-16 items-center justify-between border-b px-4">
-                <Link :href="route('dashboard')" class="flex items-center" v-show="sidebarOpen">
+                <Link :href="route('home')" class="flex items-center" v-show="sidebarOpen">
                 <ApplicationLogo class="block h-8 w-auto fill-current text-gray-800" />
                 <span class="ml-3 text-lg font-semibold text-gray-800">Soli-LMS</span>
                 </Link>
