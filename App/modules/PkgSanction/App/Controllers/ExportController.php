@@ -30,7 +30,7 @@ class ExportController extends BaseController
         foreach ($sanctions as $sanction) {
             // Extract apprenant names & groupes (assuming apprenant relation exists on absence)
             $apprenants = $sanction->absences->map(function ($absence) {
-                return $absence->apprenant->prenom . ' '. $absence->apprenant->nom ?? 'N/A';
+                return $absence->apprenant->prenom . ' ' . $absence->apprenant->nom ?? 'N/A';
             })->unique()->implode(', ');
 
             $groupe = $sanction->absences->flatMap(function ($absence) {
@@ -53,37 +53,29 @@ class ExportController extends BaseController
         return response()->download($export['path'], $export['filename'])->deleteFileAfterSend(true);
     }
 
-        public function exportRules()
+    public function exportRules()
     {
-        $sanctions = ReglesDeSanction::all();
-        
+        $rules = ReglesDeSanction::all();
+
         // Prepare header row
         $data = [
             ['Regle ID', 'Titre', 'Description', 'Absences Max', 'Seuil de Notification', 'Duree Sanction', 'Est Actif', 'Sanction Type']
         ];
 
-        foreach ($sanctions as $sanction) {
-            // Extract apprenant names & groupes (assuming apprenant relation exists on absence)
-            $apprenants = $sanction->absences->map(function ($absence) {
-                return $absence->apprenant->prenom . ' '. $absence->apprenant->nom ?? 'N/A';
-            })->unique()->implode(', ');
-
-            $groupe = $sanction->absences->flatMap(function ($absence) {
-                return $absence->apprenant->groupes->pluck('nom');
-            })->unique()->implode(', ');
-
+        foreach ($rules as $rule) {
             $data[] = [
-                $sanction->id,
-                $apprenants,
-                $groupe,
-                $sanction->regle->titre ?? 'N/A',
-                $sanction->date_debut,
-                $sanction->date_fin,
-                $sanction->status ?? 'N/A',
+                $rule->id,
+                $rule->titre,
+                $rule->description,
+                $rule->absences_max,
+                $rule->seuil_de_notification,
+                $rule->duree_sanction,
+                $rule->est_actif,
+                $rule->sanction_type->value ?? 'N/A',
             ];
         }
 
-        $export = $this->exportService->exportData($data, 'sanctions.csv');
+        $export = $this->exportService->exportData($data, 'rules.csv');
 
         return response()->download($export['path'], $export['filename'])->deleteFileAfterSend(true);
     }

@@ -22,6 +22,7 @@ Route::prefix('sanction/rules')->middleware(['auth', 'verified', 'role:responsab
     Route::put('/{id}', [SanctionRulesController::class, 'update'])->name('sanction.rules.update');
     Route::put('/{id}/toggle-status', [SanctionRulesController::class, 'toggleStatus'])->name('sanction.rules.toggleStatus');
     Route::delete('/{id}', [SanctionRulesController::class, 'destroy'])->name('sanction.rules.destroy');
+    Route::get('/export', [ExportController::class, 'exportRules'])->name('sanction.rules.export');
 });
 
 Route::prefix('sanction/tracking')->middleware(['auth', 'verified', 'role:responsable des apprenants|responsable de formation'])->group(function () {

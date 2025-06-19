@@ -11,7 +11,7 @@
 
         <div class="mt-4 sm:mt-0 flex space-x-3">
           <button @click="exportRules"
-            class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+            class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-light-blue-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">
             <Download class="h-4 w-4 mr-2" />
             Exporter
           </button>
@@ -37,14 +37,15 @@
 
       <!-- Rules Table -->
       <RulesTable :rules="sanctionRules" @view="viewRule" @edit="editRule" @toggle-status="toggleRuleStatus"
-        @delete="deleteRule" :formatDate="formatDate"/>
+        @delete="deleteRule" :formatDate="formatDate" />
 
       <!-- Add Rule Modal -->
       <AddRuleModal v-if="showAddRuleModal" :sanctionTypes="sanctionTypes" @close="showAddRuleModal = false"
         @submit="handleAddRule" />
 
       <!-- View Rule Modal -->
-      <ViewRuleModal v-if="showViewModal && selectedRule" :rule="selectedRule" @close="showViewModal = false" :formatDate="formatDate"/>
+      <ViewRuleModal v-if="showViewModal && selectedRule" :rule="selectedRule" @close="showViewModal = false"
+        :formatDate="formatDate" />
 
       <!-- Edit Rule Modal -->
       <EditRuleModal v-if="showEditModal && selectedRule" :sanctionTypes="sanctionTypes" :rule="selectedRule"
@@ -143,34 +144,9 @@ const editRule = (rule) => {
   showEditModal.value = true;
 };
 
-const exportRules = () => {
-  // Implementation for exporting rules
-  console.log('Exporting rules...');
-
-  // Create CSV content
-  const headers = ['Titre', 'Description', 'Absences Max', 'Seuil Notification', 'Durée Sanction', 'Statut'];
-  const csvContent = [
-    headers.join(','),
-    ...rules.value.map(rule => [
-      `"${rule.titre}"`,
-      `"${rule.description}"`,
-      rule.absencesMax,
-      rule.seuilDeNotification,
-      rule.dureeSanction,
-      rule.statut
-    ].join(','))
-  ].join('\n');
-
-  // Download CSV
-  const blob = new Blob([csvContent], { type: 'text/csv' });
-  const url = window.URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'regles-sanction.csv';
-  a.click();
-  window.URL.revokeObjectURL(url);
-};
-
+function exportRules() {
+  window.location.href = route('sanction.rules.export');
+}
 </script>
 
 <style scoped>
