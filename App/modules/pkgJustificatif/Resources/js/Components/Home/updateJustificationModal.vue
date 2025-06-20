@@ -132,13 +132,13 @@
     const isSubmitting = ref(false);
     const form = useForm({
     dateDepot: new Date().toISOString().split('T')[0],
-    dateDebut: props.justification.dateDebut || '',
-    dateFin : props.justification.dateFin || '',
-    description : props.justification.description || '',
-    status: props.justification.status || 'EN_ATTENTE',
-    raison: props.justification.raison?.id || props.reasons[0].id,
-    apprenant: props.justification.apprenant?.id || apprenantsDuGroupe.value[0]?.id,
-    fichier: props.justification.fichier || null,
+    dateDebut: props.justification?.dateDebut || '',
+    dateFin : props.justification?.dateFin || '',
+    description : props.justification?.description || '',
+    status: props.justification?.status || 'EN_ATTENTE',
+    raison: props.justification?.raison?.id || props.reasons[0].id,
+    apprenant: props.justification?.apprenant?.id || apprenantsDuGroupe.value[0]?.id,
+    fichier: props.justification?.fichier || null,
     });
     const updateJustification = () => {
         if (isSubmitting.value) return;
