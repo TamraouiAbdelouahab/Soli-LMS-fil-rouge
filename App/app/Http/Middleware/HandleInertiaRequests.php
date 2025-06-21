@@ -62,6 +62,9 @@ class HandleInertiaRequests extends Middleware
                         ];
                     });
             },
+            'flash' => [
+                'messageErrorValideEnAttente' => $request->session()->get('messageErrorValideEnAttente'),
+            ],
         ]);
     }
 }
