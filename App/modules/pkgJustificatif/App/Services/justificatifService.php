@@ -2,13 +2,15 @@
 
 namespace Modules\PkgJustificatif\App\Services;
 use Modules\PkgJustificatif\App\Repositories\justificatifRepository;
-class justificatifService
-{
-    protected $justificationRepository;
 
-    public function __construct(JustificatifRepository $justificationRepository)
+class justificatifService extends BaseService
+{
+    // protected $justificationRepository;
+
+    public function __construct(protected JustificatifRepository $justificationRepository)
     {
-        $this->justificationRepository = $justificationRepository;
+        // $this->justificationRepository = $justificationRepository;
+        parent::__construct($justificationRepository);
     }
 
     public function Alljustifications()
@@ -24,4 +26,5 @@ class justificatifService
         $count = $this->justificationRepository->countapprenantwithjustification();
         return $count;
     }
+    
 }

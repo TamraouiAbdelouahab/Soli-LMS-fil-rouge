@@ -10,7 +10,7 @@ use Modules\PkgJustificatif\App\Services\raisonService;
 
 class HomeController extends  BaseController
 {
-    protected $justificationService,$reasonService,$groupeService;
+    protected $justificationService,$raisonService,$groupeService;
 
     public function __construct(justificatifService $justificationService,raisonService $raisonService,groupeService $groupeService)
     {

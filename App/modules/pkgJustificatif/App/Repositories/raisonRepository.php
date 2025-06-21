@@ -6,12 +6,15 @@ use Modules\PkgApprenant\App\Models\Apprenant;
 use Modules\PkgJustificatif\App\Models\Raison;
 
 
-class raisonRepository
+class raisonRepository extends BaseRepository
 {
-
+    public function __construct(Raison $raison)
+    {
+        parent::__construct($raison);
+    }
     public function Allreason(){
         $reasons = Raison::all();
         return $reasons;
     }
-    
+
 }

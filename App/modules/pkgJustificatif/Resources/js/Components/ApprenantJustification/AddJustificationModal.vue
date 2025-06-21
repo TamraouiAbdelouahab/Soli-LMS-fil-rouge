@@ -39,57 +39,29 @@
             </div>
         </div>
         <div class="flex justify-between gap-4 w-full">
-          <div class="w-1/2">
-              <label  for="status" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white w-full">
-                status
-              </label>
-              <select name="status" v-model="form.status" id="status" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-2">
-                <option v-for="[key, status] in Object.entries(statuses)" :value="key" :key="key">{{status}}</option>
-              </select>
-              <small class="text-red-500" v-if="form.errors.status">{{ form.errors.status }}</small>
-          </div>
-          <div class="w-1/2">
-              <label for="raison" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                raison
-              </label>
-              <div class="flex justify-between gap-4 w-full items-start">
-                <select name="raison" v-model="form.raison" id="" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-2">
-                  <option v-for="reason in props.reasons" :value="reason.id" :key="reason.id">{{reason.libelle}}</option>
-                </select>
-                <small class="text-red-500" v-if="form.errors.raison">{{ form.errors.raison }}</small>
-                <!-- <button
-                      class="bg-blue-500 text-white px-4 py-2 rounded">
-                      +
-                </button> -->
-              </div>
-          </div>
-        </div>
-        <div class="flex justify-between gap-4 w-full">
-          <div class="w-1/2">
-              <label  for="groupe" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                Groupe
-              </label>
-              <select name="groupe" id="groupe" v-model="groupe" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-2">
-                <option v-for="group in props.groups" :value="group.id" :key="group.id">{{group.nom}}</option>
-              </select>
-          </div>
-          <div class="w-1/2">
-              <label  for="apprenant" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                apprenant
-              </label>
-              <select name="apprenant" id="groupe" v-model="form.apprenant" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-2">
-                <option v-for="apprenant in apprenantsDuGroupe" :value="apprenant.id" :key="apprenant.id">{{apprenant.nom + " " + apprenant.prenom}}</option>
-              </select>
-              <small class="text-red-500" v-if="form.errors.apprenant">{{ form.errors.apprenant }}</small>
-          </div>
-        </div>
-        <div>
-            <label  for="fichier" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-              Fichier
-            </label>
-            <input  type="file" name="fichier" @change="handleFileUpload" id="fichier" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-2"
-                    placeholder=".png,.jpg,.pdf" required  />
-            <small class="text-red-500" v-if="form.errors.fichier">{{ form.errors.fichier }}</small>
+            <div class="w-1/2">
+                <label  for="fichier" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                Fichier
+                </label>
+                <input  type="file" name="fichier" @change="handleFileUpload" id="fichier" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-2"
+                        placeholder=".png,.jpg,.pdf" required  />
+                <small class="text-red-500" v-if="form.errors.fichier">{{ form.errors.fichier }}</small>
+            </div>
+            <div class="w-1/2">
+                <label for="raison" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                    raison
+                </label>
+                <div class="flex justify-between gap-4 w-full items-start">
+                    <select name="raison" v-model="form.raison" id="" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-2">
+                    <option v-for="reason in props.reasons" :value="reason.id" :key="reason.id">{{reason.libelle}}</option>
+                    </select>
+                    <small class="text-red-500" v-if="form.errors.raison">{{ form.errors.raison }}</small>
+                    <!-- <button
+                        class="bg-blue-500 text-white px-4 py-2 rounded">
+                        +
+                    </button> -->
+                </div>
+            </div>
         </div>
         <div>
             <label  for="description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
@@ -119,9 +91,7 @@
     import { computed } from 'vue';
     import { ref } from 'vue';
     import { useForm } from '@inertiajs/vue3';
-
     const props = defineProps(['show','reasons','groups'])
-
     const statuses = ref({
     "EN_ATTENTE": "en attente",
     "ACCEPTE": "accepte",
@@ -129,11 +99,6 @@
     })
 
     const emit = defineEmits(['close','closeAddConfirmationVisible','openAddConfirmationVisible']);
-    const groupe = ref(props.groups[0].id);
-    const apprenantsDuGroupe =ref( computed(() => {
-    const selectedGroup = props.groups.find(g => g.id === groupe.value);
-    return selectedGroup ? selectedGroup.apprenants : [];
-    }));
     const animatingOut = ref(false);
     const isSubmitting = ref(false);
     const form = useForm({
@@ -141,16 +106,13 @@
     dateDebut: '',
     dateFin: '',
     description: '',
-    status: 'EN_ATTENTE',
     raison: props.reasons[0].id,
-    // apprenant: computed(()=> apprenantsDuGroupe.value[0].id),
-    apprenant: '',
     fichier: null,
     });
     const addJustification = () => {
-        if (isSubmitting.value) return; 
+        if (isSubmitting.value) return;
             isSubmitting.value = true;
-        form.post(route('Justificatifs.store'), {
+        form.post(route('Justificatifs.apprenant.store'), {
             onSuccess: () => {
                 form.reset();
                 animatingOut.value = true;
@@ -164,6 +126,7 @@
             },
             onError: () => {
                 isSubmitting.value = false;
+                console.log(form.errors);
             },
             onFinish: () => {
                 isSubmitting.value = false;

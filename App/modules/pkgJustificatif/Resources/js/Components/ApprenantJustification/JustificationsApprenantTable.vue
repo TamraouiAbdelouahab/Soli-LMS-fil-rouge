@@ -1,9 +1,4 @@
 <template>
-    <ConfirmDelete @closeConfirmation = "deleteConfirmationVisible = false"
-                    v-show="deleteConfirmationVisible"
-                    @confirm="confirmDeleteJustification"
-                    @cancel = "deleteConfirmationVisible = false"
-                    />
     <div class="min-h-[calc(65vh)] max-h-[calc(70vh)]">
         <div class="bg-white rounded-lg shadow p-4">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
@@ -16,13 +11,15 @@
                             <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Apprenant</th>
                             <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Groupe</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Statut</th>
                             <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Raison</th>
                             <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Date depot</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Date debut</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Date fin</th>
                             <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Actions</th>
                         </tr>
@@ -38,7 +35,6 @@
                                     <div class="text-sm font-medium text-gray-900">{{ justification.apprenant.nom + " " + justification.apprenant.prenom }}</div>
                                 </div>
                             </td>
-                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{{justification.apprenant.groupes.at(-1).nom}}</td>
                             <td class="px-4 py-3 whitespace-nowrap">
                                 <span
                                     :class="`inline-flex px-2 py-1 text-xs rounded-full
@@ -53,15 +49,14 @@
                             </td>
                             <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{{ justification.raison.libelle }}</td>
                             <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{{ justification.dateDepot }}</td>
+                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{{justification.dateDebut}}</td>
+                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{{justification.dateFin}}</td>
                             <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
-                                <div class="flex space-x-2">
+                                <div class="flex space-x-2 justify-center">
                                     <button class="text-blue-600 hover:text-blue-800">
                                         <Edit class="h-4 w-4"
                                             @click="emit('openUpdateModal',justification.id)"
                                         />
-                                    </button>
-                                    <button class="text-red-600 hover:text-red-800" @click="deleteJustification(justification.id)">
-                                        <Trash2 class="h-4 w-4" />
                                     </button>
                                 </div>
                             </td>
@@ -72,37 +67,19 @@
         </div>
     </div>
     <Pagination :Links="props.justifications.links"  v-show="props.justifications.links.length > 3" />
-
 </template>
 
 <script setup>
 import { FileText, FileSpreadsheet, Edit, Trash2 } from 'lucide-vue-next';
 import { ref } from 'vue';
-import Pagination from './pagination.vue';
+import Pagination from '../Home/pagination.vue';
 import { router } from '@inertiajs/vue3'
-import ConfirmDelete from "./deleteConfirm.vue"
 const props = defineProps({
     justifications: {
         type: Object,
         required: true
-    }
+    },
 });
-const deleteConfirmationVisible = ref(false)
-const idToDelete = ref(null);
-const emit = defineEmits(['openDeleteConfirmation','closeDeleteConfirmation','openUpdateModal']);
 
-const deleteJustification = (id) => {
-    idToDelete.value = id;
-    deleteConfirmationVisible.value = true;
-};
-const confirmDeleteJustification = () => {
-    router.delete(idToDelete.value)
-    deleteConfirmationVisible.value = false;
-    setTimeout(() => {
-        emit('openDeleteConfirmation');
-    }, 1000);
-    setTimeout(() => {
-        emit('closeDeleteConfirmation');
-    }, 2000)
-};
+const emit = defineEmits(['openDeleteConfirmation','closeDeleteConfirmation','openUpdateModal']);
 </script>

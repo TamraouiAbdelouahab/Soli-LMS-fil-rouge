@@ -5,9 +5,12 @@ use Modules\PkgJustificatif\App\Models\Justificatif;
 use Modules\PkgApprenant\App\Models\Apprenant;
 
 
-class justificatifRepository
+class justificatifRepository extends BaseRepository
 {
-
+    public function __construct(Justificatif $justificatif)
+    {
+        parent::__construct($justificatif);
+    }
     public function Alljustifications(){
         $justifications = Justificatif::with(['raison','apprenant.groupes'])->get();
         return $justifications;

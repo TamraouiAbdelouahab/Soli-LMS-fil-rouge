@@ -65,20 +65,18 @@ const dureeMoyenne = computed(() => {
   const totalJours = props.justifications.reduce((somme, j) => {
     const debut = new Date(j.dateDebut);
     const fin = new Date(j.dateFin);
-    const duree = (fin - debut) / (1000 * 60 * 60 * 24) + 1; 
+    const duree = (fin - debut) / (1000 * 60 * 60 * 24) + 1;
     return somme + duree;
   }, 0);
 
-  return totalJours / props.justifications.length + " jours";
+  return (totalJours / props.justifications.length).toFixed(2) + " jours";
 });
 
-
-const justificationEnAttente = props.justifications.filter(justification => justification.statut === 'EN_ATTENTE').length;
-
-
+const justificationEnAttente = props.justifications.filter(justification => justification.status === 'EN_ATTENTE').length;
 
 const analyticsData = ref({
-    "tendance": {
+    // "tendance": {
+    "Raison la Plus Fréquente": {
         value: raisontendance,
         icon: 'TrendingUp',
         color: 'red'
