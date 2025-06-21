@@ -3,12 +3,25 @@
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use Modules\PkgJustificatif\App\Controllers\DashboardController;
+use Modules\PkgJustificatif\App\Controllers\JustificationApprenantController;
 use Modules\PkgJustificatif\App\Controllers\JustificationController;
 use Modules\PkgJustificatif\App\Controllers\raisonController;
 
 Route::get('justificatif/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('Justificatifs.dashboard');
+
+    
+    // Justification Apprenant Routes
+Route::get('justificatif/apprenant', [JustificationApprenantController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('Justificatifs.apprenant');
+Route::post('justificatif/apprenant', [JustificationApprenantController::class, 'store'])
+    ->middleware(['auth', 'verified'])
+    ->name('Justificatifs.apprenant.store');
+Route::match(['POST', 'PUT'], 'justificatif/apprenant/{id}', [JustificationApprenantController::class, 'update'])
+    ->middleware(['auth', 'verified'])
+    ->name('Justificatifs.apprenant.update');
 
 
     // Reaison Routes
@@ -27,6 +40,8 @@ Route::match(['POST', 'PUT'], 'justificatif/reason/{id}', [raisonController::cla
 
 
 
+
+
     // Justification Routes
 Route::get('justificatif/home', [JustificationController::class, 'index'])
     ->middleware(['auth', 'verified'])
@@ -40,6 +55,10 @@ Route::delete('justificatif/{id}', [JustificationController::class, 'destroy'])
 Route::match(['POST', 'PUT'], 'justificatif/{id}', [JustificationController::class, 'update'])
     ->middleware(['auth', 'verified'])
     ->name('Justificatifs.update');
+
+
+
+
 
 
 

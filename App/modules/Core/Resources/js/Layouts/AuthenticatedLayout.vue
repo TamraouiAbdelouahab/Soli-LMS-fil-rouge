@@ -258,7 +258,6 @@ onUnmounted(() => {
                         ]">
                         Justificatifs list
                         </Link>
-
                     </div>
                 </nav>
             </div>

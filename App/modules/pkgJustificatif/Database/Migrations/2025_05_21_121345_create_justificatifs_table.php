@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->date('dateFin');
             $table->string('fichier');
             $table->text('description')->nullable();
-            $table->string('status')->default(StatutJustificatif::ACCEPTE->name);
+            $table->string('status')->default(StatutJustificatif::EN_ATTENTE->name);
             $table->foreignId('raison_id')->constrained('raisons');
             $table->foreignId('apprenant_id')->constrained('apprenants');
             $table->timestamps();

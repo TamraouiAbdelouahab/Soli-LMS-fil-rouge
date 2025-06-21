@@ -26,7 +26,7 @@ class StoreJustificationRequest extends FormRequest
 
             'dateDebut' => 'required|date',
 
-            'dateFin' => 'required|date|after:dateDebut',
+            'dateFin' => 'required|date|after_or_equal:dateDebut',
 
             'fichier' => 'required|file|mimes:png,jpg,jpeg,pdf',
 

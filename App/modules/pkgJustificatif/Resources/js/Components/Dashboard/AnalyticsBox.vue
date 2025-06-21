@@ -75,7 +75,8 @@ const dureeMoyenne = computed(() => {
 const justificationEnAttente = props.justifications.filter(justification => justification.status === 'EN_ATTENTE').length;
 
 const analyticsData = ref({
-    "tendance": {
+    // "tendance": {
+    "Raison la Plus Fréquente": {
         value: raisontendance,
         icon: 'TrendingUp',
         color: 'red'

@@ -15,8 +15,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Modules\PkgApprenant\App\Services\apprenantService;
 use Illuminate\Support\Facades\Auth;
+use Modules\PkgJustificatif\App\Requests\StoreJustificationByApprenantRequest;
+use Modules\PkgJustificatif\App\Requests\UpdateJustificationByApprenantRequest;
 
-class JustificationController extends  BaseController
+class JustificationApprenantController extends  BaseController
 {
     protected $justificationService,$raisonService,$groupeService,$apprenantService;
 
@@ -27,13 +29,10 @@ class JustificationController extends  BaseController
         $this->groupeService = $groupeService;
         $this->apprenantService = $apprenantService;
     }
-    public function index(Request $request)
+     public function index(Request $request)
     {
-         $query = Justificatif::query()->with('raison', 'apprenant.groupes');
-        // Filtres dynamiques
-        if ($request->filled('apprenant_id')) {
-            $query->where('apprenant_id', $request->apprenant_id);
-        }
+         $query = Justificatif::query()->with('raison', 'apprenant.groupes')
+         ->where('apprenant_id', Auth::user()->id);
 
         if ($request->filled('status')) {
             $query->where('status', $request->status);
@@ -46,7 +45,7 @@ class JustificationController extends  BaseController
         if ($request->filled('dateFin')) {
             $query->whereDate('dateFin', '<=', $request->dateFin);
         }
-        return Inertia::render('PkgJustificatif::Justification', [
+        return Inertia::render('PkgJustificatif::ApprenantJustification', [
             // 'justifications'=> $this->justificationService->Alljustifications(),
             'justifications' => $query->paginate(5)->appends($request->query()),
             'reasons' =>$this->raisonService->Allreason(),
@@ -56,20 +55,23 @@ class JustificationController extends  BaseController
             'filters'     => $request->only(['apprenant_id', 'status', 'dateDebut', 'dateFin']),
         ]);
     }
-    public function store(StoreJustificationRequest $request)
+    public function store(StoreJustificationByApprenantRequest $request)
     {
         $validateData = $request->validated();
         $originalName = $request->file('fichier')->getClientOriginalName();
         $timestamp = now()->format('YmdHis');
         $newFileName = $timestamp . '_' . $originalName;
         $path = $request->file('fichier')->storeAs('justifications', $newFileName, 'public');
-        $data = array_merge($validateData,['raison_id'=>$validateData['raison'],'apprenant_id'=>$validateData['apprenant'],'fichier' => $path,]);
+        $path = 'justifications/' . $newFileName;
+        $data = array_merge($validateData,['raison_id'=>$validateData['raison'],'apprenant_id'=>Auth::user()->id,'fichier' => $path,]);
         $this->justificationService->create($data);
     }
-
-    public function update($id,UpdateJustificationRequest $request)
+    public function update($id,UpdateJustificationByApprenantRequest $request)
     {
         $validateData = $request->validated();
+        if ($this->justificationService->find($id)->status !== 'EN_ATTENTE') {
+            return Redirect::back()->with(['messageErrorValideEnAttente' => 'Vous ne pouvez modifier une justification que si elle est en attente.']);
+        }
         $path = "justifications/" . $request->file('fichier')->getClientOriginalName();
         if($path != Justificatif::find($id)->fichier){
             $originalName = $request->file('fichier')->getClientOriginalName();
@@ -80,18 +82,8 @@ class JustificationController extends  BaseController
                 Storage::disk('public')->delete(Justificatif::find($id)->fichier);
         }
         }
-        $data = array_merge($validateData,['raison_id'=>$validateData['raison'],'apprenant_id'=>$validateData['apprenant'],'fichier' => $path,]);
+        $data = array_merge($validateData,['raison_id'=>$validateData['raison'],'fichier' => $path,]);
         $this->justificationService->update($id,$data);
-    }
-    public function destroy($id)
-    {
-        $this->justificationService->delete($id);
-        if(str_contains(url()->previous(), 'justificatif/dashboard')){
-            return Redirect::route('Justificatifs.dashboard');
-        }
-        elseif(str_contains(url()->previous(), 'justificatif/home')){
-            return Redirect::route('Justificatifs.home');
-        }
     }
 }
 
