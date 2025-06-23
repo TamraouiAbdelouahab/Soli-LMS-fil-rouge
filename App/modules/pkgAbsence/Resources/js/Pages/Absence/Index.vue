@@ -12,6 +12,17 @@
     </template>
 
     <div class="p-6 space-y-8">
+      <!-- Debug Info (à supprimer en production) -->
+      <div v-if="$page.props.errors && Object.keys($page.props.errors).length > 0" 
+           class="bg-red-50 border border-red-200 rounded-lg p-4">
+        <h3 class="text-red-800 font-medium">Erreurs de validation :</h3>
+        <ul class="mt-2 text-sm text-red-700">
+          <li v-for="(error, field) in $page.props.errors" :key="field">
+            <strong>{{ field }}:</strong> {{ Array.isArray(error) ? error.join(', ') : error }}
+          </li>
+        </ul>
+      </div>
+
       <!-- Boutons d'action -->
       <div class="flex justify-end gap-3">
         <button @click="openMultiModal"
@@ -115,6 +126,9 @@
                       <div class="text-sm font-medium text-gray-900">
                         {{ absence.apprenant?.nom }} {{ absence.apprenant?.prenom }}
                       </div>
+                      <div class="text-xs text-gray-500" v-if="absence.apprenant?.groupes?.length">
+                        Groupes: {{ absence.apprenant.groupes.map(g => g.nom).join(', ') }}
+                      </div>
                     </div>
                   </div>
                 </td>
@@ -189,10 +203,11 @@
 
     <!-- Modales -->
     <AbsenceFormModal
-      v-if="modalOpen"
+      :show="modalOpen"
       :absence="selectedAbsence"
       :apprenants="apprenants"
       :seances="seances"
+      :sanctions="sanctions"
       @close="closeModal"
       @submit="handleSubmitAbsence"
     />
@@ -229,6 +244,10 @@
 import { router, usePage } from '@inertiajs/vue3'
 import { route } from 'ziggy-js';
 
+// Ajoutez cette ligne pour accéder aux props de la page
+const { props: pageProps } = usePage()
+const $page = usePage()
+
 import AuthenticatedLayout from '@core/Layouts/AuthenticatedLayout.vue'
 import AbsenceFormModal from './AbsenceFormModal.vue'
 import AbsenceEditModal from './AbsenceEditModal.vue'
@@ -241,6 +260,7 @@ const props = defineProps({
   apprenants: Array,
   seances: Array,
   groupes: Array,
+  sanctions: Array,
 })
 
 const selectedSeance = ref('')
@@ -254,13 +274,15 @@ const multiModalOpen = ref(false)
 const selectedAbsence = ref(null)
 const viewedAbsence = ref(null)
 
-// Fonctions modales
+// Fonctions modales avec debug
 function openModal() {
+  console.log('🔵 Opening modal for new absence')
   selectedAbsence.value = null
   modalOpen.value = true
 }
 
 function closeModal() {
+  console.log('🔴 Closing modal')
   modalOpen.value = false
   selectedAbsence.value = null
 }
@@ -289,14 +311,54 @@ function deleteAbsence(id) {
   }
 }
 
+// Fonction handleSubmitAbsence avec user_id ajouté
 function handleSubmitAbsence(data) {
-  if (selectedAbsence.value) {
-    router.put(route('Absences.update', selectedAbsence.value.id), data)
-  } else {
-    router.post(route('Absences.store'), data)
+  console.log('📤 Submitting absence data:', data)
+  console.log('🔍 Selected absence:', selectedAbsence.value)
+  
+  // Ajouter l'user_id automatiquement depuis les props de la page
+  const submitData = {
+    ...data,
+    user_id: $page.props.auth?.user?.id || null
   }
-  closeModal()
-  closeEditModal()
+  
+  console.log('📤 Final submit data with user_id:', submitData)
+  
+  try {
+    if (selectedAbsence.value) {
+      // Mode édition
+      console.log('✏️ Updating absence with ID:', selectedAbsence.value.id)
+      router.put(route('Absences.update', selectedAbsence.value.id), submitData, {
+        onStart: () => console.log('🚀 Update request started'),
+        onSuccess: (page) => {
+          console.log('✅ Update successful:', page)
+          closeModal()
+          closeEditModal()
+        },
+        onError: (errors) => {
+          console.error('❌ Update failed:', errors)
+        },
+        onFinish: () => console.log('🏁 Update request finished')
+      })
+    } else {
+      // Mode création
+      console.log('➕ Creating new absence')
+      router.post(route('Absences.store'), submitData, {
+        onStart: () => console.log('🚀 Create request started'),
+        onSuccess: (page) => {
+          console.log('✅ Create successful:', page)
+          closeModal()
+          closeEditModal()
+        },
+        onError: (errors) => {
+          console.error('❌ Create failed:', errors)
+        },
+        onFinish: () => console.log('🏁 Create request finished')
+      })
+    }
+  } catch (error) {
+    console.error('💥 Exception in handleSubmitAbsence:', error)
+  }
 }
 
 function handleSubmitMulti(data) {
@@ -307,17 +369,14 @@ function handleSubmitMulti(data) {
 // filter des absences
 const filteredAbsences = computed(() => {
   return props.absences.filter(absence => {
-    // filtre séance
     const matchesSeance = selectedSeance.value
       ? absence.seance?.id === Number(selectedSeance.value)
       : true;
 
-    // filtre groupe (via apprenant.groupe_id)
-    const matchesGroupe = selectedGroupe.value
-      ? absence.apprenant?.groupe_id === selectedGroupe.value
-      : true
+    const matchesGroupe = !selectedGroupe.value || selectedGroupe.value === ''
+      ? true
+      : absence.apprenant?.groupes?.some(groupe => groupe.id === Number(selectedGroupe.value))
 
-    // filtre recherche sur nom/prenom (insensible à la casse)
     const fullName = (absence.apprenant?.nom + ' ' + absence.apprenant?.prenom).toLowerCase()
     const search = searchApprenant.value.trim().toLowerCase()
     const matchesSearch = search ? fullName.includes(search) : true
@@ -335,7 +394,6 @@ function formatDate(heure) {
   });
 }
 
-// Formattage de la date d'absence (seulement la date)
 function formatAbsenceDate(dateString) {
   if (!dateString) return 'N/A'
   const date = new Date(dateString)

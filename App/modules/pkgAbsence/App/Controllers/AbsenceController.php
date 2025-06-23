@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Modules\PkgAbsence\App\Services\GererAbsence;
 use Modules\PkgApprenant\App\Models\Apprenant;
+use Modules\PkgApprenant\App\Models\Groupe;
 use App\Models\Seance;
 use Illuminate\Support\Facades\Auth;
 
@@ -22,9 +23,10 @@ class AbsenceController extends Controller
     public function index()
     {
         return Inertia::render('pkgAbsence::Absence/Index', [
-            'absences' => $this->service->listAbsences(),
-            'apprenants' => Apprenant::select('id', 'nom', 'prenom')->get(),
-            'seances' => Seance::select('id', 'date_debut')->get()
+            'absences' => $this->service->listAbsences()->load(['apprenant.groupes', 'seance']),
+            'apprenants' => Apprenant::with('groupes')->select('id', 'nom', 'prenom')->get(),
+            'seances' => Seance::select('id', 'date_debut', 'date_fin')->get(),
+            'groupes' => Groupe::select('id', 'nom')->get()
         ]);
     }
 
