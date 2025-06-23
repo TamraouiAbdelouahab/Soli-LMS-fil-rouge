@@ -80,7 +80,7 @@ class DashboardService
     {
         $query = Absence::query();
         $this->applyDateFilter($query, $filterType, $filterValue);
-        return $query->distinct('user_id')->count('user_id');
+        return $query->distinct('apprenant_id')->count('apprenant_id');
     }
 
     public function getGlobalAbsenceRate(?string $filterType = null, $filterValue = null): float
@@ -149,7 +149,7 @@ class DashboardService
 
     public function getTopSessions(int $limit = 5, ?string $filterType = null, $filterValue = null): array
     {
-        $query = Seance::select('seances.id', DB::raw('CONCAT("Séance ", DATE_FORMAT(seances.date_debut, " %H:%i")) as nom'), DB::raw('COUNT(absences.id) as total'))
+        $query = Seance::select('seances.id', DB::raw('CONCAT("Séance ", DATE_FORMAT(seances.date_debut, "%H:%i")) as nom'), DB::raw('COUNT(absences.id) as total'))
             ->join('absences', 'seances.id', '=', 'absences.seance_id');
 
         $this->applyDateFilter($query, $filterType, $filterValue);
@@ -167,8 +167,7 @@ class DashboardService
                 'apprenants.id as apprenant_id',
                 'apprenants.nom',
                 'apprenants.prenom',
-                'apprenants.prenom_arab',
-                'apprenants.nom_arab',
+                'apprenants.tele_num',
                 DB::raw('COUNT(absences.id) as total')
             )
             ->join('absences', 'apprenants.id', '=', 'absences.user_id');

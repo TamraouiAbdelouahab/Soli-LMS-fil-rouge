@@ -57,7 +57,7 @@ class DashboardController extends BaseController
             'topGroups' => $this->absenceService->getTopGroups(5, $filterType, $filterValue),
             'topSessions' => $this->absenceService->getTopSessions(5, $filterType, $filterValue),
             'topMonthlyLearners' => $this->absenceService->getTopMonthlyLearners(5, $filterType, $filterValue),
-            'apprenants' => Apprenant::select('id', 'nom', 'prenom', 'cin')->get(),
+            'apprenants' => Apprenant::select('id', 'nom', 'prenom', 'tele_num')->get(),
             'seances' => Seance::select('id', 'date_debut', 'date_fin')->get(),
             'currentFilter' => [
                 'type' => $filterType,
