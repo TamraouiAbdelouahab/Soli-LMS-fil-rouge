@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('seances', function (Blueprint $table) {
             $table->id();
-            $table->dateTime('date_debut');
-            $table->dateTime('date_fin');
+            $table->time('date_debut');
+            $table->time('date_fin');
             $table->timestamps();
         });
     }
