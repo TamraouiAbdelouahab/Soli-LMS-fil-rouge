@@ -18,7 +18,7 @@ class AbsencesSeeder1 extends Seeder
             $absences[] = [
                 'apprenant_id' => rand(1, 10),
                 'user_id' => 2,
-                'seance_id' => rand(1, 30),
+                'seance_id' => rand(1, 3),
                 'justifie' => false,
                 'est_sanctionnée' => false,
                 'sanction_absence_id' => null,

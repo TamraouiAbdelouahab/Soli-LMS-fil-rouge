@@ -1,83 +1,57 @@
 <template>
-    <div class="chart-container">
-        <canvas ref="chartRef"></canvas>
-    </div>
+    <canvas ref="chartCanvas"></canvas>
 </template>
 
-<script>
-import { defineComponent, ref, onMounted, watch, toRefs } from 'vue';
-import Chart from 'chart.js/auto';
+<script setup>
+import { ref, onMounted, watch } from 'vue';
+import { Chart, registerables } from 'chart.js';
 
-export default defineComponent({
-    name: 'BarChart',
-    props: {
-        chartData: {
-            type: Object,
-            required: true
-        }
-    },
-    setup(props) {
-        const chartRef = ref(null);
-        let chartInstance = null;
-        const { chartData } = toRefs(props);
+Chart.register(...registerables);
 
-        const renderChart = () => {
-            if (chartInstance) {
-                chartInstance.destroy();
-            }
-
-            const ctx = chartRef.value.getContext('2d');
-            chartInstance = new Chart(ctx, {
-                type: 'bar',
-                data: chartData.value,
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            mode: 'index',
-                            intersect: false
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.05)'
-                            }
-                        },
-                        x: {
-                            grid: {
-                                display: false
-                            }
-                        }
-                    }
-                }
-            });
-        };
-
-        onMounted(() => {
-            renderChart();
-        });
-
-        watch(chartData, () => {
-            renderChart();
-        }, { deep: true });
-
-        return {
-            chartRef
-        };
-    }
+const props = defineProps({
+    chartData: Object,
 });
-</script>
 
-<style scoped>
-.chart-container {
-    position: relative;
-    width: 100%;
-    height: 100%;
-}
-</style>
+const chartCanvas = ref(null);
+let myChart = null;
+
+const renderChart = () => {
+    if (myChart) {
+        myChart.destroy();
+    }
+    myChart = new Chart(chartCanvas.value, {
+        type: 'bar',
+        data: props.chartData,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false,
+                },
+            },
+            scales: {
+                x: {
+                    grid: {
+                        display: false,
+                    },
+                },
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: '#e5e7eb',
+                    },
+                },
+            },
+        },
+    });
+};
+
+onMounted(() => {
+    renderChart();
+});
+
+watch(() => props.chartData, () => {
+    renderChart();
+}, { deep: true });
+</script>

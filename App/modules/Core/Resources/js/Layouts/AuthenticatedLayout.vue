@@ -35,6 +35,7 @@ function handleClick(notification) {
 const dashboardExpanded = ref(false)
 const sanctionExpanded = ref(false)
 const justificatifsExpanded = ref(false)
+const absencesExpanded = ref(false)
 
 const showingNavigationDropdown = ref(false);
 const sidebarOpen = ref(true);
@@ -311,6 +312,36 @@ onUnmounted(() => {
                         Justificatifs list
                         </Link>
                     </div>
+                    <!-- Absence Parent -->
+                    <button @click="absencesExpanded = !absencesExpanded" :class="[ 
+                        route().current('Absences.index')
+                            ? 'bg-blue-50 text-teal-700'
+                            : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
+                        sidebarOpen ? 'justify-start' : 'justify-center',
+                        'w-full flex items-center rounded-md px-2 py-2 text-sm font-medium focus:outline-none transition'
+                    ]">
+                        <FileText :class="[
+                            route().current('Absences.index')
+                                ? 'text-teal-700'
+                                : 'text-gray-500 group-hover:text-gray-500',
+                            'mr-3 h-5 w-5 flex-shrink-0'
+                        ]" />
+                        <span v-if="sidebarOpen">Absences</span>
+                        <ChevronRight v-if="!absencesExpanded && sidebarOpen" class="ml-auto h-4 w-4 text-gray-400" />
+                        <ChevronDown v-if="absencesExpanded && sidebarOpen" class="ml-auto h-4 w-4 text-gray-400" />
+                    </button>
+
+                    <!-- Sublinks Absences -->
+                    <div v-show="absencesExpanded" class="ml-8 space-y-1" v-if="sidebarOpen">
+                        <!-- Liste des Absences (Page CRUD) -->
+                        <Link :href="route('Absences.index')" :class="[
+                            route().current('Absences.index') ? 'text-teal-700' : 'text-gray-600 hover:text-teal-600',
+                            'block text-sm py-1 transition'
+                        ]">
+                            Liste des Absences
+                        </Link>
+                    </div>
+
                 </nav>
             </div>
 

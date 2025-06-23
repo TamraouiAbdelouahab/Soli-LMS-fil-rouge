@@ -1,80 +1,58 @@
 <template>
-    <div :class="[bgColor, 'rounded-lg shadow p-4 text-white']">
-        <div class="flex items-center justify-between">
-            <div>
-                <p class="text-sm opacity-80">{{ title }}</p>
-                <p class="text-2xl font-bold">{{ value }}</p>
-            </div>
-            <div :class="[iconBgColor, 'p-3 rounded-full']">
-                <component :is="iconComponent" class="h-6 w-6" />
-            </div>
+    <div :class="['bg-white rounded-lg shadow p-4 flex items-center', colorClass]">
+        <div :class="['flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center', iconBgClass]">
+            <UserXIcon v-if="icon === 'UserX'" :class="['w-5 h-5', iconColorClass]" />
+            <UsersIcon v-else-if="icon === 'Users'" :class="['w-5 h-5', iconColorClass]" />
+            <TrendingUpIcon v-else-if="icon === 'TrendingUp'" :class="['w-5 h-5', iconColorClass]" />
+            <CheckCircleIcon v-else-if="icon === 'CheckCircle'" :class="['w-5 h-5', iconColorClass]" />
         </div>
-        <p class="text-xs mt-2 opacity-80">{{ trend }}</p>
+        <div class="ml-4">
+            <p class="text-sm font-medium text-gray-500">{{ title }}</p>
+            <p class="text-2xl font-semibold text-gray-900">{{ value }}</p>
+            <p class="text-xs text-gray-500 mt-1">{{ trend }}</p>
+        </div>
     </div>
 </template>
 
 <script setup>
 import { computed } from 'vue';
-import {
-    Gavel,
-    Calendar,
-    AlertTriangle,
-    Percent
-} from 'lucide-vue-next';
+import { UserXIcon, UsersIcon, TrendingUpIcon, CheckCircleIcon } from 'lucide-vue-next'; // Assuming lucide-vue-next for icons
 
 const props = defineProps({
-    title: {
-        type: String,
-        required: true
-    },
-    value: {
-        type: [String, Number],
-        required: true
-    },
-    trend: {
-        type: String,
-        default: ''
-    },
-    color: {
-        type: String,
-        default: 'blue'
-    },
-    icon: {
-        type: String,
-        required: true
+    title: String,
+    value: [String, Number],
+    trend: String,
+    color: String,
+    icon: String,
+});
+
+const colorClass = computed(() => {
+    switch (props.color) {
+        case 'red': return 'border-l-4 border-red-500';
+        case 'orange': return 'border-l-4 border-orange-500';
+        case 'yellow': return 'border-l-4 border-yellow-500';
+        case 'blue': return 'border-l-4 border-blue-500';
+        default: return '';
     }
 });
 
-const iconComponent = computed(() => {
-    const icons = {
-        'Gavel': Gavel,
-        'Calendar': Calendar,
-        'AlertTriangle': AlertTriangle,
-        'Percent': Percent
-    };
-    return icons[props.icon] || Gavel;
+const iconBgClass = computed(() => {
+    switch (props.color) {
+        case 'red': return 'bg-red-100';
+        case 'orange': return 'bg-orange-100';
+        case 'yellow': return 'bg-yellow-100';
+        case 'blue': return 'bg-blue-100';
+        default: return 'bg-gray-100';
+    }
 });
 
-const colorClasses = {
-    blue: {
-        bg: 'bg-blue-500',
-        iconBg: 'bg-blue-400'
-    },
-    orange: {
-        bg: 'bg-orange-500',
-        iconBg: 'bg-orange-400'
-    },
-    red: {
-        bg: 'bg-red-500',
-        iconBg: 'bg-red-400'
-    },
-    green: {
-        bg: 'bg-green-500',
-        iconBg: 'bg-green-400'
+const iconColorClass = computed(() => {
+    switch (props.color) {
+        case 'red': return 'text-red-600';
+        case 'orange': return 'text-orange-600';
+        case 'yellow': return 'text-yellow-600';
+        case 'blue': return 'text-blue-600';
+        default: return 'text-gray-600';
     }
-};
-
-const bgColor = computed(() => colorClasses[props.color]?.bg || 'bg-gray-500');
-const iconBgColor = computed(() => colorClasses[props.color]?.iconBg || 'bg-gray-400');
-
+});
 </script>
