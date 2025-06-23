@@ -5,14 +5,14 @@
             <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-6">Tableau de bord --Justification d'absence</h1>
             <!-- Summary Cards -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                <SummaryCard title="Total reçus" :value="justifications.length ?? 0" trend="+12% depuis le dernier trimestre"
-                    color="blue" icon="Inbox" />
-                <SummaryCard title="En attente" :value="justificationEnAttente" trend="-5% par rapport au mois dernier"
-                    color="yellow" icon="Clock" />
-                <SummaryCard title="Acceptés" :value="justificationAccepte" trend="+3 depuis la semaine dernière"
-                    color="green" icon="Check" />
-                <SummaryCard title="Taux de récurrence" value="15%" trend="-2% depuis le dernier trimestre"
-                    color="teal" icon="Percent" />
+                <SummaryCard title="Total reçus" :value="justifications.length ?? 0"
+                    color="blue" icon="Inbox" href="/justificatif/home?status=EN_ATTENTE" />
+                <SummaryCard title="En attente" :value="justificationEnAttente"
+                    color="yellow" icon="Clock" href="/justificatif/home?status=EN_ATTENTE"/>
+                <SummaryCard title="Acceptés" :value="justificationAccepte"
+                    color="green" icon="Check" href="/justificatif/home?status=ACCEPTE"/>
+                <SummaryCard title="Rejetés" :value="justificationRejete"
+                    color="teal" icon="XCircle" href="/justificatif/home?status=REJETE"/>
             </div>
             <!-- Charts Section -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">

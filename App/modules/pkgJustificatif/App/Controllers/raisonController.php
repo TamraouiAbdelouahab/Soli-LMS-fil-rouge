@@ -17,6 +17,8 @@ class raisonController extends  BaseController
 
     public function __construct(raisonService $raisonService){
         $this->raisonService = $raisonService;
+        $this->middleware(['auth', 'verified', 'role:responsable des apprenants|responsable de formation']);
+
     }
     public function index()
     {

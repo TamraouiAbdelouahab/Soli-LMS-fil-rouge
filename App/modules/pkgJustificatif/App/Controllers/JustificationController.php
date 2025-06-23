@@ -26,6 +26,8 @@ class JustificationController extends  BaseController
         $this->raisonService = $raisonService;
         $this->groupeService = $groupeService;
         $this->apprenantService = $apprenantService;
+        $this->middleware(['auth', 'verified', 'role:responsable des apprenants|responsable de formation']);
+
     }
     public function index(Request $request)
     {

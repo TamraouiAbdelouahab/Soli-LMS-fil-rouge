@@ -56,6 +56,7 @@
                                     <button class="text-blue-600 hover:text-blue-800">
                                         <Edit class="h-4 w-4"
                                             @click="emit('openUpdateModal',justification.id)"
+                                            v-if="justification.status === 'EN_ATTENTE'"
                                         />
                                     </button>
                                 </div>
