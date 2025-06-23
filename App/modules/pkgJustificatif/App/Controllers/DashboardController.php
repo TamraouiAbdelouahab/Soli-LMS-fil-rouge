@@ -17,6 +17,7 @@ class DashboardController extends  BaseController
         $this->justificationService = $justificationService;
         $this->raisonService = $raisonService;
         $this->groupeService = $groupeService;
+        $this->middleware(['auth', 'verified', 'role:responsable des apprenants|responsable de formation']);
     }
     public function index()
     {

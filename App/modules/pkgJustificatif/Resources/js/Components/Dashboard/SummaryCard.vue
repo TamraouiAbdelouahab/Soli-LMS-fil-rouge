@@ -9,7 +9,14 @@
                 <component :is="iconComponent" class="h-6 w-6" />
             </div>
         </div>
-        <p class="text-xs mt-2 opacity-80">{{ trend }}</p>
+        <a class="flex items-center mt-2 justify-start gap-1 cursor-pointer" :href="href">
+            <div>
+                <p class="underline text-l text-center opacity-80">{{ "voir plus"  }}</p>
+            </div>
+            <div>
+                <component :is="ArrowRightCircle" class="h-4 w-4"/>
+            </div>
+        </a>
     </div>
 </template>
 
@@ -18,12 +25,12 @@ import { computed } from 'vue';
 import {
   Gavel,
   Calendar,
-  Inbox,
   Clock,
   AlertTriangle,
-  Percent,
   Mail,
   Check,
+  X,
+  ArrowRightCircle
 } from 'lucide-vue-next';
 
 const props = defineProps({
@@ -46,6 +53,10 @@ const props = defineProps({
     icon: {
         type: String,
         required: true
+    },
+    href: {
+        type: String,
+        required: true
     }
 });
 
@@ -57,7 +68,7 @@ const iconComponent = computed(() => {
         'Mail': Mail,
         'Calendar': Calendar,
         'AlertTriangle': AlertTriangle,
-        'Percent': Percent
+        'XCircle': X
     };
     return icons[props.icon] || Gavel;
 });
@@ -84,8 +95,8 @@ const colorClasses = {
         iconBg: 'bg-red-400'
     },
     teal: {
-        bg: 'bg-cyan-500',
-        iconBg: 'bg-cyan-400'
+        bg: 'bg-red-500',
+        iconBg: 'bg-red-400'
     },
 };
 

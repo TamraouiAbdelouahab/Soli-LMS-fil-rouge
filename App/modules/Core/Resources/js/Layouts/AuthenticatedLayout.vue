@@ -304,11 +304,29 @@ onUnmounted(() => {
                     <!-- Sublinks -->
                     <div v-show="justificatifsExpanded" class="ml-8 space-y-1" v-if="sidebarOpen">
                         <!-- Page 1 -->
-                        <Link :href="route('Justificatifs.home')" :class="[
+                        <Link
+                            v-if="['responsable des apprenants', 'responsable de formation'].some(role => page.props.auth.user?.roles?.includes(role))"
+                        :href="route('Justificatifs.home')" :class="[
                             route().current('Justificatifs.home') ? 'text-teal-700' : 'text-gray-600 hover:text-teal-600',
                             'block text-sm py-1 transition'
                         ]">
-                        Justificatifs list
+                        Liste des justificatifs
+                        </Link>
+                        <Link
+                            v-if="['responsable des apprenants', 'responsable de formation'].some(role => page.props.auth.user?.roles?.includes(role))"
+                        :href="route('reasons.home')" :class="[
+                            route().current('reasons.home') ? 'text-teal-700' : 'text-gray-600 hover:text-teal-600',
+                            'block text-sm py-1 transition'
+                        ]">
+                        Liste des raisons
+                        </Link>
+                        <Link
+                            v-if="page.props.auth.user?.roles?.includes('apprenant')"
+                        :href="route('Justificatifs.apprenant')" :class="[
+                            route().current('Justificatifs.apprenant') ? 'text-teal-700' : 'text-gray-600 hover:text-teal-600',
+                            'block text-sm py-1 transition'
+                        ]">
+                        Mes justificatifs
                         </Link>
                     </div>
                 </nav>

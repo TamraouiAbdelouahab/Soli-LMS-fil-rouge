@@ -28,11 +28,13 @@ class JustificationApprenantController extends  BaseController
         $this->raisonService = $raisonService;
         $this->groupeService = $groupeService;
         $this->apprenantService = $apprenantService;
+        $this->middleware(['auth', 'verified', 'role:apprenant']);
+
     }
      public function index(Request $request)
     {
          $query = Justificatif::query()->with('raison', 'apprenant.groupes')
-         ->where('apprenant_id', Auth::user()->id);
+         ->where('apprenant_id', Auth::user()->apprenant->id);
 
         if ($request->filled('status')) {
             $query->where('status', $request->status);
