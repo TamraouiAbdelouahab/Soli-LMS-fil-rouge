@@ -426,10 +426,10 @@
   </AuthenticatedLayout>
 </template>
 
-<script setup>
+<script>
 import { router, usePage } from '@inertiajs/vue3'
 import { route } from 'ziggy-js'
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, defineProps, defineEmits } from 'vue'
 
 import AuthenticatedLayout from '@core/Layouts/AuthenticatedLayout.vue'
 import AbsenceFormModal from './AbsenceFormModal.vue'
@@ -438,235 +438,331 @@ import AbsenceMultiCreateModal from './AbsenceMultiCreateModal.vue'
 import AbsenceViewModal from './AbsenceViewModal.vue'
 import ConfirmationModal from './ConfirmationModal.vue'
 
-const $page = usePage()
+export default {
+  components: {
+    AuthenticatedLayout,
+    AbsenceFormModal,
+    AbsenceEditModal,
+    AbsenceMultiCreateModal,
+    AbsenceViewModal,
+    ConfirmationModal
+  },
+  props: {
+    absences: Array,
+    apprenants: Array,
+    seances: Array,
+    groupes: Array,
+    sanctions: Array,
+  },
+  setup(props) {
+    const $page = usePage()
 
-const props = defineProps({
-  absences: Array,
-  apprenants: Array,
-  seances: Array,
-  groupes: Array,
-  sanctions: Array,
-})
+    // État des filtres
+    const selectedSeance = ref('')
+    const selectedGroupe = ref('')
+    const searchApprenant = ref('')
+    const selectedStatus = ref('')
 
-// État des filtres
-const selectedSeance = ref('')
-const selectedGroupe = ref('')
-const searchApprenant = ref('')
-const selectedStatus = ref('')
+    // État des modales
+    const modalOpen = ref(false)
+    const editModalOpen = ref(false)
+    const multiModalOpen = ref(false)
+    const selectedAbsence = ref(null)
+    const viewedAbsence = ref(null)
 
-// État des modales
-const modalOpen = ref(false)
-const editModalOpen = ref(false)
-const multiModalOpen = ref(false)
-const selectedAbsence = ref(null)
-const viewedAbsence = ref(null)
+    // État de la suppression
+    const showDeleteConfirm = ref(false)
+    const absenceToDelete = ref(null)
 
-// État de la suppression
-const showDeleteConfirm = ref(false)
-const absenceToDelete = ref(null)
+    // Pagination
+    const currentPage = ref(1)
+    const itemsPerPage = ref(4)
 
-// Pagination
-const currentPage = ref(1)
-const itemsPerPage = ref(10)
+    // Computed properties
+    const hasErrors = computed(() => {
+      return $page.props.errors && Object.keys($page.props.errors).length > 0
+    })
 
-// Computed properties
-const hasErrors = computed(() => {
-  return $page.props.errors && Object.keys($page.props.errors).length > 0
-})
+    const hasActiveFilters = computed(() => {
+      return selectedSeance.value || selectedGroupe.value || searchApprenant.value || selectedStatus.value
+    })
 
-const hasActiveFilters = computed(() => {
-  return selectedSeance.value || selectedGroupe.value || searchApprenant.value || selectedStatus.value
-})
+    const filteredAbsences = computed(() => {
+      return props.absences.filter(absence => {
+        // Filtre séance
+        const matchesSeance = !selectedSeance.value || absence.seance?.id === Number(selectedSeance.value)
 
-const filteredAbsences = computed(() => {
-  return props.absences.filter(absence => {
-    // Filtre séance
-    const matchesSeance = !selectedSeance.value || absence.seance?.id === Number(selectedSeance.value)
-    
-    // Filtre groupe
-    const matchesGroupe = !selectedGroupe.value || 
-      absence.apprenant?.groupes?.some(groupe => groupe.id === Number(selectedGroupe.value))
-    
-    // Filtre recherche
-    const fullName = `${absence.apprenant?.nom || ''} ${absence.apprenant?.prenom || ''}`.toLowerCase()
-    const search = searchApprenant.value.trim().toLowerCase()
-    const matchesSearch = !search || fullName.includes(search)
-    
-    // Filtre statut
-    let matchesStatus = true
-    if (selectedStatus.value === 'justified') {
-      matchesStatus = absence.justifie
-    } else if (selectedStatus.value === 'unjustified') {
-      matchesStatus = !absence.justifie
-    } else if (selectedStatus.value === 'sanctioned') {
-      matchesStatus = absence.est_sanctionnée
+        // Filtre groupe
+        const matchesGroupe = !selectedGroupe.value ||
+          absence.apprenant?.groupes?.some(groupe => groupe.id === Number(selectedGroupe.value))
+
+        // Filtre recherche
+        const fullName = `${absence.apprenant?.nom || ''} ${absence.apprenant?.prenom || ''}`.toLowerCase()
+        const search = searchApprenant.value.trim().toLowerCase()
+        const matchesSearch = !search || fullName.includes(search)
+
+        // Filtre statut
+        let matchesStatus = true
+        if (selectedStatus.value === 'justified') {
+          matchesStatus = absence.justifie
+        } else if (selectedStatus.value === 'unjustified') {
+          matchesStatus = !absence.justifie
+        } else if (selectedStatus.value === 'sanctioned') {
+          matchesStatus = absence.est_sanctionnée
+        }
+
+        return matchesSeance && matchesGroupe && matchesSearch && matchesStatus
+      })
+    })
+
+    const totalPages = computed(() => {
+      return Math.ceil(filteredAbsences.value.length / itemsPerPage.value)
+    })
+
+    const paginatedAbsences = computed(() => {
+      const start = (currentPage.value - 1) * itemsPerPage.value
+      const end = start + itemsPerPage.value
+      return filteredAbsences.value.slice(start, end)
+    })
+
+    // Watchers
+    watch(filteredAbsences, () => {
+      currentPage.value = 1
+    })
+
+    // Méthodes
+    function clearErrors() {
+      // Cette fonction pourrait être utilisée pour nettoyer les erreurs côté client
     }
-    
-    return matchesSeance && matchesGroupe && matchesSearch && matchesStatus
-  })
-})
 
-const totalPages = computed(() => {
-  return Math.ceil(filteredAbsences.value.length / itemsPerPage.value)
-})
-
-const paginatedAbsences = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage.value
-  const end = start + itemsPerPage.value
-  return filteredAbsences.value.slice(start, end)
-})
-
-// Watchers
-watch(filteredAbsences, () => {
-  currentPage.value = 1
-})
-
-// Méthodes
-function clearErrors() {
-  // Cette fonction pourrait être utilisée pour nettoyer les erreurs côté client
-}
-
-function clearFilters() {
-  selectedSeance.value = ''
-  selectedGroupe.value = ''
-  searchApprenant.value = ''
-  selectedStatus.value = ''
-}
-
-function openModal() {
-  selectedAbsence.value = null
-  modalOpen.value = true
-}
-
-function closeModal() {
-  modalOpen.value = false
-  selectedAbsence.value = null
-}
-
-function openMultiModal() {
-  multiModalOpen.value = true
-}
-
-function viewAbsence(absence) {
-  viewedAbsence.value = absence
-}
-
-function editAbsence(absence) {
-  selectedAbsence.value = absence
-  editModalOpen.value = true
-}
-
-function closeEditModal() {
-  editModalOpen.value = false
-  selectedAbsence.value = null
-}
-
-function confirmDelete(absence) {
-  absenceToDelete.value = absence
-  showDeleteConfirm.value = true
-}
-
-function deleteAbsence() {
-  if (absenceToDelete.value) {
-    router.delete(route('Absences.destroy', absenceToDelete.value.id), {
-      onSuccess: () => {
-        showDeleteConfirm.value = false
-        absenceToDelete.value = null
-      }
-    })
-  }
-}
-
-function cancelDelete() {
-  showDeleteConfirm.value = false
-  absenceToDelete.value = null
-}
-
-function handleSubmitAbsence(data) {
-  const submitData = {
-    ...data,
-    user_id: $page.props.auth?.user?.id || null
-  }
-  
-  if (selectedAbsence.value) {
-    router.put(route('Absences.update', selectedAbsence.value.id), submitData, {
-      onSuccess: () => {
-        closeModal()
-        closeEditModal()
-      }
-    })
-  } else {
-    router.post(route('Absences.store'), submitData, {
-      onSuccess: () => {
-        closeModal()
-        closeEditModal()
-      }
-    })
-  }
-}
-
-function handleSubmitMulti(data) {
-  router.post(route('Absences.store'), data, {
-    onSuccess: () => {
-      multiModalOpen.value = false
+    function clearFilters() {
+      selectedSeance.value = ''
+      selectedGroupe.value = ''
+      searchApprenant.value = ''
+      selectedStatus.value = ''
     }
-  })
-}
 
-// Fonctions utilitaires
-function getInitials(apprenant) {
-  if (!apprenant) return '??'
-  const nom = apprenant.nom?.charAt(0) || ''
-  const prenom = apprenant.prenom?.charAt(0) || ''
-  return (nom + prenom).toUpperCase()
-}
+    function openModal() {
+      selectedAbsence.value = null
+      modalOpen.value = true
+    }
 
-function formatSessionDisplay(seance) {
-  if (!seance) return 'N/A'
-  return `${formatTime(seance.date_debut)} → ${formatTime(seance.date_fin)}`
-}
+    function closeModal() {
+      modalOpen.value = false
+      selectedAbsence.value = null
+    }
 
-function formatTime(heure) {
-  if (!heure) return 'N/A'
-  try {
-    return new Date(`1970-01-01T${heure}Z`).toLocaleTimeString([], {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false
-    })
-  } catch {
-    return heure
+    function openMultiModal() {
+      multiModalOpen.value = true
+    }
+
+    function viewAbsence(absence) {
+      viewedAbsence.value = absence
+    }
+
+    function editAbsence(absence) {
+      selectedAbsence.value = absence
+      editModalOpen.value = true
+    }
+
+    function closeEditModal() {
+      editModalOpen.value = false
+      selectedAbsence.value = null
+    }
+
+    function confirmDelete(absence) {
+      absenceToDelete.value = absence
+      showDeleteConfirm.value = true
+    }
+
+    function deleteAbsence() {
+      if (absenceToDelete.value) {
+        router.delete(route('Absences.destroy', absenceToDelete.value.id), {
+          onSuccess: () => {
+            showDeleteConfirm.value = false
+            absenceToDelete.value = null
+          }
+        })
+      }
+    }
+
+    function cancelDelete() {
+      showDeleteConfirm.value = false
+      absenceToDelete.value = null
+    }
+
+    const emit = defineEmits(['close', 'submit']);
+
+    function handleSubmitAbsence(data) {
+      const submitData = {
+        ...data,
+        user_id: $page.props.auth?.user?.id || null
+      }
+
+      if (selectedAbsence.value) {
+        router.put(route('Absences.update', selectedAbsence.value.id), submitData, {
+          onSuccess: () => {
+            closeModal()
+            closeEditModal()
+          }
+        })
+      } else {
+        router.post(route('Absences.store'), submitData, {
+          onSuccess: () => {
+            closeModal()
+            closeEditModal()
+          }
+        })
+      }
+    }
+
+    function handleSubmitMulti(data) {
+      console.log('📤 Submitting multi absence data:', data)
+
+      // Vérifier que nous avons bien un tableau d'absences
+      if (!data.absences || !Array.isArray(data.absences)) {
+        console.error('❌ Invalid multi absence data format')
+        return
+      }
+
+      // Ajouter l'user_id à chaque absence
+      const absencesWithUserId = data.absences.map(absence => ({
+        ...absence,
+        user_id: $page.props.auth?.user?.id || null
+      }))
+
+      console.log('📤 Final multi absence data:', absencesWithUserId)
+
+      // Envoyer chaque absence individuellement ou en lot selon votre API
+      // Option 1: Envoyer en lot (si votre API le supporte)
+      router.post(route('Absences.store-multiple'), {
+        absences: absencesWithUserId
+      }, {
+        onSuccess: () => {
+          multiModalOpen.value = false
+          console.log('✅ Multi absences created successfully')
+        },
+        onError: (errors) => {
+          console.error('❌ Multi absence creation failed:', errors)
+        }
+      })
+
+      // Option 2: Envoyer individuellement (si votre API n'accepte qu'une absence à la fois)
+      /*
+      Promise.all(
+        absencesWithUserId.map(absence => 
+          router.post(route('Absences.store'), absence, {
+            preserveState: true,
+            preserveScroll: true
+          })
+        )
+      ).then(() => {
+        multiModalOpen.value = false
+        console.log('✅ All absences created successfully')
+      }).catch(error => {
+        console.error('❌ Some absences failed to create:', error)
+      })
+      */
+    }
+
+    // Fonctions utilitaires
+    function getInitials(apprenant) {
+      if (!apprenant) return '??'
+      const nom = apprenant.nom?.charAt(0) || ''
+      const prenom = apprenant.prenom?.charAt(0) || ''
+      return (nom + prenom).toUpperCase()
+    }
+
+    function formatSessionDisplay(seance) {
+      if (!seance) return 'N/A'
+      return `${formatTime(seance.date_debut)} → ${formatTime(seance.date_fin)}`
+    }
+
+    function formatTime(heure) {
+      if (!heure) return 'N/A'
+      try {
+        return new Date(`1970-01-01T${heure}Z`).toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false
+        })
+      } catch {
+        return heure
+      }
+    }
+
+    function formatAbsenceDate(dateString) {
+      if (!dateString) return 'N/A'
+      try {
+        return new Date(dateString).toLocaleDateString('fr-FR', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric'
+        })
+      } catch {
+        return 'Date invalide'
+      }
+    }
+
+    function getStatusBadgeClass(absence) {
+      const baseClass = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium'
+      return absence.justifie
+        ? `${baseClass} bg-green-100 text-green-800`
+        : `${baseClass} bg-red-100 text-red-800`
+    }
+
+    function getStatusIconClass(absence) {
+      const baseClass = 'w-1.5 h-1.5 mr-1.5'
+      return absence.justifie
+        ? `${baseClass} text-green-400`
+        : `${baseClass} text-red-400`
+    }
+
+    function getStatusText(absence) {
+      return absence.justifie ? 'Justifiée' : 'Non justifiée'
+    }
+
+    return {
+      $page,
+      selectedSeance,
+      selectedGroupe,
+      searchApprenant,
+      selectedStatus,
+      modalOpen,
+      editModalOpen,
+      multiModalOpen,
+      selectedAbsence,
+      viewedAbsence,
+      showDeleteConfirm,
+      absenceToDelete,
+      currentPage,
+      itemsPerPage,
+      hasErrors,
+      hasActiveFilters,
+      filteredAbsences,
+      totalPages,
+      paginatedAbsences,
+      clearErrors,
+      clearFilters,
+      openModal,
+      closeModal,
+      openMultiModal,
+      viewAbsence,
+      editAbsence,
+      closeEditModal,
+      confirmDelete,
+      deleteAbsence,
+      cancelDelete,
+      handleSubmitAbsence,
+      handleSubmitMulti,
+      getInitials,
+      formatSessionDisplay,
+      formatTime,
+      formatAbsenceDate,
+      getStatusBadgeClass,
+      getStatusIconClass,
+      getStatusText,
+    }
   }
-}
-
-function formatAbsenceDate(dateString) {
-  if (!dateString) return 'N/A'
-  try {
-    return new Date(dateString).toLocaleDateString('fr-FR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
-    })
-  } catch {
-    return 'Date invalide'
-  }
-}
-
-function getStatusBadgeClass(absence) {
-  const baseClass = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium'
-  return absence.justifie 
-    ? `${baseClass} bg-green-100 text-green-800`
-    : `${baseClass} bg-red-100 text-red-800`
-}
-
-function getStatusIconClass(absence) {
-  const baseClass = 'w-1.5 h-1.5 mr-1.5'
-  return absence.justifie 
-    ? `${baseClass} text-green-400`
-    : `${baseClass} text-red-400`
-}
-
-function getStatusText(absence) {
-  return absence.justifie ? 'Justifiée' : 'Non justifiée'
 }
 </script>

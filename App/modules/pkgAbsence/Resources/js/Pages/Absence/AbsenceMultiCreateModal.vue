@@ -1,227 +1,371 @@
 <template>
-  <transition name="modal" appear>
-    <div v-if="show" class="fixed inset-0 z-50 overflow-y-auto">
-      <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-        <!-- Background overlay -->
-        <transition name="overlay" appear>
-          <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" @click="close"></div>
-        </transition>
-
-        <!-- Modal panel -->
-        <div class="inline-block w-full max-w-4xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
-          <!-- Header -->
-          <div class="flex items-center justify-between pb-4 border-b border-gray-200">
-            <div class="flex items-center space-x-3">
-              <div class="p-2 bg-blue-100 rounded-lg">
-                <Users class="w-6 h-6 text-blue-600" />
+  <transition name="modal">
+    <div v-if="show" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 p-4">
+      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden transform">
+        <!-- Header amélioré -->
+        <div class="relative bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 px-8 py-6">
+          <div class="absolute inset-0 bg-black bg-opacity-10"></div>
+          <div class="relative flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+              <div class="bg-white bg-opacity-20 backdrop-blur-sm rounded-xl p-3 shadow-lg">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                </svg>
               </div>
               <div>
-                <h3 class="text-xl font-semibold text-gray-900">Absences Groupées</h3>
-                <p class="text-sm text-gray-500">Enregistrer plusieurs absences simultanément</p>
+                <h3 class="text-xl font-bold text-white">Absences Groupées</h3>
+                <p class="text-blue-100 text-sm mt-1">Enregistrez plusieurs absences simultanément</p>
               </div>
             </div>
-            <button @click="close" class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
-              <X class="w-5 h-5" />
+            <button 
+              @click="handleClose" 
+              class="text-white hover:text-blue-100 transition-all duration-200 p-2 rounded-xl hover:bg-white hover:bg-opacity-20 group"
+              title="Fermer"
+            >
+              <svg class="w-6 h-6 group-hover:rotate-90 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
             </button>
           </div>
+        </div>
 
-          <form @submit.prevent="submitForm" class="mt-6">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <!-- Left Column: Session Selection -->
+        <!-- Contenu principal -->
+        <div class="max-h-[calc(90vh-200px)] overflow-y-auto">
+          <form @submit.prevent="handleSubmit" class="p-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <!-- Colonne gauche: Configuration -->
               <div class="space-y-6">
-                <!-- Session Selection -->
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">
-                    <Calendar class="inline w-4 h-4 mr-1" />
-                    Séance *
+                <!-- Sélection de séance -->
+                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border-2 border-blue-200">
+                  <label class="block text-sm font-semibold text-gray-700 mb-4">
+                    <div class="flex items-center space-x-2">
+                      <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                      </svg>
+                      <span>Séance *</span>
+                    </div>
                   </label>
                   <select 
-                    v-model="form.seance_id" 
+                    v-model="formData.seance_id" 
                     required 
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                    class="w-full px-4 py-3 border-2 border-blue-200 rounded-xl shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-all duration-200"
                     @change="onSeanceChange"
                   >
-                    <option value="" disabled>Sélectionner une séance</option>
+                    <option value="">Sélectionner une séance</option>
                     <option v-for="seance in seances" :key="seance.id" :value="seance.id">
-                    {{ formatDateRange(seance.date_debut) }}
+                      {{ formatSessionDisplay(seance) }}
                     </option>
                   </select>
                 </div>
 
-                <!-- Absence Options -->
+                <!-- Options d'absence -->
                 <div class="space-y-4">
-                  <h4 class="font-medium text-gray-900">Options d'absence</h4>
-                  <div class="space-y-3">
-                    <label class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
+                  <h4 class="text-lg font-semibold text-gray-900 flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                    Options d'absence
+                  </h4>
+
+                  <!-- Carte Justification -->
+                  <div class="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-2xl p-6 transition-all duration-300 hover:shadow-lg">
+                    <label class="flex items-center cursor-pointer group">
                       <input 
-                        v-model="form.justifie" 
+                        v-model="formData.justifie" 
                         type="checkbox" 
-                        class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                        class="w-5 h-5 text-green-600 border-2 border-gray-300 rounded focus:ring-green-500 transition-all duration-200"
                       />
-                      <div class="ml-3">
-                        <div class="flex items-center">
-                          <CheckCircle class="w-4 h-4 mr-2 text-green-600" />
-                          <span class="font-medium text-gray-900">Absence justifiée</span>
-                        </div>
-                        <p class="text-sm text-gray-500">Marquer ces absences comme justifiées</p>
-                      </div>
-                    </label>
-
-                    <label class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
-                      <input 
-                        v-model="form.est_sanctionnée" 
-                        type="checkbox" 
-                        class="w-4 h-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500"
-                      />
-                      <div class="ml-3">
-                        <div class="flex items-center">
-                          <AlertTriangle class="w-4 h-4 mr-2 text-orange-600" />
-                          <span class="font-medium text-gray-900">Absence sanctionnée</span>
-                        </div>
-                        <p class="text-sm text-gray-500">Appliquer une sanction pour ces absences</p>
-                      </div>
-                    </label>
-                  </div>
-                </div>
-
-                <!-- Summary -->
-                <div v-if="form.apprenant_ids.length > 0" class="p-4 bg-green-50 rounded-lg border border-green-200">
-                  <div class="flex items-center mb-2">
-                    <Users class="w-4 h-4 mr-2 text-green-600" />
-                    <span class="font-medium text-green-900">Résumé</span>
-                  </div>
-                  <div class="text-sm text-green-800">
-                    <p>{{ form.apprenant_ids.length }} apprenant{{ form.apprenant_ids.length > 1 ? 's' : '' }} sélectionné{{ form.apprenant_ids.length > 1 ? 's' : '' }}</p>
-                    <p v-if="selectedSeance">Séance: {{ selectedSeance.matiere }}</p>
-                    <p>Statut: {{ form.justifie ? 'Justifiée' : 'Non justifiée' }}{{ form.est_sanctionnée ? ', Sanctionnée' : '' }}</p>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Right Column: Student Selection -->
-              <div class="space-y-4">
-                <!-- Search and filters -->
-                <div class="space-y-3">
-                  <div class="flex items-center justify-between">
-                    <label class="block text-sm font-medium text-gray-700">
-                      <User class="inline w-4 h-4 mr-1" />
-                      Apprenants *
-                    </label>
-                    <div class="text-sm text-gray-500">
-                      {{ form.apprenant_ids.length }}/{{ filteredApprenants.length }} sélectionné{{ form.apprenant_ids.length > 1 ? 's' : '' }}
-                    </div>
-                  </div>
-
-                  <!-- Search bar -->
-                  <div class="relative">
-                    <Search class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                    <input
-                      v-model="searchQuery"
-                      type="text"
-                      placeholder="Rechercher un apprenant..."
-                      class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-                  </div>
-
-                  <!-- Quick actions -->
-                  <div class="flex space-x-2">
-                    <button
-                      type="button"
-                      @click="selectAll"
-                      class="flex-1 px-3 py-2 text-xs font-medium text-blue-700 bg-blue-100 rounded-lg hover:bg-blue-200 transition-colors"
-                    >
-                      <CheckSquare class="w-3 h-3 mr-1 inline" />
-                      Tout sélectionner
-                    </button>
-                    <button
-                      type="button"
-                      @click="deselectAll"
-                      class="flex-1 px-3 py-2 text-xs font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
-                    >
-                      <Square class="w-3 h-3 mr-1 inline" />
-                      Tout désélectionner
-                    </button>
-                  </div>
-                </div>
-
-                <!-- Students list -->
-                <div class="border border-gray-200 rounded-lg max-h-80 overflow-y-auto">
-                  <div v-if="filteredApprenants.length === 0" class="p-8 text-center text-gray-500">
-                    <UserX class="w-8 h-8 mx-auto mb-2 text-gray-400" />
-                    <p>Aucun apprenant trouvé</p>
-                  </div>
-                  
-                  <div v-else class="divide-y divide-gray-200">
-                    <label
-                      v-for="apprenant in filteredApprenants"
-                      :key="apprenant.id"
-                      class="flex items-center p-3 hover:bg-gray-50 cursor-pointer transition-colors"
-                      :class="{ 'bg-blue-50': form.apprenant_ids.includes(apprenant.id) }"
-                    >
-                      <input
-                        type="checkbox"
-                        :value="apprenant.id"
-                        v-model="form.apprenant_ids"
-                        class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                      />
-                      <div class="ml-3 flex-1">
-                        <div class="flex items-center">
-                          <div class="w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center mr-3">
-                            <span class="text-white text-xs font-medium">
-                              {{ getInitials(apprenant.prenom, apprenant.nom) }}
-                            </span>
+                      <div class="ml-4 flex-1">
+                        <div class="flex items-center space-x-3">
+                          <div :class="[
+                            'rounded-xl p-3 transition-all duration-300',
+                            formData.justifie ? 'bg-green-500 shadow-lg' : 'bg-gray-300'
+                          ]">
+                            <svg :class="[
+                              'w-6 h-6 transition-all duration-300',
+                              formData.justifie ? 'text-white' : 'text-gray-500'
+                            ]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
                           </div>
                           <div>
-                            <div class="text-sm font-medium text-gray-900">
-                              {{ apprenant.prenom }} {{ apprenant.nom }}
+                            <div class="font-semibold text-gray-900 group-hover:text-green-700 transition-colors duration-200">
+                              Absence justifiée
                             </div>
-                            <div class="text-xs text-gray-500">{{ apprenant.email }}</div>
+                            <div class="text-sm text-gray-600">
+                              Marquer toutes ces absences comme justifiées
+                            </div>
                           </div>
                         </div>
                       </div>
-                      <div v-if="form.apprenant_ids.includes(apprenant.id)" class="text-blue-600">
-                        <CheckCircle class="w-4 h-4" />
+                      <div :class="[
+                        'text-3xl font-bold transition-all duration-300',
+                        formData.justifie ? 'text-green-600 scale-110' : 'text-gray-400'
+                      ]">
+                        {{ formData.justifie ? '✓' : '○' }}
+                      </div>
+                    </label>
+                  </div>
+
+                  <!-- Carte Sanction -->
+                  <div class="bg-gradient-to-br from-orange-50 to-amber-50 border-2 border-orange-200 rounded-2xl p-6 transition-all duration-300 hover:shadow-lg">
+                    <label class="flex items-center cursor-pointer group">
+                      <input 
+                        v-model="formData.est_sanctionnée" 
+                        type="checkbox" 
+                        class="w-5 h-5 text-orange-600 border-2 border-gray-300 rounded focus:ring-orange-500 transition-all duration-200"
+                      />
+                      <div class="ml-4 flex-1">
+                        <div class="flex items-center space-x-3">
+                          <div :class="[
+                            'rounded-xl p-3 transition-all duration-300',
+                            formData.est_sanctionnée ? 'bg-orange-500 shadow-lg' : 'bg-gray-300'
+                          ]">
+                            <svg :class="[
+                              'w-6 h-6 transition-all duration-300',
+                              formData.est_sanctionnée ? 'text-white' : 'text-gray-500'
+                            ]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                            </svg>
+                          </div>
+                          <div>
+                            <div class="font-semibold text-gray-900 group-hover:text-orange-700 transition-colors duration-200">
+                              Absence sanctionnée
+                            </div>
+                            <div class="text-sm text-gray-600">
+                              Appliquer une sanction pour ces absences
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div :class="[
+                        'text-3xl font-bold transition-all duration-300',
+                        formData.est_sanctionnée ? 'text-orange-600 scale-110' : 'text-gray-400'
+                      ]">
+                        {{ formData.est_sanctionnée ? '⚠' : '○' }}
                       </div>
                     </label>
                   </div>
                 </div>
 
-                <!-- Validation message -->
-                <div v-if="showValidationError" class="p-3 bg-red-50 border border-red-200 rounded-lg">
-                  <div class="flex items-center">
-                    <AlertCircle class="w-4 h-4 mr-2 text-red-600" />
-                    <span class="text-sm text-red-800">Veuillez sélectionner au moins un apprenant</span>
+                <!-- Résumé -->
+                <transition
+                  enter-active-class="transition duration-300 ease-out"
+                  enter-from-class="transform scale-95 opacity-0"
+                  enter-to-class="transform scale-100 opacity-100"
+                  leave-active-class="transition duration-200 ease-in"
+                  leave-from-class="transform scale-100 opacity-100"
+                  leave-to-class="transform scale-95 opacity-0"
+                >
+                  <div v-if="formData.apprenant_ids.length > 0" class="bg-gradient-to-br from-indigo-50 to-purple-50 border-2 border-indigo-200 rounded-2xl p-6">
+                    <div class="flex items-center mb-4">
+                      <svg class="w-6 h-6 mr-3 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                      </svg>
+                      <span class="font-semibold text-indigo-900 text-lg">Résumé</span>
+                    </div>
+                    <div class="space-y-3 text-sm">
+                      <div class="flex justify-between items-center">
+                        <span class="text-gray-600">Apprenants sélectionnés :</span>
+                        <span class="font-bold text-indigo-900 text-lg">{{ formData.apprenant_ids.length }}</span>
+                      </div>
+                      <div v-if="selectedSeance" class="flex justify-between items-center">
+                        <span class="text-gray-600">Séance :</span>
+                        <span class="font-medium text-gray-900">{{ formatSessionDisplay(selectedSeance) }}</span>
+                      </div>
+                      <div class="flex justify-between items-center">
+                        <span class="text-gray-600">Statut :</span>
+                        <div class="flex space-x-2">
+                          <span v-if="formData.justifie" class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
+                            Justifiée
+                          </span>
+                          <span v-if="formData.est_sanctionnée" class="px-2 py-1 bg-orange-100 text-orange-800 rounded-full text-xs font-medium">
+                            Sanctionnée
+                          </span>
+                          <span v-if="!formData.justifie && !formData.est_sanctionnée" class="px-2 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-medium">
+                            Standard
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </transition>
+              </div>
+
+              <!-- Colonne droite: Sélection des apprenants -->
+              <div class="space-y-6">
+                <!-- En-tête avec compteur -->
+                <div class="flex items-center justify-between">
+                  <label class="block text-lg font-semibold text-gray-700">
+                    <div class="flex items-center space-x-2">
+                      <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                      </svg>
+                      <span>Apprenants *</span>
+                    </div>
+                  </label>
+                  <div class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-medium">
+                    {{ formData.apprenant_ids.length }}/{{ filteredApprenants.length }} sélectionné{{ formData.apprenant_ids.length > 1 ? 's' : '' }}
                   </div>
                 </div>
-              </div>
-            </div>
 
-            <!-- Footer -->
-            <div class="flex items-center justify-between pt-6 mt-6 border-t border-gray-200">
-              <div class="text-sm text-gray-500">
-                <span v-if="form.apprenant_ids.length > 0">
-                  {{ form.apprenant_ids.length }} absence{{ form.apprenant_ids.length > 1 ? 's' : '' }} sera{{ form.apprenant_ids.length > 1 ? 'ont' : '' }} créée{{ form.apprenant_ids.length > 1 ? 's' : '' }}
-                </span>
-              </div>
-              <div class="flex space-x-3">
-                <button
-                  type="button"
-                  @click="close"
-                  class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                <!-- Barre de recherche -->
+                <div class="relative">
+                  <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                  </div>
+                  <input
+                    v-model="searchQuery"
+                    type="text"
+                    placeholder="Rechercher un apprenant..."
+                    class="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition-all duration-200"
+                  />
+                  <div v-if="searchQuery" class="absolute inset-y-0 right-0 pr-4 flex items-center">
+                    <button @click="searchQuery = ''" class="text-gray-400 hover:text-gray-600">
+                      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Actions rapides -->
+                <div class="flex space-x-3">
+                  <button
+                    type="button"
+                    @click="selectAll"
+                    class="flex-1 inline-flex items-center justify-center px-4 py-2 bg-indigo-100 text-indigo-700 rounded-xl hover:bg-indigo-200 transition-colors duration-200 font-medium"
+                  >
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    Tout sélectionner
+                  </button>
+                  <button
+                    type="button"
+                    @click="deselectAll"
+                    class="flex-1 inline-flex items-center justify-center px-4 py-2 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors duration-200 font-medium"
+                  >
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                    Tout désélectionner
+                  </button>
+                </div>
+
+                <!-- Liste des apprenants -->
+                <div class="border-2 border-gray-200 rounded-2xl overflow-hidden">
+                  <div class="max-h-80 overflow-y-auto">
+                    <div v-if="filteredApprenants.length === 0" class="p-12 text-center text-gray-500">
+                      <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                      </svg>
+                      <p class="text-lg font-medium text-gray-900 mb-2">Aucun apprenant trouvé</p>
+                      <p class="text-gray-500">Essayez de modifier votre recherche</p>
+                    </div>
+                    
+                    <div v-else class="divide-y divide-gray-200">
+                      <label
+                        v-for="apprenant in filteredApprenants"
+                        :key="apprenant.id"
+                        class="flex items-center p-4 hover:bg-indigo-50 cursor-pointer transition-all duration-200 group"
+                        :class="{ 'bg-indigo-50 border-l-4 border-indigo-500': formData.apprenant_ids.includes(apprenant.id) }"
+                      >
+                        <input
+                          type="checkbox"
+                          :value="apprenant.id"
+                          v-model="formData.apprenant_ids"
+                          class="w-5 h-5 text-indigo-600 border-2 border-gray-300 rounded focus:ring-indigo-500 transition-all duration-200"
+                        />
+                        <div class="ml-4 flex-1">
+                          <div class="flex items-center">
+                            <div class="w-12 h-12 bg-gradient-to-br from-indigo-400 to-purple-600 rounded-full flex items-center justify-center mr-4 shadow-lg">
+                              <span class="text-white text-sm font-bold">
+                                {{ getInitials(apprenant) }}
+                              </span>
+                            </div>
+                            <div class="flex-1">
+                              <div class="text-sm font-semibold text-gray-900 group-hover:text-indigo-700 transition-colors duration-200">
+                                {{ apprenant.prenom }} {{ apprenant.nom }}
+                              </div>
+                              <div v-if="apprenant.email" class="text-xs text-gray-500">{{ apprenant.email }}</div>
+                              <div v-if="apprenant.groupes?.length" class="text-xs text-indigo-600 mt-1">
+                                {{ apprenant.groupes.map(g => g.nom).join(', ') }}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div v-if="formData.apprenant_ids.includes(apprenant.id)" class="text-indigo-600">
+                          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                          </svg>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Message de validation -->
+                <transition
+                  enter-active-class="transition duration-300 ease-out"
+                  enter-from-class="transform scale-95 opacity-0"
+                  enter-to-class="transform scale-100 opacity-100"
+                  leave-active-class="transition duration-200 ease-in"
+                  leave-from-class="transform scale-100 opacity-100"
+                  leave-to-class="transform scale-95 opacity-0"
                 >
-                  Annuler
-                </button>
-                <button
-                  type="submit"
-                  :disabled="form.apprenant_ids.length === 0 || !form.seance_id"
-                  class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                >
-                  <Save class="w-4 h-4 mr-2 inline" />
-                  Créer {{ form.apprenant_ids.length }} absence{{ form.apprenant_ids.length > 1 ? 's' : '' }}
-                </button>
+                  <div v-if="showValidationError" class="bg-red-50 border-2 border-red-200 rounded-2xl p-4">
+                    <div class="flex items-center">
+                      <svg class="w-5 h-5 mr-3 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                      </svg>
+                      <span class="text-sm font-medium text-red-800">Veuillez sélectionner au moins un apprenant</span>
+                    </div>
+                  </div>
+                </transition>
               </div>
             </div>
           </form>
+        </div>
+
+        <!-- Footer -->
+        <div class="bg-gray-50 px-8 py-6 border-t border-gray-200">
+          <div class="flex items-center justify-between">
+            <div class="text-sm text-gray-600">
+              <span v-if="formData.apprenant_ids.length > 0" class="font-medium">
+                {{ formData.apprenant_ids.length }} absence{{ formData.apprenant_ids.length > 1 ? 's' : '' }} sera{{ formData.apprenant_ids.length > 1 ? 'ont' : '' }} créée{{ formData.apprenant_ids.length > 1 ? 's' : '' }}
+              </span>
+              <span v-else class="text-gray-400">
+                Sélectionnez des apprenants pour continuer
+              </span>
+            </div>
+            <div class="flex space-x-4">
+              <button
+                type="button"
+                @click="handleClose"
+                class="px-6 py-3 text-sm font-medium text-gray-700 bg-white border-2 border-gray-300 rounded-xl hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-all duration-200"
+              >
+                Annuler
+              </button>
+              <button
+                @click="handleSubmit"
+                :disabled="formData.apprenant_ids.length === 0 || !formData.seance_id || isSubmitting"
+                class="px-6 py-3 text-sm font-medium text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 border border-transparent rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-105"
+              >
+                <svg v-if="!isSubmitting" class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+                <svg v-else class="w-4 h-4 mr-2 inline animate-spin" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                {{ isSubmitting ? 'Création en cours...' : `Créer ${formData.apprenant_ids.length} absence${formData.apprenant_ids.length > 1 ? 's' : ''}` }}
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -230,12 +374,7 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
-import {
-  X, Users, Calendar, Clock, BookOpen, User, Search, CheckSquare, Square,
-  CheckCircle, AlertTriangle, AlertCircle, UserX, Save
-} from 'lucide-vue-next'
 
-// Props
 const props = defineProps({
   show: {
     type: Boolean,
@@ -243,44 +382,19 @@ const props = defineProps({
   },
   apprenants: {
     type: Array,
-    default: () => [
-      { id: 1, nom: 'Dupont', prenom: 'Jean', email: 'jean.dupont@email.com' },
-      { id: 2, nom: 'Martin', prenom: 'Marie', email: 'marie.martin@email.com' },
-      { id: 3, nom: 'Durand', prenom: 'Pierre', email: 'pierre.durand@email.com' },
-      { id: 4, nom: 'Bernard', prenom: 'Sophie', email: 'sophie.bernard@email.com' },
-      { id: 5, nom: 'Petit', prenom: 'Lucas', email: 'lucas.petit@email.com' }
-    ]
+    default: () => []
   },
   seances: {
     type: Array,
-    default: () => [
-      {
-        id: 1,
-        date_debut: '2024-01-15T08:00:00Z',
-        date_fin: '2024-01-15T10:00:00Z',
-        matiere: 'Mathématiques'
-      },
-      {
-        id: 2,
-        date_debut: '2024-01-15T10:15:00Z',
-        date_fin: '2024-01-15T12:15:00Z',
-        matiere: 'Français'
-      },
-      {
-        id: 3,
-        date_debut: '2024-01-15T14:00:00Z',
-        date_fin: '2024-01-15T16:00:00Z',
-        matiere: 'Sciences'
-      }
-    ]
+    default: () => []
   }
 })
 
-// Emits
 const emit = defineEmits(['close', 'submit'])
 
-// Reactive data
-const form = ref({
+// État du formulaire
+const isSubmitting = ref(false)
+const formData = ref({
   seance_id: '',
   apprenant_ids: [],
   justifie: false,
@@ -292,76 +406,73 @@ const showValidationError = ref(false)
 
 // Computed properties
 const selectedSeance = computed(() => {
-  return props.seances.find(s => s.id == form.value.seance_id)
+  return props.seances.find(s => s.id == formData.value.seance_id)
 })
 
 const filteredApprenants = computed(() => {
-  if (!searchQuery.value) return props.apprenants
+  if (!searchQuery.value.trim()) return props.apprenants || []
   
-  const query = searchQuery.value.toLowerCase()
-  return props.apprenants.filter(apprenant =>
-    `${apprenant.prenom} ${apprenant.nom}`.toLowerCase().includes(query) ||
-    apprenant.email.toLowerCase().includes(query)
-  )
+  const query = searchQuery.value.toLowerCase().trim()
+  return (props.apprenants || []).filter(apprenant => {
+    const fullName = `${apprenant.prenom || ''} ${apprenant.nom || ''}`.toLowerCase()
+    const email = (apprenant.email || '').toLowerCase()
+    return fullName.includes(query) || email.includes(query)
+  })
 })
 
-// Watch for validation errors
-watch(() => form.value.apprenant_ids, () => {
-  if (showValidationError.value && form.value.apprenant_ids.length > 0) {
+// Watchers
+watch(() => formData.value.apprenant_ids, () => {
+  if (showValidationError.value && formData.value.apprenant_ids.length > 0) {
     showValidationError.value = false
   }
 })
 
-// Methods
-const getInitials = (prenom, nom) => {
-  return `${prenom?.[0] || ''}${nom?.[0] || ''}`.toUpperCase()
+watch(() => props.show, (newShow) => {
+  if (newShow) {
+    resetForm()
+  }
+})
+
+// Méthodes
+function getInitials(apprenant) {
+  if (!apprenant) return '??'
+  const prenom = apprenant.prenom?.charAt(0) || ''
+  const nom = apprenant.nom?.charAt(0) || ''
+  return (prenom + nom).toUpperCase()
 }
 
-function formatDateRange(heure) {
-  return new Date(`1970-01-01T${heure}Z`).toLocaleTimeString([], {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false
-  });
+function formatSessionDisplay(seance) {
+  if (!seance) return 'N/A'
+  return `${formatTime(seance.date_debut)} → ${formatTime(seance.date_fin)}`
 }
 
-const selectAll = () => {
-  form.value.apprenant_ids = filteredApprenants.value.map(a => a.id)
+function formatTime(heure) {
+  if (!heure) return 'N/A'
+  try {
+    return new Date(`1970-01-01T${heure}Z`).toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    })
+  } catch {
+    return heure
+  }
 }
 
-const deselectAll = () => {
-  form.value.apprenant_ids = []
+function selectAll() {
+  formData.value.apprenant_ids = filteredApprenants.value.map(a => a.id)
 }
 
-const onSeanceChange = () => {
-  // Reset validation error when seance changes
+function deselectAll() {
+  formData.value.apprenant_ids = []
+}
+
+function onSeanceChange() {
   showValidationError.value = false
 }
 
-const submitForm = () => {
-  if (form.value.apprenant_ids.length === 0) {
-    showValidationError.value = true
-    return
-  }
-
-  if (!form.value.seance_id) {
-    alert('Veuillez sélectionner une séance.')
-    return
-  }
-
-  // Emit the form data
-  emit('submit', {
-    ...form.value,
-    // Additional metadata for better handling
-    selectedSeance: selectedSeance.value,
-    selectedApprenants: props.apprenants.filter(a => form.value.apprenant_ids.includes(a.id))
-  })
-
-  resetForm()
-}
-
-const resetForm = () => {
-  form.value = {
+function resetForm() {
+  formData.value = {
     seance_id: '',
     apprenant_ids: [],
     justifie: false,
@@ -369,68 +480,95 @@ const resetForm = () => {
   }
   searchQuery.value = ''
   showValidationError.value = false
+  isSubmitting.value = false
 }
 
-const close = () => {
+function handleClose() {
   resetForm()
   emit('close')
+}
+
+async function handleSubmit() {
+  if (isSubmitting.value) return
+
+  // Validation
+  if (formData.value.apprenant_ids.length === 0) {
+    showValidationError.value = true
+    return
+  }
+
+  if (!formData.value.seance_id) {
+    alert('Veuillez sélectionner une séance.')
+    return
+  }
+
+  isSubmitting.value = true
+
+  try {
+    // Créer un tableau d'absences individuelles
+    // C'est ici la correction principale !
+    const absences = formData.value.apprenant_ids.map(apprenant_id => ({
+      apprenant_id: Number(apprenant_id),
+      seance_id: Number(formData.value.seance_id),
+      justifie: Boolean(formData.value.justifie),
+      est_sanctionnée: Boolean(formData.value.est_sanctionnée),
+      // Le user_id sera ajouté dans le composant parent
+    }))
+
+    // Émettre les données formatées correctement
+    emit('submit', {
+      absences: absences,
+      metadata: {
+        selectedSeance: selectedSeance.value,
+        selectedApprenants: props.apprenants.filter(a => formData.value.apprenant_ids.includes(a.id)),
+        count: absences.length
+      }
+    })
+
+    resetForm()
+  } catch (error) {
+    console.error('Erreur lors de la soumission:', error)
+  } finally {
+    isSubmitting.value = false
+  }
 }
 </script>
 
 <style scoped>
-/* Modal transitions */
-.modal-enter-active, .modal-leave-active {
-  transition: all 0.3s ease;
+.modal-enter-active {
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.modal-enter-from, .modal-leave-to {
+.modal-leave-active {
+  transition: all 0.3s ease-in;
+}
+
+.modal-enter-from {
   opacity: 0;
-  transform: scale(0.95);
+  transform: scale(0.8) translateY(-20px);
 }
 
-.overlay-enter-active, .overlay-leave-active {
-  transition: opacity 0.3s ease;
-}
-
-.overlay-enter-from, .overlay-leave-to {
+.modal-leave-to {
   opacity: 0;
+  transform: scale(0.9) translateY(-10px);
 }
 
-/* Custom scrollbar */
+/* Scrollbar personnalisée */
 .overflow-y-auto::-webkit-scrollbar {
   width: 6px;
 }
 
 .overflow-y-auto::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: #f1f5f9;
   border-radius: 3px;
 }
 
 .overflow-y-auto::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
+  background: #cbd5e1;
   border-radius: 3px;
 }
 
 .overflow-y-auto::-webkit-scrollbar-thumb:hover {
-  background: #a1a1a1;
-}
-
-/* Smooth transitions for all elements */
-* {
-  transition: all 0.2s ease-in-out;
-}
-
-/* Focus styles */
-input:focus, select:focus, button:focus {
-  outline: none;
-}
-
-/* Hover effects */
-.hover\:bg-gray-50:hover {
-  background-color: #f9fafb;
-}
-
-.hover\:bg-blue-50:hover {
-  background-color: #eff6ff;
+  background: #94a3b8;
 }
 </style>

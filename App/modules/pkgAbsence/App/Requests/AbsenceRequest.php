@@ -3,38 +3,54 @@
 namespace Modules\PkgAbsence\App\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class AbsenceRequest extends FormRequest
 {
-    public function authorize(): bool
+    public function authorize()
     {
-        // Autoriser toutes les requêtes (ajuste selon ta logique d'authentification)
         return true;
     }
 
-    public function rules(): array
+    public function rules()
     {
         return [
-            'apprenant_id' => 'required|exists:apprenants,id',
-            'user_id' => 'required|exists:users,id',
-            'seance_id' => 'required|exists:seances,id',
-            'justifie' => 'required|boolean',
-            'est_sanctionnée' => 'required|boolean',
-            'sanction_absence_id' => 'nullable|exists:sanction_absences,id',
-            'sanction_absence_calculee_id' => 'nullable|exists:sanction_absences_calculees,id',
+            'apprenant_id' => 'required|integer|exists:apprenants,id',
+            'seance_id' => 'required|integer|exists:seances,id',
+            'user_id' => 'nullable|integer|exists:users,id',
+            'justifie' => 'boolean',
+            'est_sanctionnée' => 'boolean',
+            'sanction_absence_id' => 'nullable|integer|exists:sanction_absences,id',
+            'notes' => 'nullable|string|max:1000',
         ];
     }
 
-    public function messages(): array
+    public function messages()
     {
         return [
             'apprenant_id.required' => 'L\'apprenant est requis.',
-            'user_id.required' => 'Le surveillant est requis.',
+            'apprenant_id.exists' => 'L\'apprenant sélectionné n\'existe pas.',
             'seance_id.required' => 'La séance est requise.',
-            'justifie.required' => 'Le champ justification est requis.',
-            'est_sanctionnée.required' => 'Le champ sanction est requis.',
-            'sanction_absence_id.exists' => 'Sanction réelle invalide.',
-            'sanction_absence_calculee_id.exists' => 'Sanction prévisionnelle invalide.',
+            'seance_id.exists' => 'La séance sélectionnée n\'existe pas.',
+            'user_id.exists' => 'L\'utilisateur spécifié n\'existe pas.',
+            'sanction_absence_id.exists' => 'La sanction sélectionnée n\'existe pas.',
+            'notes.max' => 'Les notes ne peuvent pas dépasser 1000 caractères.',
         ];
+    }
+
+    protected function prepareForValidation()
+    {
+        // S'assurer que user_id est défini
+        if (!$this->has('user_id') || !$this->user_id) {
+            $this->merge([
+                'user_id' => Auth::id()
+            ]);
+        }
+
+        // Convertir les valeurs booléennes
+        $this->merge([
+            'justifie' => $this->boolean('justifie'),
+            'est_sanctionnée' => $this->boolean('est_sanctionnée'),
+        ]);
     }
 }
