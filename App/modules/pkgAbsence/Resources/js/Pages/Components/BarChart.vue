@@ -1,30 +1,25 @@
 <template>
-    <div class="w-full h-full">
-        <canvas ref="chartCanvas"></canvas>
-    </div>
+    <canvas ref="chartCanvas"></canvas>
 </template>
 
 <script setup>
 import { ref, onMounted, watch } from 'vue';
-import Chart from 'chart.js/auto';
+import { Chart, registerables } from 'chart.js';
+
+Chart.register(...registerables);
 
 const props = defineProps({
-    chartData: {
-        type: Object,
-        required: true
-    }
+    chartData: Object,
 });
 
 const chartCanvas = ref(null);
-let chartInstance = null;
+let myChart = null;
 
-const createChart = () => {
-    if (chartInstance) {
-        chartInstance.destroy();
+const renderChart = () => {
+    if (myChart) {
+        myChart.destroy();
     }
-
-    const ctx = chartCanvas.value.getContext('2d');
-    chartInstance = new Chart(ctx, {
+    myChart = new Chart(chartCanvas.value, {
         type: 'bar',
         data: props.chartData,
         options: {
@@ -32,26 +27,31 @@ const createChart = () => {
             maintainAspectRatio: false,
             plugins: {
                 legend: {
-                    display: false
-                }
+                    display: false,
+                },
             },
             scales: {
+                x: {
+                    grid: {
+                        display: false,
+                    },
+                },
                 y: {
                     beginAtZero: true,
-                    ticks: {
-                        stepSize: 1
-                    }
-                }
-            }
-        }
+                    grid: {
+                        color: '#e5e7eb',
+                    },
+                },
+            },
+        },
     });
 };
 
 onMounted(() => {
-    createChart();
+    renderChart();
 });
 
 watch(() => props.chartData, () => {
-    createChart();
+    renderChart();
 }, { deep: true });
 </script>

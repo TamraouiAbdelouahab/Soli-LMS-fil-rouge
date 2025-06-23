@@ -5,83 +5,80 @@ namespace Modules\PkgAbsence\App\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Modules\Core\App\Controllers\BaseController;
-use Modules\PkgAbsence\App\Services\AbsenceService;
-
+use Modules\PkgAbsence\App\Services\DashboardService;
+use Modules\PkgApprenant\App\Models\Apprenant;
+use App\Models\Seance;
+use Carbon\Carbon;
 class DashboardController extends BaseController
 {
     protected $absenceService;
 
-    public function __construct(AbsenceService $absenceService)
+    public function __construct(DashboardService $absenceService)
     {
         $this->absenceService = $absenceService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        try {
-            // Données principales
-            $totalAbsencesToday = $this->absenceService->totalAbsencesToday();
-            $learnersAbsentToday = $this->absenceService->learnersAbsentToday();
-            $globalAbsenceRate = $this->absenceService->globalAbsenceRate();
+        $filterType = $request->input('filter_type', 'month'); // Default to 'month'
+        $filterValue = $request->input('filter_value');
 
-            // Top groupes aujourd'hui + ce mois
-            $topGroups = $this->absenceService->topGroupsWithAbsents();
-            $topGroupsMonthly = $this->absenceService->topGroupsWithAbsentsMonthly();
-
-            // Top séances aujourd’hui
-            $topSessions = $this->absenceService->topSessionsWithAbsents();
-
-            // Apprenants les plus absents ce mois
-            $topMonthlyLearners = $this->absenceService->topLearnersAbsentMonthly();
-
-            // Récapitulatif semaine / mois
-            $recapData = $this->absenceService->recapWeeklyMonthly();
-
-            // Séances non traitées
-            $unprocessedSessions = $this->absenceService->unprocessedSessions();
-
-            // Statistiques supplémentaires
-            $absenceStats = $this->absenceService->getAbsenceStats();
-
-            return Inertia::render('pkgAbsence::Dashboard', [
-                'totalAbsencesToday' => $totalAbsencesToday,
-                'learnersAbsentToday' => $learnersAbsentToday,
-                'globalAbsenceRate' => $globalAbsenceRate,
-
-                'topGroups' => $topGroups,
-                'topGroupsMonthly' => $topGroupsMonthly,
-
-                'topSessions' => $topSessions,
-                'topMonthlyLearners' => $topMonthlyLearners,
-
-                'weeklyRecap' => $recapData['weekly'],
-                'monthlyRecap' => $recapData['monthly'],
-
-                'unprocessedSessions' => $unprocessedSessions,
-                'absenceStats' => $absenceStats,
-            ]);
-        } catch (\Exception $e) {
-            return Inertia::render('pkgAbsence::Dashboard', [
-                'totalAbsencesToday' => 0,
-                'learnersAbsentToday' => 0,
-                'globalAbsenceRate' => 0,
-
-                'topGroups' => [],
-                'topGroupsMonthly' => [],
-                'topSessions' => [],
-                'topMonthlyLearners' => [],
-
-                'weeklyRecap' => [],
-                'monthlyRecap' => [],
-
-                'unprocessedSessions' => [],
-                'absenceStats' => [
-                    'justified' => 0,
-                    'unjustified' => 0,
-                    'total' => 0,
-                    'sanctioned' => 0,
-                ],
-            ]);
+        // Set default filter value if not provided
+        if (is_null($filterValue)) {
+            $now = Carbon::now();
+            switch ($filterType) {
+                case 'today':
+                case 'week':
+                case 'month':
+                    $filterValue = ($filterType === 'month') ? $now->month : null;
+                    break;
+                case 'year':
+                    $filterValue = $now->year;
+                    break;
+                case 'custom_week':
+                    $filterValue = $now->weekOfYear;
+                    break;
+                case 'custom_month':
+                    $filterValue = $now->month;
+                    break;
+                case 'custom_year':
+                    $filterValue = $now->year;
+                    break;
+            }
         }
+
+        return Inertia::render('pkgAbsence::Dashboard', [
+            'totalAbsencesToday' => $this->absenceService->getTotalAbsencesToday($filterType, $filterValue),
+            'learnersAbsentToday' => $this->absenceService->getLearnersAbsentToday($filterType, $filterValue),
+            'globalAbsenceRate' => $this->absenceService->getGlobalAbsenceRate($filterType, $filterValue),
+            'absenceStats' => $this->absenceService->getAbsenceStats($filterType, $filterValue),
+            'weeklyRecap' => $this->absenceService->getWeeklyRecap($filterType, $filterValue),
+            'monthlyRecap' => $this->absenceService->getMonthlyRecap($filterType, $filterValue),
+            'topGroups' => $this->absenceService->getTopGroups(5, $filterType, $filterValue),
+            'topSessions' => $this->absenceService->getTopSessions(5, $filterType, $filterValue),
+            'topMonthlyLearners' => $this->absenceService->getTopMonthlyLearners(5, $filterType, $filterValue),
+            'apprenants' => Apprenant::select('id', 'nom', 'prenom', 'cin')->get(),
+            'seances' => Seance::select('id', 'date_debut', 'date_fin')->get(),
+            'currentFilter' => [
+                'type' => $filterType,
+                'value' => $filterValue,
+            ],
+        ]);
     }
+
+    // You can add an update method if you need to edit absences
+    // public function update(Request $request, Absence $absence)
+    // {
+    //     $request->validate([
+    //         'justifie' => ['boolean'],
+    //         // Add other fields if they can be updated
+    //     ]);
+
+    //     try {
+    //         $absence->update($request->all());
+    //         return redirect()->back()->with('success', 'Absence mise à jour avec succès.');
+    //     } catch (\Exception $e) {
+    //         return redirect()->back()->with('error', 'Erreur lors de la mise à jour de l\'absence: ' . $e->getMessage());
+    //     }
+    // }
 }

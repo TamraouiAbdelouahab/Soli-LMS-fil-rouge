@@ -3,6 +3,44 @@
         <div class="min-h-screen bg-gray-50 p-4 md:p-6">
             <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-6">Tableau de bord des Absences</h1>
 
+            <!-- Filter Controls -->
+            <div class="bg-white rounded-lg shadow p-4 mb-6 flex flex-col sm:flex-row items-center gap-4">
+                <div class="flex-grow">
+                    <label for="filterType" class="block text-sm font-medium text-gray-700 sr-only">Filtrer par</label>
+                    <select id="filterType" v-model="filter.type" @change="applyFilter"
+                            class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                        <option value="today">Aujourd'hui</option>
+                        <option value="week">Cette Semaine</option>
+                        <option value="month">Ce Mois</option>
+                        <option value="year">Cette Année</option>
+                        <option value="custom_week">Semaine Spécifique</option>
+                        <option value="custom_month">Mois Spécifique</option>
+                        <option value="custom_year">Année Spécifique</option>
+                    </select>
+                </div>
+
+                <div v-if="filter.type === 'custom_week'" class="flex-grow">
+                    <label for="customWeek" class="block text-sm font-medium text-gray-700 sr-only">Numéro de Semaine</label>
+                    <input type="number" id="customWeek" v-model="filter.value" @change="applyFilter" placeholder="Numéro de semaine (1-52)"
+                           class="mt-1 block w-full pl-3 pr-3 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                </div>
+
+                <div v-if="filter.type === 'custom_month'" class="flex-grow">
+                    <label for="customMonth" class="block text-sm font-medium text-gray-700 sr-only">Mois</label>
+                    <select id="customMonth" v-model="filter.value" @change="applyFilter"
+                            class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                        <option value="" disabled>Sélectionner un mois</option>
+                        <option v-for="m in 12" :key="m" :value="m">{{ new Date(2000, m - 1, 1).toLocaleString('fr-FR', { month: 'long' }) }}</option>
+                    </select>
+                </div>
+
+                <div v-if="filter.type === 'custom_year'" class="flex-grow">
+                    <label for="customYear" class="block text-sm font-medium text-gray-700 sr-only">Année</label>
+                    <input type="number" id="customYear" v-model="filter.value" @change="applyFilter" placeholder="Année (ex: 2023)"
+                           class="mt-1 block w-full pl-3 pr-3 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                </div>
+            </div>
+
             <!-- Summary Cards -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                 <SummaryCard 
@@ -121,29 +159,40 @@
             </div>
 
             <!-- Frequent Absentees Table -->
-<!-- Top apprenants absents du mois -->
-    <div class="bg-white rounded-lg shadow p-4 mb-6">
-    <h2 class="text-lg font-semibold text-gray-700 mb-4">Top 5 apprenants absents ce mois</h2>
-    <ul class="divide-y divide-gray-200">
-        <li v-for="apprenant in topMonthlyLearners" :key="apprenant.apprenant_id" class="py-2 flex justify-between">
-        <span>{{ apprenant.nom }} {{ apprenant.prenom }}</span>
-        <span class="text-red-600 font-semibold">{{ apprenant.total }} absences</span>
-        </li>
-    </ul>
-    </div>
+            <div class="bg-white rounded-lg shadow p-4 mb-6">
+                <h2 class="text-lg font-semibold text-gray-700 mb-4">Top 5 apprenants absents ce mois</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div v-for="apprenant in topMonthlyLearners" :key="apprenant.apprenant_id"
+                         class="bg-gray-50 p-3 rounded-lg flex items-center justify-between border border-gray-200">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-bold text-sm">
+                                {{ apprenant.nom.charAt(0) }}{{ apprenant.prenom.charAt(0) }}
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm font-medium text-gray-900">{{ apprenant.nom }} {{ apprenant.prenom }}</p>
+                                <p class="text-xs text-gray-500">{{ apprenant.prenom_arab }} {{ apprenant.nom_arab }}</p>
+                            </div>
+                        </div>
+                        <span class="text-red-600 font-semibold text-sm">{{ apprenant.total }} absences</span>
+                    </div>
+                    <p v-if="!topMonthlyLearners || topMonthlyLearners.length === 0" class="text-gray-500 col-span-full text-center py-4">
+                        Aucun apprenant absent ce mois-ci.
+                    </p>
+                </div>
+            </div>
         </div>
     </AuthenticatedLayout>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
+import { useForm, router } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@core/Layouts/AuthenticatedLayout.vue';
-
 import SummaryCard from './Components/SummaryCard.vue';
-import FrequentAbsenteesTable from './Components/FrequentAbsenteesTable.vue';
 import LineChart from './Components/LineChart.vue';
 import PieChart from './Components/PieChart.vue';
 import BarChart from './Components/BarChart.vue';
+// import { route } from '@inertiajs/vue3';
 
 const props = defineProps({
     totalAbsencesToday: Number,
@@ -153,15 +202,73 @@ const props = defineProps({
     topSessions: Array,
     weeklyRecap: Array,
     monthlyRecap: Array,
-    frequentAbsentees: Array,
+    frequentAbsentees: Array, // This prop is not used in the template, but kept for consistency
     absenceStats: Object,
+    apprenants: Array,
+    seances: Array,
+    topMonthlyLearners: Array,
+    currentFilter: Object, // New prop to receive current filter from backend
 });
 
-// Calculer le total des absences de la semaine
-const weeklyAbsencesCount = computed(() => {
-    if (!props.weeklyRecap || !props.weeklyRecap.length) return 0;
-    return props.weeklyRecap.reduce((sum, item) => sum + item.total, 0);
+// Initialize filter state from props or default
+const filter = ref({
+    type: props.currentFilter?.type || 'month', // Default to 'month'
+    value: props.currentFilter?.value || (props.currentFilter?.type === 'month' ? new Date().getMonth() + 1 : new Date().getFullYear()),
 });
+
+// Watch for changes in filter props and update local filter state
+watch(() => props.currentFilter, (newFilter) => {
+    if (newFilter) {
+        filter.value.type = newFilter.type;
+        filter.value.value = newFilter.value;
+    }
+}, { deep: true, immediate: true });
+
+
+const applyFilter = () => {
+    router.get(route('dashboard'), {
+        filter_type: filter.value.type,
+        filter_value: filter.value.value,
+    }, {
+        preserveState: true,
+        preserveScroll: true,
+        only: [
+            'totalAbsencesToday', 'learnersAbsentToday', 'globalAbsenceRate',
+            'absenceStats', 'weeklyRecap', 'monthlyRecap', 'topGroups',
+            'topSessions', 'topMonthlyLearners', 'currentFilter'
+        ],
+    });
+};
+
+// Form for absence entry
+const form = useForm({
+    apprenant_id: '',
+    seance_id: '',
+    justifie: false,
+});
+
+const submitAbsence = () => {
+    form.post(route('absences.store'), {
+        onSuccess: () => {
+            form.reset(); // Reset form fields on success
+            // Reload relevant props, applying the current filter
+            router.reload({
+                only: [
+                    'totalAbsencesToday', 'learnersAbsentToday', 'globalAbsenceRate',
+                    'absenceStats', 'weeklyRecap', 'monthlyRecap', 'topGroups',
+                    'topSessions', 'topMonthlyLearners'
+                ],
+                data: {
+                    filter_type: filter.value.type,
+                    filter_value: filter.value.value,
+                }
+            });
+        },
+        onError: (errors) => {
+            console.error('Error submitting absence:', errors);
+        }
+    });
+};
 
 // Données pour le graphique hebdomadaire
 const weeklyAbsencesChartData = computed(() => {
@@ -225,19 +332,26 @@ const topGroupsChartData = computed(() => {
         };
     }
 
+    const backgroundColors = [
+        'rgba(239, 68, 68, 0.8)', // Red
+        'rgba(245, 158, 11, 0.8)', // Orange
+        'rgba(59, 130, 246, 0.8)', // Blue
+        'rgba(16, 185, 129, 0.8)', // Green
+        'rgba(139, 69, 19, 0.8)', // Brown
+        'rgba(168, 85, 247, 0.8)', // Purple
+        'rgba(255, 99, 132, 0.8)', // Pink
+        'rgba(54, 162, 235, 0.8)', // Light Blue
+        'rgba(255, 206, 86, 0.8)', // Yellow
+        'rgba(75, 192, 192, 0.8)', // Teal
+    ];
+
     return {
         labels: props.topGroups.map(item => item.nom),
         datasets: [
             {
                 label: 'Absences',
                 data: props.topGroups.map(item => item.total),
-                backgroundColor: [
-                    'rgba(239, 68, 68, 0.8)',
-                    'rgba(245, 158, 11, 0.8)',
-                    'rgba(59, 130, 246, 0.8)',
-                    'rgba(16, 185, 129, 0.8)',
-                    'rgba(139, 69, 19, 0.8)',
-                ],
+                backgroundColor: props.topGroups.map((_, index) => backgroundColors[index % backgroundColors.length]),
                 borderWidth: 1,
             }
         ]
@@ -253,22 +367,28 @@ const topSessionsChartData = computed(() => {
         };
     }
 
+    const backgroundColors = [
+        'rgba(59, 130, 246, 0.8)',
+        'rgba(245, 158, 11, 0.8)',
+        'rgba(239, 68, 68, 0.8)',
+        'rgba(16, 185, 129, 0.8)',
+        'rgba(168, 85, 247, 0.8)',
+        'rgba(255, 99, 132, 0.8)',
+        'rgba(54, 162, 235, 0.8)',
+        'rgba(255, 206, 86, 0.8)',
+        'rgba(75, 192, 192, 0.8)',
+        'rgba(153, 102, 255, 0.8)',
+    ];
+
     return {
         labels: props.topSessions.map(item => item.nom),
         datasets: [
             {
                 data: props.topSessions.map(item => item.total),
-                backgroundColor: [
-                    'rgba(59, 130, 246, 0.8)',
-                    'rgba(245, 158, 11, 0.8)',
-                    'rgba(239, 68, 68, 0.8)',
-                    'rgba(16, 185, 129, 0.8)',
-                    'rgba(168, 85, 247, 0.8)',
-                ],
+                backgroundColor: props.topSessions.map((_, index) => backgroundColors[index % backgroundColors.length]),
                 borderWidth: 1,
             }
         ]
     };
 });
-
 </script>
