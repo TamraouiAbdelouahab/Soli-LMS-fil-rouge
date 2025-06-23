@@ -13,7 +13,7 @@ class SanctionService
     public function getRecentSanctions()
     {
 
-        $RecentSanctions = SanctionAbsence::with('absences.apprenant', 'regle')->limit(5)->orderBy('date_fin', 'desc')->get();
+        $RecentSanctions = SanctionAbsence::with('absences.apprenant.groupes', 'regle')->limit(5)->orderBy('date_fin', 'desc')->get();
 
         foreach ($RecentSanctions as $Sanction) {
             if ($Sanction) {
@@ -39,11 +39,6 @@ class SanctionService
     public function sanctionAbsenceCount()
     {
         return SanctionAbsence::count();
-    }
-
-    public function sanctionAbsenceCalculeeCount()
-    {
-        return SanctionAbsenceCalculee::count();
     }
 
     public function learnersSanctionedCount()
@@ -87,7 +82,9 @@ class SanctionService
             });
         }
 
-        return $query->orderBy('date_fin', 'desc')->paginate(2, ['*'], 'applied_page');
+        return $query->orderBy('date_fin', 'desc')
+            ->paginate(10, ['*'], 'applied_page')
+            ->appends($request->only(['status', 'groupe_id', 'search']));;
     }
 
     public function getLearnerSanctions($learnerId)
@@ -98,5 +95,19 @@ class SanctionService
             })
             ->orderBy('date_fin', 'desc')
             ->get();
+    }
+
+    public function deleteSanction($sanctionId)
+    {
+        $sanction = SanctionAbsence::with('absences')->findOrFail($sanctionId);
+
+        foreach ($sanction->absences as $absence) {
+            $absence->update([
+                'sanction_absence_id' => null,
+                'est_sanctionnée' => false,
+            ]);
+        }
+
+        $sanction->delete();
     }
 }

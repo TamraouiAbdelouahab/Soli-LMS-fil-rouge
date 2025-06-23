@@ -9,6 +9,7 @@ use Modules\PkgApprenant\App\Services\groupeService;
 use Modules\PkgSanction\App\Enum\SanctionType;
 use Modules\PkgSanction\App\Services\SanctionCalculeeService;
 use Modules\PkgSanction\App\Services\SanctionService;
+use Illuminate\Support\Facades\Auth;
 
 class SanctionController extends BaseController
 {
@@ -27,7 +28,9 @@ class SanctionController extends BaseController
     {
         return Inertia::render('PkgSanction::SanctionTracking', [
             'sanctionsApplied' => $this->sanctionService->getSanctionsApplied($request),
+            'sanctionsAppliedCount' => $this->sanctionService->sanctionAbsenceCount(),
             'sanctionsCalculees' => $this->sanctionCalculeeService->getSanctionsCalculees($request),
+            'sanctionsCalculeesCount' => $this->sanctionCalculeeService->sanctionAbsenceCalculeeCount(),
             'filters' => $request->only(['status', 'groupe_id', 'sanction_type', 'search']),
             'groupes' => $this->groupeService->getAllGroups(),
             'sanctionTypes' => array_map(fn($case) => [
@@ -49,16 +52,29 @@ class SanctionController extends BaseController
         return redirect()->back()->with('success', 'Sanctions applied successfully.');
     }
 
-    public function destroy($id)
+    public function destroyCalculatedSanction($id)
     {
         $this->sanctionCalculeeService->deleteSanctionCalculee($id);
-        return redirect()->back()->with('success', 'Sanction deleted successfully.');
+        return redirect()->back()->with('success', 'Sanction supprimé avec succès.');
     }
 
-    public function learnerIndex($learnerId)
+    public function destroyAppliedSanction($id)
     {
+        $this->sanctionService->deleteSanction($id);
+        return redirect()->back()->with('success', 'Sanction supprimé avec succès.');
+    }
+
+    public function learnerIndex()
+    {
+        $user = Auth::user();
+        $apprenant = $user->apprenant;
+
+        if (!$apprenant) {
+            abort(404, 'Apprenant profile not found.');
+        }
+
         return Inertia::render('PkgSanction::LearnerSanctions', [
-            'sanctions' => $this->sanctionService->getLearnerSanctions($learnerId),
+            'sanctions' => $this->sanctionService->getLearnerSanctions($apprenant->id),
         ]);
     }
 }

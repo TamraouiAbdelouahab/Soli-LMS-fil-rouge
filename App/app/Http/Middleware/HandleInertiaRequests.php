@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Middleware;
 use Tighten\Ziggy\Ziggy;
 
@@ -37,6 +38,8 @@ class HandleInertiaRequests extends Middleware
                     'name' => $request->user()->name,
                     'email' => $request->user()->email,
                     'email_verified_at' => $request->user()->email_verified_at,
+                    'roles' => $request->user()->getRoleNames(),
+                    'permissions' => $request->user()->getAllPermissions()->pluck('name'),
                 ] : null,
             ],
             'ziggy' => function () use ($request) {
@@ -44,6 +47,24 @@ class HandleInertiaRequests extends Middleware
                     'location' => $request->url(),
                 ]);
             },
+            'notifications' => function () {
+                $user = Auth::user();
+                if (!$user) return [];
+
+                return $user->unreadNotifications
+                    ->map(function ($notification) {
+                        return [
+                            'id' => $notification->id,
+                            'title' => $notification->data['title'] ?? '',
+                            'message' => $notification->data['message'] ?? '',
+                            'url' => $notification->data['url'] ?? '#',
+                            'time' => $notification->created_at->diffForHumans(),
+                        ];
+                    });
+            },
+            'flash' => [
+                'messageErrorValideEnAttente' => $request->session()->get('messageErrorValideEnAttente'),
+            ],
         ]);
     }
 }

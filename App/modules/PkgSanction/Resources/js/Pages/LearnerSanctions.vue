@@ -61,11 +61,11 @@ import SanctionCard from '../Components/LearnerSanctions/SanctionCard.vue';
 import SanctionDetailsModal from '../Components/LearnerSanctions/SanctionDetailsModal .vue';
 import AuthenticatedLayout from '@core/Layouts/AuthenticatedLayout.vue';
 
-defineProps({
+const props = defineProps({
     sanctions: {
         type: Array,
         default: () => []
-    }
+    },
 });
 
 const showDetailsModal = ref(false);

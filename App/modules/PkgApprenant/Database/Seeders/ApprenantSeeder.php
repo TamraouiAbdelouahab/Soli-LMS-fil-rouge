@@ -59,7 +59,7 @@ class ApprenantSeeder extends Seeder
                 'email_verified_at' => Carbon::now(),
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now()
-            ]);
+            ])->assignRole('apprenant');
 
             // Select random city
             $city = $cities[array_rand($cities)];

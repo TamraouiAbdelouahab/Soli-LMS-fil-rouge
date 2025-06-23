@@ -9,6 +9,8 @@ use Modules\PkgAbsence\App\Models\Absence;
 use Modules\PkgSanction\App\Models\ReglesDeSanction;
 use Modules\PkgSanction\App\Models\SanctionAbsence;
 use Modules\PkgSanction\App\Models\SanctionAbsenceCalculee;
+use Modules\PkgSanction\App\Notifications\AbsenceWarningNotification;
+use Modules\PkgSanction\App\Notifications\SanctionAppliedNotification;
 
 class SanctionCalculeeService
 {
@@ -38,7 +40,8 @@ class SanctionCalculeeService
             });
         }
 
-        return $query->paginate(2, ['*'], 'pending_page');
+        return $query->paginate(10, ['*'], 'pending_page')
+            ->appends($request->only(['sanction_type', 'groupe_id', 'search']));;
     }
 
     public function calculateSanctions()
@@ -100,9 +103,10 @@ class SanctionCalculeeService
     {
         DB::transaction(function () use ($sanctionId) {
             // 1. Fetch the calculated sanction with absences and the rule
-            $sanctionCalculee = SanctionAbsenceCalculee::with(['absences', 'regle'])->findOrFail($sanctionId);
+            $sanctionCalculee = SanctionAbsenceCalculee::with(['absences.apprenant.user', 'regle'])->findOrFail($sanctionId);
             $absences = $sanctionCalculee->absences;
             $regle = $sanctionCalculee->regle;
+            $apprenant = $absences->first()?->apprenant->user;
 
             if ($absences->isEmpty()) {
                 throw new \Exception("No absences found for this sanction.");
@@ -130,6 +134,52 @@ class SanctionCalculeeService
 
             // 5. Delete the calculated sanction
             $sanctionCalculee->delete();
+
+            // send the notification
+            if ($apprenant) {
+                $apprenant->notify(new SanctionAppliedNotification($sanction));
+            }
         });
+    }
+
+    public function sanctionAbsenceCalculeeCount()
+    {
+        return SanctionAbsenceCalculee::count();
+    }
+
+    public function calculateWarnings()
+    {
+        $warningRule = ReglesDeSanction::orderBy('seuil_de_notification')->first();
+        if (!$warningRule) {
+            return;
+        }
+
+        $warningThreshold = $warningRule->seuil_de_notification;
+
+        // Group absences by learner where absence is not justified and not sanctioned
+        $absencesGrouped = Absence::where('est_sanctionnée', false)
+            ->where('justifie', false)
+            ->get()
+            ->groupBy('apprenant_id');
+
+        foreach ($absencesGrouped as $apprenant_id => $absences) {
+            $count = $absences->count();
+
+            if ($count >= $warningThreshold) {
+                $user = $absences->first()->apprenant->user;
+
+                if ($user) {
+                    // Avoid sending duplicate unread notifications
+                    $alreadyWarned = $user->notifications()
+                        ->where('type', AbsenceWarningNotification::class)
+                        ->whereNull('read_at')
+                        ->exists();
+
+                    if (!$alreadyWarned) {
+                        $user->notify(new AbsenceWarningNotification($count, $warningThreshold));
+                    }
+                }
+            }
+        }
     }
 }

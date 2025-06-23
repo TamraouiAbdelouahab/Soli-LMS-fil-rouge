@@ -9,7 +9,12 @@
                 <component :is="iconComponent" class="h-6 w-6" />
             </div>
         </div>
-        <p class="text-xs mt-2 opacity-80">{{ trend }}</p>
+        <p class="text-xs mt-2 opacity-80">
+            <button v-if="clickable" @click="$emit('view-details')"
+                class="underline hover:text-gray-300 cursor-pointer p-0 m-0 bg-transparent border-0" type="button">{{
+                    trend }}</button>
+            <span v-else>{{ trend }}</span>
+        </p>
     </div>
 </template>
 
@@ -42,6 +47,10 @@ const props = defineProps({
     icon: {
         type: String,
         required: true
+    },
+    clickable: {
+        type: Boolean,
+        default: false
     }
 });
 

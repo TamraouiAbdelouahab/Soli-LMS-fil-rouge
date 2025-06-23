@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, usePage, router } from '@inertiajs/vue3';
 import ApplicationLogo from '@core/Components/ApplicationLogo.vue';
 import Dropdown from '@core/Components/Dropdown.vue';
 import DropdownLink from '@core/Components/DropdownLink.vue';
@@ -22,6 +22,15 @@ import {
     ChevronLeft,
     Gavel
 } from 'lucide-vue-next';
+
+const page = usePage();
+const notifications = page.props.notifications || []
+
+function handleClick(notification) {
+    router.post(route('notifications.markAsRead', notification.id), {
+        redirect_url: notification.url
+    });
+}
 
 const dashboardExpanded = ref(false)
 const sanctionExpanded = ref(false)
@@ -67,7 +76,7 @@ onUnmounted(() => {
                             <X v-else class="h-6 w-6" />
                         </button>
 
-                        <Link :href="route('dashboard')" class="flex items-center">
+                        <Link :href="route('home')" class="flex items-center">
                         <ApplicationLogo class="block h-9 w-auto fill-current text-gray-800 lg:ps-4" />
                         </Link>
                     </div>
@@ -85,27 +94,49 @@ onUnmounted(() => {
                     </div> -->
 
                     <!-- Right side - Notifications and Profile -->
-                    <div class="flex items-center">
-                        <button
-                            class="mr-4 rounded-full p-1 text-gray-500 hover:bg-gray-100 hover:text-gray-600 focus:outline-none">
-                            <Bell class="h-6 w-6" />
-                        </button>
+                    <div class="flex items-center space-x-4">
+                        <!-- Notifications Dropdown -->
+                        <Dropdown align="right" width="60">
+                            <template #trigger>
+                                <button
+                                    class="relative rounded-full p-1 text-gray-500 hover:bg-gray-100 hover:text-gray-600 focus:outline-none">
+                                    <Bell class="h-6 w-6" />
+                                    <span v-if="notifications.length > 0"
+                                        class="absolute top-0 right-0 inline-flex h-2 w-2 rounded-full bg-red-600"></span>
+                                </button>
+                            </template>
+
+                            <template #content>
+                                <div class="max-h-60 overflow-y-auto">
+                                    <template v-if="notifications.length">
+                                        <div v-for="n in notifications" :key="n.id"
+                                            class="px-4 py-2 hover:bg-gray-100 cursor-pointer" @click="handleClick(n)">
+                                            <div class="block text-sm font-medium text-gray-700">
+                                                <div class="font-semibold">{{ n.title }}</div>
+                                                <div class="text-xs text-gray-500 truncate">{{ n.message }}</div>
+                                                <div class="text-xs text-gray-400 mt-1">{{ n.time }}</div>
+                                            </div>
+                                        </div>
+                                    </template>
+                                    <template v-else>
+                                        <div class="px-4 py-2 text-gray-500 text-sm">Aucune notification</div>
+                                    </template>
+                                </div>
+                            </template>
+                        </Dropdown>
 
                         <!-- Profile Dropdown -->
                         <Dropdown align="right" width="48">
                             <template #trigger>
                                 <button
-                                    class="flex items-center rounded-full border border-transparent bg-white p-1 text-sm font-medium text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none">
+                                    class="flex items-center rounded-full border border-transparent bg-white p-1 text-sm font-medium text-gray-500 hover:text-gray-700 focus:outline-none">
                                     <div class="mr-2 h-8 w-8 overflow-hidden rounded-full bg-gray-200">
                                         <User class="h-full w-full p-1 text-gray-600" />
                                     </div>
-                                    <div class="hidden md:block">
-                                        {{ $page.props.auth.user.name }}
-                                    </div>
+                                    <div class="hidden md:block">{{ page.props.auth.user.name }}</div>
                                     <ChevronDown class="ml-1 h-4 w-4" />
                                 </button>
                             </template>
-
                             <template #content>
                                 <DropdownLink :href="route('profile.edit')">
                                     <div class="flex items-center">
@@ -133,7 +164,7 @@ onUnmounted(() => {
         ]">
             <!-- Sidebar header -->
             <div class="flex h-16 items-center justify-between border-b px-4">
-                <Link :href="route('dashboard')" class="flex items-center" v-show="sidebarOpen">
+                <Link :href="route('home')" class="flex items-center" v-show="sidebarOpen">
                 <ApplicationLogo class="block h-8 w-auto fill-current text-gray-800" />
                 <span class="ml-3 text-lg font-semibold text-gray-800">Soli-LMS</span>
                 </Link>
@@ -169,33 +200,39 @@ onUnmounted(() => {
                     <!-- Sublinks -->
                     <div v-show="dashboardExpanded" class="ml-8 space-y-1" v-if="sidebarOpen">
                         <!-- Page 1 -->
-                        <Link :href="route('sanction.dashboard')" :class="[
-                            route().current('sanction.dashboard') ? 'text-teal-700' : 'text-gray-600 hover:text-teal-600',
-                            'block text-sm py-1 transition'
-                        ]">
+                        <Link
+                            v-if="['responsable des apprenants', 'responsable de formation'].some(role => page.props.auth.user?.roles?.includes(role))"
+                            :href="route('sanction.dashboard')" :class="[
+                                route().current('sanction.dashboard') ? 'text-teal-700' : 'text-gray-600 hover:text-teal-600',
+                                'block text-sm py-1 transition'
+                            ]">
                         Sanctions
                         </Link>
 
                         <!-- Page 2 -->
-                        <Link :href="route('Justificatifs.dashboard')" :class="[
-                            route().current('Justificatifs.dashboard') ? 'text-teal-700' : 'text-gray-600 hover:text-teal-600',
-                            'block text-sm py-1 transition'
-                        ]">
+                        <Link
+                            v-if="['responsable des apprenants', 'responsable de formation'].some(role => page.props.auth.user?.roles?.includes(role))"
+                            :href="route('Justificatifs.dashboard')" :class="[
+                                route().current('Justificatifs.dashboard') ? 'text-teal-700' : 'text-gray-600 hover:text-teal-600',
+                                'block text-sm py-1 transition'
+                            ]">
                         Justificatifs
                         </Link>
 
                         <!-- Page 3 -->
-                        <Link :href="route('absence.dashboard')" :class="[
-                            route().current('absence.dashboard') ? 'text-teal-700' : 'text-gray-600 hover:text-teal-600',
-                            'block text-sm py-1 transition'
-                        ]">
+                        <Link
+                            v-if="['responsable des apprenants', 'responsable de formation'].some(role => page.props.auth.user?.roles?.includes(role))"
+                            :href="route('absence.dashboard')" :class="[
+                                route().current('absence.dashboard') ? 'text-teal-700' : 'text-gray-600 hover:text-teal-600',
+                                'block text-sm py-1 transition'
+                            ]">
                         Absences
                         </Link>
                     </div>
 
                     <!-- Sanction Parent -->
                     <button @click="sanctionExpanded = !sanctionExpanded" :class="[
-                        route().current('sanction.rules.index') || route().current('sanction.tracking.index')
+                        route().current('sanction.rules.index') || route().current('sanction.tracking.index') || route().current('learner.sanction.index')
                             ? 'bg-blue-50 text-teal-700'
                             : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
                         sidebarOpen ? 'justify-start' : 'justify-center',
@@ -215,20 +252,33 @@ onUnmounted(() => {
                     <!-- Sublinks -->
                     <div v-show="sanctionExpanded" class="ml-8 space-y-1" v-if="sidebarOpen">
                         <!-- Page 1 -->
-                        <Link :href="route('sanction.rules.index')" :class="[
-                            route().current('sanction.rules.index') ? 'text-teal-700' : 'text-gray-600 hover:text-teal-600',
-                            'block text-sm py-1 transition'
-                        ]">
+                        <Link
+                            v-if="['responsable des apprenants', 'responsable de formation'].some(role => page.props.auth.user?.roles?.includes(role))"
+                            :href="route('sanction.rules.index')" :class="[
+                                route().current('sanction.rules.index') ? 'text-teal-700' : 'text-gray-600 hover:text-teal-600',
+                                'block text-sm py-1 transition'
+                            ]">
                         Règles de sanction
                         </Link>
+
                         <!-- Page 2 -->
-                        <Link :href="route('sanction.tracking.index')" :class="[
-                            route().current('sanction.tracking.index') ? 'text-teal-700' : 'text-gray-600 hover:text-teal-600',
-                            'block text-sm py-1 transition'
-                        ]">
+                        <Link
+                            v-if="['responsable des apprenants', 'responsable de formation'].some(role => page.props.auth.user?.roles?.includes(role))"
+                            :href="route('sanction.tracking.index')" :class="[
+                                route().current('sanction.tracking.index') ? 'text-teal-700' : 'text-gray-600 hover:text-teal-600',
+                                'block text-sm py-1 transition'
+                            ]">
                         Suivi des sanctions
                         </Link>
 
+                        <!-- Page 3 -->
+                        <Link v-if="page.props.auth.user?.roles?.includes('apprenant')"
+                            :href="route('learner.sanction.index')" :class="[
+                                route().current('learner.sanction.index') ? 'text-teal-700' : 'text-gray-600 hover:text-teal-600',
+                                'block text-sm py-1 transition'
+                            ]">
+                        Mes sanctions
+                        </Link>
                     </div>
 
                     <!-- Justificatif Parent -->
@@ -246,8 +296,10 @@ onUnmounted(() => {
                             'mr-3 h-5 w-5 flex-shrink-0'
                         ]" />
                         <span v-if="sidebarOpen">Justificatifs</span>
-                        <ChevronRight v-if="!justificatifsExpanded && sidebarOpen" class="ml-auto h-4 w-4 text-gray-400" />
-                        <ChevronDown v-if="justificatifsExpanded && sidebarOpen" class="ml-auto h-4 w-4 text-gray-400" />
+                        <ChevronRight v-if="!justificatifsExpanded && sidebarOpen"
+                            class="ml-auto h-4 w-4 text-gray-400" />
+                        <ChevronDown v-if="justificatifsExpanded && sidebarOpen"
+                            class="ml-auto h-4 w-4 text-gray-400" />
                     </button>
 
                     <!-- Sublinks -->
